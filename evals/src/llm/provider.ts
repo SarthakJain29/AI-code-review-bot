@@ -89,7 +89,7 @@ export class GeminiProvider implements LlmProvider {
   readonly name = 'gemini' as const;
   constructor(
     private readonly apiKey: string,
-    readonly model = 'gemini-3.5-flash',
+    readonly model = 'gemini-3.1-flash-lite',
   ) {}
 
   async complete(req: LlmRequest): Promise<LlmResponse> {
@@ -247,10 +247,11 @@ export class FallbackProvider implements LlmProvider {
 }
 
 /** All configured real providers, preferred first (for fallback chains). */
-export function providerChainFromEnv(preferred: ProviderName): LlmProvider | null {
+export function providerChainFromEnv(preferred: ProviderName, model?: string): LlmProvider | null {
   const all: LlmProvider[] = [];
-  if (process.env.GEMINI_API_KEY) all.push(new GeminiProvider(process.env.GEMINI_API_KEY));
-  if (process.env.GROQ_API_KEY) all.push(new GroqProvider(process.env.GROQ_API_KEY));
+  const m = (name: ProviderName) => (name === preferred ? model : undefined);
+  if (process.env.GEMINI_API_KEY) all.push(new GeminiProvider(process.env.GEMINI_API_KEY, m('gemini')));
+  if (process.env.GROQ_API_KEY) all.push(new GroqProvider(process.env.GROQ_API_KEY, m('groq')));
   all.sort((a, b) => Number(b.name === preferred) - Number(a.name === preferred));
   if (all.length === 0) return null;
   return all.length === 1 ? all[0]! : new FallbackProvider(all);

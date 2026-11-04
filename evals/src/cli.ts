@@ -50,11 +50,12 @@ dataset
   .option('--max-intro-files <n>', 'max files in the introducing diff', '20')
   .option('--extend', 'keep existing cases and add new ones', false)
   .option('--no-llm', 'skip LLM annotation (heuristic descriptions/categories)')
+  .option('--annotator-model <id>', 'model for the preferred annotator provider')
   .option('--annotator <provider>', 'preferred provider (falls back to the other): groq | gemini', 'groq')
   .option('--out <path>', 'output file', DATASET_PATH)
   .action(async (o) => {
     const reposDir = resolve(process.env.EVALS_REPOS_DIR ?? join(CACHE_DIR, 'repos'));
-    const llm = o.llm ? providerChainFromEnv(o.annotator as ProviderName) : null;
+    const llm = o.llm ? providerChainFromEnv(o.annotator as ProviderName, o.annotatorModel) : null;
     if (o.llm && !llm) console.warn('No LLM key: using heuristic annotation.');
     await buildDataset({
       repos: String(o.repos).split(',').map((s) => s.trim()).filter(Boolean),

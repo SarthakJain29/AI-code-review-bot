@@ -21,7 +21,7 @@ Requirements: Node ≥ 20 (developed on 22), git on PATH (the dataset builder cl
 | `GEMINI_API_KEY` | baseline reviewer (default), annotation fallback | https://aistudio.google.com/apikey (free tier) | falls back to Groq, then mock |
 | `GROQ_API_KEY` | LLM judge (default), dataset annotation (default) | https://console.groq.com/keys (free tier) | falls back to Gemini, then keyword judge / heuristic annotation |
 | `EVALS_GITHUB_TOKEN` | optional PR metadata (title/body) via GitHub REST while building the dataset | https://github.com/settings/tokens (fine-grained, public repos read-only, no scopes needed) | builder works from git history only |
-| `EVALS_REVIEWER_PROVIDER` / `EVALS_REVIEWER_MODEL` | override baseline model (default `gemini` / `gemini-3.5-flash`) | – | defaults |
+| `EVALS_REVIEWER_PROVIDER` / `EVALS_REVIEWER_MODEL` | override baseline model (default `gemini` / `gemini-3.1-flash-lite`) | – | defaults |
 | `EVALS_JUDGE_PROVIDER` / `EVALS_JUDGE_MODEL` | override judge (default `groq` / `openai/gpt-oss-120b`) | – | defaults |
 | `EVALS_REPOS_DIR` | where the builder clones repos (default `.cache/repos`, ~550 MB for the default list) | – | default |
 | `DIFFWISE_REVIEW_URL` / `DIFFWISE_VERSION` | `--reviewer diffwise` HTTP adapter (future) | your local Diffwise | diffwise reviewer becomes `mock-silent` with a note |
@@ -78,10 +78,12 @@ tests/                   vitest
 
 - GitHub REST API is blocked for other repos in the cloud sandbox (proxy 403) → dataset built from git history only;
   PR titles come from squash-commit subjects, PR bodies are not used. See Blockers.
-- `gemini-3.5-flash` free tier intermittently returns 503 "high demand"; the provider retries 4× with backoff, and
+- `gemini-3.5-flash` free tier allows only **20 requests/day** and also returned 503s, so the default reviewer is
+  `gemini-3.1-flash-lite`. For a full run on a stronger model, use a paid key or `--provider groq --model qwen/qwen3.8-27b`.
+- Gemini free-tier models intermittently return 503 "high demand"; the provider retries 4× with backoff, and
   the dataset annotator falls back to Groq. Reviews that still fail are recorded with `error` and counted in the
   "Errors" column (not cached, so a re-run retries them).
-- Pricing for `gemini-3.5-flash` and Groq `gpt-oss-*` is marked `assumed` in `src/llm/pricing.ts`; verify before quoting cost.
+- Pricing for Gemini 3.x and Groq `gpt-oss-*` is marked `assumed` in `src/llm/pricing.ts`; verify before quoting cost.
 - SZZ is noisy by nature: some "introducing" PRs only moved/reformatted the line. Filters reduce this
   (whitespace-insensitive blame, majority vote, mechanical-commit filter, LLM rejection) but don't eliminate it.
 
@@ -103,11 +105,10 @@ tests/                   vitest
 - **Annotator = Groq gpt-oss-120b, reviewer = Gemini.** The model that writes bug descriptions should not be the
   model under test (its own phrasing would make semantic matching easier). The judge is also gpt-oss-120b; this
   shares a model with the annotator but not with the reviewer.
-- **Annotation split for speed:** Groq's free tier is 8k tokens/min, so one annotator would have taken hours. The
-  first 6 repos (vue, svelte, vitest, query, hono, zod) are annotated by Groq `gpt-oss-120b`, the other 6 (axios,
-  date-fns, zustand, immer, ky, h3) by Gemini `gemini-3.5-flash`, with the other provider as fallback. Each case
-  records its annotator in `annotation.model`. Caveat: for Gemini-annotated cases the description author shares a
-  family with the baseline reviewer. Re-run `dataset build --annotator groq` for a single annotator.
+- **Annotation split for speed:** Groq's free tier is 8k tokens/min per model, so one annotator would have taken
+  hours. Rate limits are per model, so the first 6 repos (vue, svelte, vitest, query, hono, zod) are annotated by
+  Groq `openai/gpt-oss-120b` and the other 6 (axios, date-fns, zustand, immer, ky, h3) by Groq `openai/gpt-oss-20b`.
+  Each case records its annotator in `annotation.model`. Neither shares a family with the Gemini baseline.
 - **Two catch rates:** strict (semantic + within ±5 lines) is the headline; "any line" shows how much is lost to bad line refs.
 - **Precision is reported as a lower bound** (only the known bug counts as a true positive); noise on clean PRs is the main FP metric.
 - **Cost is list-price equivalent** (free tiers bill $0) so reviewers are comparable.
@@ -124,7 +125,8 @@ tests/                   vitest
 | What failed | What I tried | Workaround | What you need to do |
 |---|---|---|---|
 | GitHub REST API for other repos → proxy 403 "GitHub access to this repository is not enabled for this session" (with `EVALS_GITHUB_TOKEN`) | curl + Node fetch through the proxy | Dataset mined from `git clone` + `git log`/`git blame` (real merged PRs via squash subjects). Builder keeps the API path for PR metadata when it is reachable. | Optional: run `npm run evals -- dataset build` locally with `EVALS_GITHUB_TOKEN` to add PR bodies to annotation. |
-| `gemini-2.5-flash` → 404 "no longer available to new users" | listed models | default reviewer model `gemini-3.5-flash` | none |
+| `gemini-2.5-flash` → 404 "no longer available to new users" | listed models | tried `gemini-3.5-flash` | none |
+| `gemini-3.5-flash` free tier: 20 requests/day (quota hit during dataset annotation) | checked other models | default reviewer `gemini-3.1-flash-lite`; annotation on Groq models | for a full eval on a stronger Gemini, use a paid key (`EVALS_REVIEWER_MODEL=gemini-3.5-flash`) |
 | `gemini-3.5-flash` / `gemini-flash-latest` intermittent 503 | retry with backoff | Groq fallback for annotation; errors recorded per case | re-run failed cases later (cache skips successes) |
 | Groq `llama-3.3-70b-versatile` → model_not_found | listed models | `openai/gpt-oss-120b` | none |
 

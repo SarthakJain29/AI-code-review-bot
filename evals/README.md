@@ -94,7 +94,7 @@ number on every commit of the main branch.
 | 4. Introducer | majority vote (≥ 50% of blamed lines); must be a single-parent squash commit with a PR number, not mechanical (format, rename, release, bump), older than the fix | standard SZZ refinements that reduce misattribution |
 | 5. Reviewable | introducing diff ≤ 600 changed lines and ≤ 20 files, after dropping lockfiles, snapshots, build output and binaries | a reviewer could plausibly read it |
 | 6. Location | blamed lines that are **added** lines of the introducing diff, merged into ranges (gaps ≤ 3) | location in the reviewer's own coordinates (new-side line numbers) |
-| 7. Annotation | an LLM (Groq `gpt-oss-120b`, falling back to Gemini) reads the fix commit, fix diff and blamed lines. It **rejects** non-logic or misattributed pairs and writes a 1–2 sentence description of what is wrong *in the introducing code*, plus a category | filters SZZ noise; gives the judge a target |
+| 7. Annotation | an LLM (Groq `gpt-oss-120b` or `gpt-oss-20b`, depending on the repo; see developer.md) reads the fix commit, fix diff and blamed lines. It **rejects** non-logic or misattributed pairs and writes a 1–2 sentence description of what is wrong *in the introducing code*, plus a category | filters SZZ noise; gives the judge a target |
 | 8. Clean PRs | `feat/perf/refactor (#N)` PRs ≥ 270 days old, 15–400 changed lines, never reverted, and no later fix touching their files blames back to them (up to 15 checked) | "no known bug" after a long exposure window |
 
 Each case stores: repo, introducing PR (number, commit, title, URL, date), the filtered unified diff, diff stats,
@@ -124,7 +124,7 @@ bug-introducing PR to review. The builder still probes the REST API first and us
   location, the real fix diff (source files first) and all comments. It returns `match` and a reason for each
   comment. The prompt is strict: generic advice ("add tests", "check for null" without this bug's cause) and
   different real problems in the same lines do not count. The judge deliberately uses a different model family
-  from the baseline reviewer (Gemini), to avoid self-preference.
+  from the baseline reviewer (Gemini `gemini-3.1-flash-lite`), to avoid self-preference.
 - **Verdicts:** `caught` = some comment passes both checks; `caughtAnyLocation` = some comment passes the semantic check.
 - Offline fallback: a keyword-overlap judge. It is much weaker and only for plumbing tests.
 
@@ -218,6 +218,6 @@ context such as embeddings, note that the baseline sees the diff only.
   Large PRs, where review is hardest, are under-represented.
 - **Data contamination.** These are public repos, so the reviewer's model may have seen the fix during training.
   This affects all LLM reviewers roughly equally, but it inflates absolute numbers.
-- **Free-tier volatility.** Gemini free-tier models get rotated or retired (`gemini-2.5-flash` was unavailable to new keys)
+- **Free-tier volatility.** Gemini free-tier models get rotated or retired (`gemini-2.5-flash` was unavailable to new keys; `gemini-3.5-flash` allows 20 requests/day on the free tier, which is why the baseline uses `gemini-3.1-flash-lite`)
   and return 503s under load. Latency numbers include provider queueing.
 - **Cost is an estimate** at list prices, some of which are marked `assumed` in `pricing.ts`.
