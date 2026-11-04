@@ -132,7 +132,12 @@ tests/                   vitest
 
 ## Progress
 
-- **Done:** scaffold (TS, ESLint, Vitest, CLI); diff parser; LLM providers + fallback; SZZ dataset builder; baseline,
-  mock, silent reviewers + Diffwise HTTP adapter stub; LLM + keyword judge; metrics; markdown/HTML report; tests for scoring/judge/dataset rules.
-- **In progress:** building dataset (`dataset/cases.json`).
-- **Next:** hand labels + judge validation; 5-case smoke run with baseline + mock; report; README; PR.
+- **Done:** scaffold (TS, ESLint, Vitest, CLI); diff parser; LLM providers + fallback; SZZ dataset builder; dataset
+  (91 buggy + 19 clean, `dataset/cases.json`); baseline, mock and silent reviewers + Diffwise HTTP adapter stub; LLM +
+  keyword judge; judge labels (19 items) + validation (LLM 100% / κ 1.0, keyword 89.5%); metrics; markdown/HTML report;
+  5-case smoke run (`results/smoke-*.json`, `reports/scoreboard.*`); README; tests.
+- **In progress:** none.
+- **Next (for you):** run the full eval (`npm run evals -- run --reviewer baseline`). On the free tier, flash-lite plus the Groq
+  judge at 8k TPM takes roughly an hour, mostly judge rate limits. Re-check `dataset/judge-labels.json` by hand, and
+  spot-check ~10 dataset cases for SZZ misattribution. When the Diffwise worker has a pure review function, wire
+  `src/reviewers/diffwise.ts`.

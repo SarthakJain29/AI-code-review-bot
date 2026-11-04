@@ -171,7 +171,7 @@ program
     const files: string[] = o.runs
       ? String(o.runs).split(',').map((p) => resolve(p))
       : readdirSync(RESULTS_DIR)
-          .filter((f) => f.endsWith('.json') && f !== basename(o.judgeValidation))
+          .filter((f) => f.endsWith('.json') && !f.startsWith('judge-validation') && f !== basename(o.judgeValidation))
           .map((f) => join(RESULTS_DIR, f));
     const runs = files.map((f) => JSON.parse(readFileSync(f, 'utf8')) as RunResult);
     const jv = existsSync(o.judgeValidation) ? (JSON.parse(readFileSync(o.judgeValidation, 'utf8')) as JudgeValidation) : undefined;

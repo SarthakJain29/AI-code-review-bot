@@ -24,6 +24,10 @@ finished, so it is fully decoupled: any reviewer that maps `diff → comments` c
                                    reports/scoreboard.{md,html}
 ```
 
+> **Smoke test (5 cases):** the baseline (`gemini-3.1-flash-lite`, one prompt) caught **0/4** known bugs and left
+> 1 comment on the 1 clean PR, at ≈$0.0002 and 1.2 s per review. Each miss was a plausible-sounding comment about
+> something else. See [`reports/scoreboard.md`](reports/scoreboard.md) or [`reports/scoreboard.html`](reports/scoreboard.html).
+
 > **Status:** the harness, dataset and judge are complete. Per the brief, the **full eval has not been run**. The
 > committed report in [`reports/`](reports/) is a **5-case smoke test**, and its numbers carry error bars far
 > too wide to mean anything. Run the full eval with `npm run evals -- run --reviewer baseline`.
@@ -112,7 +116,49 @@ Squash-merge titles carry the PR number, so the same thing can be done from hist
 and real `git blame`. That is closer to the brief than SWE-style datasets, which have issues and fix patches but no
 bug-introducing PR to review. The builder still probes the REST API first and uses PR metadata when it is reachable.
 
-<!-- DATASET-STATS -->
+### The dataset as committed
+
+**110 cases: 91 buggy, 19 clean, from 12 repos.** It was built in under 30 minutes (two parallel builds) from git history, with every buggy
+case LLM-annotated. Two cases per repo are clean, except date-fns and ky, where no PR passed the clean filters.
+
+| Repo | Buggy | Clean |
+|---|---|---|
+| vuejs/core | 8 | 2 |
+| sveltejs/svelte | 8 | 2 |
+| vitest-dev/vitest | 8 | 2 |
+| TanStack/query | 8 | 2 |
+| honojs/hono | 8 | 2 |
+| colinhacks/zod | 8 | 2 |
+| axios/axios | 8 | 2 |
+| date-fns/date-fns | 7 | 0 |
+| pmndrs/zustand | 8 | 2 |
+| immerjs/immer | 4 | 1 |
+| sindresorhus/ky | 8 | 0 |
+| unjs/h3 | 8 | 2 |
+| **Total** | **91** | **19** |
+
+| Category | Cases |
+|---|---|
+| logic | 52 |
+| edge-case | 17 |
+| async-concurrency | 6 |
+| state-mutation | 4 |
+| api-contract | 3 |
+| regex-string | 3 |
+| null-undefined | 3 |
+| performance | 2 |
+| other | 1 |
+
+Median introducing diff: 135 changed lines in 4 files. Median SZZ share of blamed lines attributed to the introducer: 100%. Annotation: 91 LLM, 0 heuristic.
+
+Example (`honojs/hono#2314`, fixed later by `fix(cookie): …`): the PR added `name.startsWith('__Secure-')` and
+`name.startsWith('__Host-')` checks. They are case-sensitive, so `__SECURE-x` bypassed the Secure-attribute
+validation. The bug location is `src/utils/cookie.ts:117` and `:123`.
+
+What the builder skipped is printed per repo. The most common reasons were "introducing diff too large" (e.g. 30× in
+date-fns), "fix doesn't touch source" (51× in TanStack/query, mostly devtools/types), "introducer has no PR number"
+(older non-squash history) and "no majority introducer". The LLM rejected 11 SZZ pairs as not real logic bugs.
+
 
 ## Judge validation
 
@@ -140,7 +186,19 @@ comment sets written to probe the judge's hard cases:
 
 `npm run evals -- judge validate` reports accuracy and Cohen's κ against the labels.
 
-<!-- JUDGE-STATS -->
+### Judge validation results
+
+| Judge | Items | Accuracy | Cohen's κ | Disagreements |
+|---|---|---|---|---|
+| LLM judge (`openai/gpt-oss-120b`, Groq) | 19 (4 real + 15 constructed; 9 caught / 10 missed) | **100%** | 1.00 | none |
+| Keyword judge (offline fallback) | 19 | 89.5% | 0.79 | missed the correct comment buried among nits; missed a correct comment using different words |
+
+The LLM judge rejected all the hard negatives: right bug on the wrong line, generic advice on the bug line, a
+different issue on the same lines, and a real "race condition" comment in the same retry code that described a
+different defect. It accepted terse and paraphrased correct comments. **Caveat:** 19 items is small, and the
+constructed probes are cleaner than real reviewer prose, so treat 100% as "no systematic failure found", not as
+a measured error rate. Disagreements in the full run (e.g. spot-check 20 judged cases) would be the next validation step.
+
 
 ## Metrics
 
