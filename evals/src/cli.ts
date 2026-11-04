@@ -74,13 +74,26 @@ dataset
 dataset
   .command('stats')
   .description('print dataset composition')
-  .action(() => {
+  .option('--markdown', 'print markdown tables (for the README)')
+  .action((o) => {
     const ds = loadDataset();
     const by = (f: (c: Dataset['cases'][number]) => string) => {
       const m = new Map<string, number>();
       for (const c of ds.cases) m.set(f(c), (m.get(f(c)) ?? 0) + 1);
       return Object.fromEntries([...m].sort((a, b) => b[1] - a[1]));
     };
+    if (o.markdown) {
+      const buggy = ds.cases.filter((c) => c.kind === 'buggy');
+      const repos = [...new Set(ds.cases.map((c) => c.repo))];
+      const lines = ['| Repo | Buggy | Clean |', '|---|---|---|'];
+      for (const r of repos) lines.push(`| ${r} | ${buggy.filter((c) => c.repo === r).length} | ${ds.cases.filter((c) => c.repo === r && c.kind === 'clean').length} |`);
+      lines.push(`| **Total** | **${buggy.length}** | **${ds.cases.length - buggy.length}** |`, '', '| Category | Cases |', '|---|---|');
+      for (const [k, v] of Object.entries(by((c) => c.bug?.category ?? '(clean)'))) if (k !== '(clean)') lines.push(`| ${k} | ${v} |`);
+      const med = (xs: number[]) => [...xs].sort((a, b) => a - b)[Math.floor(xs.length / 2)] ?? 0;
+      lines.push('', `Median introducing diff: ${med(buggy.map((c) => c.diffStats.additions + c.diffStats.deletions))} changed lines in ${med(buggy.map((c) => c.diffStats.files))} files. Median SZZ share of blamed lines attributed to the introducer: ${(med(buggy.map((c) => c.bug!.szz.blamedLinesToIntroducer / c.bug!.szz.blamedLines)) * 100).toFixed(0)}%. Annotation: ${buggy.filter((c) => c.annotation?.by === 'llm').length} LLM, ${buggy.filter((c) => c.annotation?.by !== 'llm').length} heuristic.`);
+      console.log(lines.join('\n'));
+      return;
+    }
     console.log(JSON.stringify({ source: ds.source, total: ds.cases.length, kind: by((c) => c.kind), repo: by((c) => c.repo), category: by((c) => c.bug?.category ?? '(clean)') }, null, 2));
   });
 

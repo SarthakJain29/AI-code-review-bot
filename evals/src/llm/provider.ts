@@ -146,7 +146,9 @@ export class GroqProvider implements LlmProvider {
         {
           model: this.model,
           temperature: req.temperature ?? 0,
-          max_completion_tokens: req.maxOutputTokens ?? 8192,
+          // Groq's TPM limiter reserves max_completion_tokens up front, so keep it tight.
+          max_completion_tokens: req.maxOutputTokens ?? 2048,
+          ...(this.model.startsWith('openai/gpt-oss') ? { reasoning_effort: 'low' } : {}),
           messages: [
             { role: 'system', content: req.system },
             { role: 'user', content: req.prompt },

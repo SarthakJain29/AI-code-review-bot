@@ -103,6 +103,11 @@ tests/                   vitest
 - **Annotator = Groq gpt-oss-120b, reviewer = Gemini.** The model that writes bug descriptions should not be the
   model under test (its own phrasing would make semantic matching easier). The judge is also gpt-oss-120b; this
   shares a model with the annotator but not with the reviewer.
+- **Annotation split for speed:** Groq's free tier is 8k tokens/min, so one annotator would have taken hours. The
+  first 6 repos (vue, svelte, vitest, query, hono, zod) are annotated by Groq `gpt-oss-120b`, the other 6 (axios,
+  date-fns, zustand, immer, ky, h3) by Gemini `gemini-3.5-flash`, with the other provider as fallback. Each case
+  records its annotator in `annotation.model`. Caveat: for Gemini-annotated cases the description author shares a
+  family with the baseline reviewer. Re-run `dataset build --annotator groq` for a single annotator.
 - **Two catch rates:** strict (semantic + within ±5 lines) is the headline; "any line" shows how much is lost to bad line refs.
 - **Precision is reported as a lower bound** (only the known bug counts as a true positive); noise on clean PRs is the main FP metric.
 - **Cost is list-price equivalent** (free tiers bill $0) so reviewers are comparable.

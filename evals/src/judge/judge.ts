@@ -153,7 +153,7 @@ export class LlmJudge implements Judge {
     const key = DiskCache.key('judge', this.id, prompt);
     let raw = this.cache.get<{ verdicts: { index: number; match: boolean; reason: string }[]; usage: JudgeVerdict['judgeUsage'] }>(key);
     if (!raw) {
-      const res = await this.llm.complete({ system: JUDGE_SYSTEM, prompt, json: true, temperature: 0 });
+      const res = await this.llm.complete({ system: JUDGE_SYSTEM, prompt, json: true, temperature: 0, maxOutputTokens: 2000 });
       const parsed = JudgeOutput.parse(extractJson(res.text));
       raw = {
         verdicts: parsed.verdicts,

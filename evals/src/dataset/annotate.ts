@@ -67,7 +67,7 @@ ${input.fixDiff.slice(0, 8000)}`;
   const cached = cache.get<Annotation>(key);
   if (cached) return cached;
   try {
-    const res = await llm.complete({ system: SYSTEM, prompt, json: true, temperature: 0 });
+    const res = await llm.complete({ system: SYSTEM, prompt, json: true, temperature: 0, maxOutputTokens: 1500 });
     const parsed = AnnotationSchema.parse(extractJson(res.text));
     const out: Annotation = {
       isLogicBug: parsed.is_logic_bug,
