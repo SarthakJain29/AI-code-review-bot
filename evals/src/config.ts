@@ -3,7 +3,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-export const DATASET_PATH = join(ROOT, 'dataset', 'cases.json');
+export const DATASET_PATH = process.env.EVALS_DATASET ?? join(ROOT, 'dataset', 'cases.json');
 export const LABELS_PATH = join(ROOT, 'dataset', 'judge-labels.json');
 export const CACHE_DIR = join(ROOT, '.cache');
 export const RESULTS_DIR = join(ROOT, 'results');

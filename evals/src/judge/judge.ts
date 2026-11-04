@@ -9,6 +9,7 @@
  */
 import { z } from 'zod';
 import { DiskCache } from '../cache.js';
+import { isTestFile, parseDiff, renderDiff } from '../diff.js';
 import { extractJson, type LlmProvider } from '../llm/provider.js';
 import type { BugLocation, CommentVerdict, EvalCase, JudgeVerdict, ReviewComment } from '../types.js';
 
@@ -113,6 +114,13 @@ const JudgeOutput = z.object({
   verdicts: z.array(z.object({ index: z.coerce.number().int(), match: z.boolean(), reason: z.string().catch('') })),
 });
 
+/** Put non-test files first so the prompt budget goes to the actual fix. */
+function sourceFirst(diff: string): string {
+  const files = parseDiff(diff);
+  if (files.length === 0) return diff;
+  return renderDiff([...files].sort((a, b) => Number(isTestFile(a.newPath ?? a.oldPath ?? '')) - Number(isTestFile(b.newPath ?? b.oldPath ?? ''))));
+}
+
 export function buildJudgePrompt(c: EvalCase, comments: ReviewComment[]): string {
   const bug = c.bug!;
   const locs = bug.locations.map((l) => `${l.file}:${l.lines.start}-${l.lines.end}`).join(', ');
@@ -121,7 +129,7 @@ export function buildJudgePrompt(c: EvalCase, comments: ReviewComment[]): string
 ${bug.description}
 
 How it was fixed later (${bug.fixPr.title}):
-${bug.fixDiff.slice(0, 6000)}
+${sourceFirst(bug.fixDiff).slice(0, 6000)}
 
 Review comments:
 ${list}`;

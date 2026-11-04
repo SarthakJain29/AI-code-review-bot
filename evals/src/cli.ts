@@ -15,7 +15,7 @@ import { CACHE_DIR, DATASET_PATH, LABELS_PATH, loadDotEnv, REPORTS_DIR, RESULTS_
 import { buildDataset, DEFAULT_REPOS } from './dataset/build.js';
 import { KeywordJudge, LlmJudge, type Judge } from './judge/judge.js';
 import { loadLabels, validateJudge } from './judge/validate.js';
-import { providerFromEnv, type ProviderName } from './llm/provider.js';
+import { providerChainFromEnv, providerFromEnv, type ProviderName } from './llm/provider.js';
 import { renderHtml, renderMarkdown, type JudgeValidation } from './report/report.js';
 import { createReviewer, REVIEWER_NAMES, type ReviewerName } from './reviewers/index.js';
 import { runEval, selectCases } from './runner.js';
@@ -50,11 +50,11 @@ dataset
   .option('--max-intro-files <n>', 'max files in the introducing diff', '20')
   .option('--extend', 'keep existing cases and add new ones', false)
   .option('--no-llm', 'skip LLM annotation (heuristic descriptions/categories)')
-  .option('--annotator <provider>', 'gemini | groq', 'gemini')
+  .option('--annotator <provider>', 'preferred provider (falls back to the other): groq | gemini', 'groq')
   .option('--out <path>', 'output file', DATASET_PATH)
   .action(async (o) => {
     const reposDir = resolve(process.env.EVALS_REPOS_DIR ?? join(CACHE_DIR, 'repos'));
-    const llm = o.llm ? providerFromEnv(o.annotator as ProviderName) : null;
+    const llm = o.llm ? providerChainFromEnv(o.annotator as ProviderName) : null;
     if (o.llm && !llm) console.warn('No LLM key: using heuristic annotation.');
     await buildDataset({
       repos: String(o.repos).split(',').map((s) => s.trim()).filter(Boolean),

@@ -12,7 +12,7 @@
  */
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { DiskCache } from '../cache.js';
-import { diffStats, filterReviewableDiff, isSourceFile, parseDiff, renderDiff, type DiffFile } from '../diff.js';
+import { diffStats, filterReviewableDiff, isSourceFile, isTestFile, parseDiff, renderDiff, type DiffFile } from '../diff.js';
 import type { LlmProvider } from '../llm/provider.js';
 import { DatasetSchema, type Dataset, type EvalCase } from '../types.js';
 import { annotate } from './annotate.js';
@@ -178,7 +178,10 @@ async function buildBuggy(repo: string, dir: string, log: CommitInfo[], opts: Bu
       bump('blamed lines not in introducing diff');
       continue;
     }
-    const fixFiles = filterReviewableDiff(showDiff(dir, fix.sha));
+    // Source changes first, tests after, so truncation never hides the actual fix.
+    const fixFiles = filterReviewableDiff(showDiff(dir, fix.sha)).sort(
+      (a, b) => Number(isTestFile(a.newPath ?? a.oldPath ?? '')) - Number(isTestFile(b.newPath ?? b.oldPath ?? '')),
+    );
     const fixDiff = renderDiff(fixFiles).slice(0, LIMITS.maxFixDiffChars);
     const bugSnippet = locations.map((l) => snippet(introFiles, l.file, l.lines.start, l.lines.end)).join('\n\n');
     const fixNo = prNumberFromSubject(fix.subject);

@@ -33,6 +33,8 @@ export class LlmError extends Error {
     message: string,
     readonly status?: number,
     readonly retryable = false,
+    /** Server-requested wait (Retry-After), if any. */
+    readonly retryAfterMs?: number,
   ) {
     super(message);
   }
@@ -41,7 +43,7 @@ export class LlmError extends Error {
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 /** Retry transient failures (429/5xx/network) with exponential backoff. */
-export async function withRetry<T>(fn: () => Promise<T>, attempts = 4, baseMs = 2000): Promise<T> {
+export async function withRetry<T>(fn: () => Promise<T>, attempts = 5, baseMs = 2000): Promise<T> {
   let last: unknown;
   for (let i = 0; i < attempts; i++) {
     try {
@@ -50,7 +52,8 @@ export async function withRetry<T>(fn: () => Promise<T>, attempts = 4, baseMs = 
       last = e;
       const retryable = !(e instanceof LlmError) || e.retryable;
       if (!retryable || i === attempts - 1) break;
-      await sleep(baseMs * 2 ** i);
+      const hinted = e instanceof LlmError && e.retryAfterMs ? Math.min(e.retryAfterMs, 90_000) : 0;
+      await sleep(Math.max(baseMs * 2 ** i, hinted));
     }
   }
   throw last;
@@ -71,7 +74,13 @@ async function postJson(url: string, body: unknown, headers: Record<string, stri
   const text = await res.text();
   if (!res.ok) {
     // Never echo request headers/keys; the body from the provider is safe to show.
-    throw new LlmError(`HTTP ${res.status}: ${text.slice(0, 300)}`, res.status, res.status === 429 || res.status >= 500);
+    const ra = Number(res.headers.get('retry-after'));
+    throw new LlmError(
+      `HTTP ${res.status}: ${text.slice(0, 300)}`,
+      res.status,
+      res.status === 429 || res.status >= 500,
+      Number.isFinite(ra) && ra > 0 ? ra * 1000 + 500 : undefined,
+    );
   }
   return JSON.parse(text) as unknown;
 }
@@ -210,4 +219,36 @@ export function extractJson(text: string): unknown {
     if (start >= 0 && end > start) return JSON.parse(candidate.slice(start, end + 1));
     throw new Error(`no JSON found in model output: ${text.slice(0, 200)}`);
   }
+}
+
+/** Try providers in order; the first success wins. Used where availability matters more than model identity. */
+export class FallbackProvider implements LlmProvider {
+  readonly name: LlmProvider['name'];
+  readonly model: string;
+  constructor(private readonly chain: LlmProvider[]) {
+    if (chain.length === 0) throw new Error('FallbackProvider needs at least one provider');
+    this.name = chain[0]!.name;
+    this.model = chain.map((p) => p.model).join('|');
+  }
+  async complete(req: LlmRequest): Promise<LlmResponse> {
+    let last: unknown;
+    for (const p of this.chain) {
+      try {
+        return await p.complete(req);
+      } catch (e) {
+        last = e;
+      }
+    }
+    throw last;
+  }
+}
+
+/** All configured real providers, preferred first (for fallback chains). */
+export function providerChainFromEnv(preferred: ProviderName): LlmProvider | null {
+  const all: LlmProvider[] = [];
+  if (process.env.GEMINI_API_KEY) all.push(new GeminiProvider(process.env.GEMINI_API_KEY));
+  if (process.env.GROQ_API_KEY) all.push(new GroqProvider(process.env.GROQ_API_KEY));
+  all.sort((a, b) => Number(b.name === preferred) - Number(a.name === preferred));
+  if (all.length === 0) return null;
+  return all.length === 1 ? all[0]! : new FallbackProvider(all);
 }
