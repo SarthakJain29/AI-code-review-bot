@@ -76,7 +76,7 @@ ${input.fixDiff.slice(0, 8000)}`;
       category: parsed.category,
       rejectReason: parsed.reject_reason ?? undefined,
       by: 'llm',
-      model: llm.model,
+      model: res.model, // the model that actually answered (fallback chains may differ)
     };
     cache.set(key, out);
     return out;
