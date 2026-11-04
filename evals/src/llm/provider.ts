@@ -102,7 +102,8 @@ export class GeminiProvider implements LlmProvider {
           contents: [{ role: 'user', parts: [{ text: req.prompt }] }],
           generationConfig: {
             temperature: req.temperature ?? 0,
-            maxOutputTokens: req.maxOutputTokens ?? 8192,
+            // Thinking tokens count toward this limit on Gemini, so never go below 8192.
+            maxOutputTokens: Math.max(req.maxOutputTokens ?? 0, 8192),
             ...(req.json ? { responseMimeType: 'application/json' } : {}),
           },
         },

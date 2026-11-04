@@ -29,7 +29,7 @@ export interface Annotation {
 
 const AnnotationSchema = z.object({
   is_logic_bug: z.boolean(),
-  description: z.string(),
+  description: z.string().nullish().transform((d) => d ?? ''),
   category: z.enum(BUG_CATEGORIES).catch('other'),
   reject_reason: z.string().optional().nullable(),
 });
@@ -69,6 +69,7 @@ ${input.fixDiff.slice(0, 8000)}`;
   try {
     const res = await llm.complete({ system: SYSTEM, prompt, json: true, temperature: 0, maxOutputTokens: 1500 });
     const parsed = AnnotationSchema.parse(extractJson(res.text));
+    if (parsed.is_logic_bug && !parsed.description.trim()) throw new Error('accepted without a description');
     const out: Annotation = {
       isLogicBug: parsed.is_logic_bug,
       description: parsed.description.trim(),
@@ -80,7 +81,8 @@ ${input.fixDiff.slice(0, 8000)}`;
     cache.set(key, out);
     return out;
   } catch (e) {
-    console.warn(`  annotate: LLM failed (${(e as Error).message.slice(0, 120)}), using heuristic`);
-    return fallback;
+    // An LLM was configured but failed: reject rather than letting an unvetted pair in.
+    console.warn(`  annotate: LLM failed (${(e as Error).message.slice(0, 120)}), skipping case`);
+    return { ...fallback, isLogicBug: false, rejectReason: 'annotation failed' };
   }
 }
