@@ -1,0 +1,175 @@
+#!/usr/bin/env node
+/**
+ * Diffwise evals CLI.
+ *   npm run evals -- dataset build            # mine cases (SZZ) into dataset/cases.json
+ *   npm run evals -- dataset stats
+ *   npm run evals -- run --reviewer baseline --limit 5
+ *   npm run evals -- judge validate
+ *   npm run evals -- report --runs results/a.json,results/b.json --out reports/scoreboard
+ */
+import { Command } from 'commander';
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { basename, join, resolve } from 'node:path';
+import { DiskCache } from './cache.js';
+import { CACHE_DIR, DATASET_PATH, LABELS_PATH, loadDotEnv, REPORTS_DIR, RESULTS_DIR, ROOT } from './config.js';
+import { buildDataset, DEFAULT_REPOS } from './dataset/build.js';
+import { KeywordJudge, LlmJudge, type Judge } from './judge/judge.js';
+import { loadLabels, validateJudge } from './judge/validate.js';
+import { providerFromEnv, type ProviderName } from './llm/provider.js';
+import { renderHtml, renderMarkdown, type JudgeValidation } from './report/report.js';
+import { createReviewer, REVIEWER_NAMES, type ReviewerName } from './reviewers/index.js';
+import { runEval, selectCases } from './runner.js';
+import { computeMetrics } from './scoring/metrics.js';
+import { DatasetSchema, type Dataset, type RunResult } from './types.js';
+
+loadDotEnv();
+
+function loadDataset(path = DATASET_PATH): Dataset {
+  if (!existsSync(path)) throw new Error(`dataset not found at ${path}; run "npm run evals -- dataset build" first`);
+  return DatasetSchema.parse(JSON.parse(readFileSync(path, 'utf8')));
+}
+
+function makeJudge(kind: string, cache: DiskCache, tolerance: number): { judge: Judge; note?: string } {
+  if (kind === 'keyword') return { judge: new KeywordJudge(0.25, tolerance) };
+  const llm = providerFromEnv((process.env.EVALS_JUDGE_PROVIDER as ProviderName) ?? 'groq', process.env.EVALS_JUDGE_MODEL);
+  if (!llm) return { judge: new KeywordJudge(0.25, tolerance), note: 'No LLM key for the judge: fell back to keyword judge (much less accurate).' };
+  return { judge: new LlmJudge(llm, cache, tolerance) };
+}
+
+const program = new Command().name('evals').description('Scoreboard for AI pull-request reviewers');
+
+const dataset = program.command('dataset').description('build or inspect the dataset');
+dataset
+  .command('build')
+  .description('mine bug-introducing PRs (SZZ over git history) + clean PRs')
+  .option('--repos <list>', 'comma-separated owner/repo list', DEFAULT_REPOS.join(','))
+  .option('--per-repo-buggy <n>', 'max buggy cases per repo', '8')
+  .option('--per-repo-clean <n>', 'max clean cases per repo', '2')
+  .option('--scan-limit <n>', 'max fix commits examined per repo', '250')
+  .option('--max-intro-lines <n>', 'max changed lines in the introducing diff', '600')
+  .option('--max-intro-files <n>', 'max files in the introducing diff', '20')
+  .option('--extend', 'keep existing cases and add new ones', false)
+  .option('--no-llm', 'skip LLM annotation (heuristic descriptions/categories)')
+  .option('--annotator <provider>', 'gemini | groq', 'gemini')
+  .option('--out <path>', 'output file', DATASET_PATH)
+  .action(async (o) => {
+    const reposDir = resolve(process.env.EVALS_REPOS_DIR ?? join(CACHE_DIR, 'repos'));
+    const llm = o.llm ? providerFromEnv(o.annotator as ProviderName) : null;
+    if (o.llm && !llm) console.warn('No LLM key: using heuristic annotation.');
+    await buildDataset({
+      repos: String(o.repos).split(',').map((s) => s.trim()).filter(Boolean),
+      reposDir,
+      out: resolve(o.out),
+      perRepoBuggy: Number(o.perRepoBuggy),
+      perRepoClean: Number(o.perRepoClean),
+      scanLimit: Number(o.scanLimit),
+      maxIntroLines: Number(o.maxIntroLines),
+      maxIntroFiles: Number(o.maxIntroFiles),
+      llm,
+      cache: new DiskCache(join(CACHE_DIR, 'annotations')),
+      extend: Boolean(o.extend),
+    });
+  });
+
+dataset
+  .command('stats')
+  .description('print dataset composition')
+  .action(() => {
+    const ds = loadDataset();
+    const by = (f: (c: Dataset['cases'][number]) => string) => {
+      const m = new Map<string, number>();
+      for (const c of ds.cases) m.set(f(c), (m.get(f(c)) ?? 0) + 1);
+      return Object.fromEntries([...m].sort((a, b) => b[1] - a[1]));
+    };
+    console.log(JSON.stringify({ source: ds.source, total: ds.cases.length, kind: by((c) => c.kind), repo: by((c) => c.repo), category: by((c) => c.bug?.category ?? '(clean)') }, null, 2));
+  });
+
+program
+  .command('run')
+  .description('run a reviewer over the dataset (or a subset) and judge it')
+  .option('--reviewer <name>', `one of ${REVIEWER_NAMES.join(', ')}`, 'baseline')
+  .option('--provider <name>', 'LLM provider for the baseline: gemini | groq')
+  .option('--model <id>', 'model id override')
+  .option('--judge <kind>', 'llm | keyword', 'llm')
+  .option('--tolerance <n>', 'line tolerance for location match', '5')
+  .option('--limit <n>', 'evaluate only n cases (stratified, ~20% clean)')
+  .option('--ids <list>', 'comma-separated case ids')
+  .option('--kind <kind>', 'buggy | clean')
+  .option('--concurrency <n>', 'parallel reviews', '1')
+  .option('--no-cache', 're-run reviews even if cached')
+  .option('--out <path>', 'results file (default results/<runId>.json)')
+  .action(async (o) => {
+    const ds = loadDataset();
+    const cache = new DiskCache(join(CACHE_DIR, 'reviews'));
+    const { reviewer, fallbackNote } = createReviewer(o.reviewer as ReviewerName, { provider: o.provider, model: o.model });
+    const { judge, note: judgeNote } = makeJudge(o.judge, new DiskCache(join(CACHE_DIR, 'judge')), Number(o.tolerance));
+    const cases = selectCases(ds.cases, { limit: o.limit ? Number(o.limit) : undefined, ids: o.ids ? String(o.ids).split(',') : undefined, kind: o.kind });
+    const notes = [fallbackNote, judgeNote].filter((x): x is string => Boolean(x));
+    for (const n of notes) console.warn(`! ${n}`);
+    console.log(`Reviewer ${reviewer.id} · judge ${judge.id} · ${cases.length} cases`);
+    const run = await runEval({
+      reviewer,
+      judge,
+      cases,
+      cache,
+      datasetVersion: ds.version,
+      concurrency: Number(o.concurrency),
+      noCache: o.cache === false,
+      notes,
+      onProgress: (d, t, r) =>
+        console.log(`  [${d}/${t}] ${r.caseId} ${r.kind} comments=${r.review.comments.length}${r.verdict ? ` caught=${r.verdict.caught}` : ''}${r.cached ? ' (cached)' : ''}${r.review.error ? ` ERROR ${r.review.error.slice(0, 100)}` : ''}`),
+    });
+    mkdirSync(RESULTS_DIR, { recursive: true });
+    const out = resolve(o.out ?? join(RESULTS_DIR, `${run.runId}.json`));
+    writeFileSync(out, JSON.stringify(run, null, 2) + '\n');
+    const m = computeMetrics(run.results);
+    console.log(`\nCatch rate ${m.catchRate.num}/${m.catchRate.den} · comments/clean PR ${m.noise.commentsPerCleanPr?.toFixed(2) ?? '–'} · cost $${m.cost.totalUsd.toFixed(4)} · p50 ${m.latencyMs.p50 ?? '–'}ms`);
+    console.log(`Saved ${out}`);
+  });
+
+const judgeCmd = program.command('judge').description('judge utilities');
+judgeCmd
+  .command('validate')
+  .description('compare the judge with hand labels in dataset/judge-labels.json')
+  .option('--judge <kind>', 'llm | keyword', 'llm')
+  .option('--labels <path>', 'labels file', LABELS_PATH)
+  .option('--out <path>', 'output file', join(RESULTS_DIR, 'judge-validation.json'))
+  .action(async (o) => {
+    const ds = loadDataset();
+    const { judge, note } = makeJudge(o.judge, new DiskCache(join(CACHE_DIR, 'judge')), 5);
+    if (note) console.warn(`! ${note}`);
+    const res = await validateJudge(judge, loadLabels(resolve(o.labels)), ds.cases);
+    mkdirSync(RESULTS_DIR, { recursive: true });
+    writeFileSync(resolve(o.out), JSON.stringify(res, null, 2) + '\n');
+    console.log(`Judge ${res.judgeId}: accuracy ${((res.agreement.accuracy ?? 0) * 100).toFixed(1)}% on ${res.agreement.n} items, kappa ${res.agreement.kappa?.toFixed(2)}`);
+    for (const d of res.disagreements) console.log(`  disagree ${d.id}: label=${d.human} judge=${d.judge}`);
+  });
+
+program
+  .command('report')
+  .description('render markdown + HTML scoreboard from one or more result files')
+  .option('--runs <list>', 'comma-separated result files (default: all in results/)')
+  .option('--judge-validation <path>', 'judge validation file', join(RESULTS_DIR, 'judge-validation.json'))
+  .option('--title <title>', 'report title', 'AI PR Reviewer Scoreboard')
+  .option('--out <base>', 'output path without extension', join(REPORTS_DIR, 'scoreboard'))
+  .action((o) => {
+    const ds = loadDataset();
+    const files: string[] = o.runs
+      ? String(o.runs).split(',').map((p) => resolve(p))
+      : readdirSync(RESULTS_DIR)
+          .filter((f) => f.endsWith('.json') && f !== basename(o.judgeValidation))
+          .map((f) => join(RESULTS_DIR, f));
+    const runs = files.map((f) => JSON.parse(readFileSync(f, 'utf8')) as RunResult);
+    const jv = existsSync(o.judgeValidation) ? (JSON.parse(readFileSync(o.judgeValidation, 'utf8')) as JudgeValidation) : undefined;
+    const input = { title: o.title, runs, dataset: ds, judgeValidation: jv };
+    const base = resolve(o.out);
+    mkdirSync(resolve(base, '..'), { recursive: true });
+    writeFileSync(`${base}.md`, renderMarkdown(input));
+    writeFileSync(`${base}.html`, renderHtml(input));
+    console.log(`Wrote ${base}.md and ${base}.html (${runs.length} runs) [root ${ROOT}]`);
+  });
+
+program.parseAsync().catch((e: unknown) => {
+  console.error((e as Error).message);
+  process.exit(1);
+});

@@ -1,0 +1,31 @@
+{
+  "name": "diffwise-evals",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Evaluation harness (scoreboard) for AI pull-request reviewers",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "evals": "tsx src/cli.ts",
+    "dataset:build": "tsx src/cli.ts dataset build",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "check": "npm run typecheck && npm run lint && npm run test"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^26.6.6",
+    "eslint": "^10.14.0",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.1",
+    "vitest": "^5.1.0"
+  },
+  "dependencies": {
+    "commander": "^15.0.0",
+    "zod": "^4.6.7"
+  }
+}
