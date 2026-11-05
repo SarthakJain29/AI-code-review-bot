@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-05T21-59-48-201Z_baseline-v2_groq_openai_gpt-oss-120b",
+  "runId": "2026-11-05T23-13-34-978Z_baseline-v2_groq_openai_gpt-oss-120b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-120b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-05T21:59:48.201Z",
-  "finishedAt": "2026-11-05T22:00:48.761Z",
+  "startedAt": "2026-11-05T23:13:34.978Z",
+  "finishedAt": "2026-11-05T23:14:35.506Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -833,12 +833,128 @@
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
       "cached": true
+    },
+    {
+      "caseId": "vitest-dev/vitest#10656",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/browser/src/client/orchestrator.ts",
+            "line": 611,
+            "severity": "critical",
+            "body": "The function getIframeTimeout uses getConfig() but getConfig is not imported or defined in this module, causing a ReferenceError at runtime."
+          }
+        ],
+        "usage": {
+          "inputTokens": 5484,
+          "outputTokens": 506,
+          "costUsd": 0.0011262,
+          "latencyMs": 2519,
+          "model": "openai/gpt-oss-120b",
+          "calls": 2
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment identifies a missing import/definition for `getConfig` causing a ReferenceError, which is a different defect from the known bug where the orchestrator fails to reject the promise when an error field is present in the response event."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 786,
+          "outputTokens": 69,
+          "costUsd": 0.0009048000000000001,
+          "latencyMs": 460,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vitest-dev/vitest#9132",
+      "kind": "buggy",
+      "category": "api-contract",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 3227,
+          "outputTokens": 394,
+          "costUsd": 0.00072045,
+          "latencyMs": 1648,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vitest-dev/vitest#10170",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/runner/src/types/runner.ts",
+            "line": 39,
+            "severity": "critical",
+            "body": "Changed taskTitleValueFormatTruncate to a required number, but the configuration may still provide undefined. This will cause runtime errors when the value is accessed (e.g., in suite.ts where it’s used as inspectOptions.truncate). The type should remain number|undefined or a default should be enforced."
+          },
+          {
+            "file": "packages/utils/src/display.ts",
+            "line": 268,
+            "severity": "critical",
+            "body": "The new truncateString function uses isHighSurrogate but does not import or define it in this file, leading to a ReferenceError when the function is called with a string longer than maxLength."
+          }
+        ],
+        "usage": {
+          "inputTokens": 3460,
+          "outputTokens": 294,
+          "costUsd": 0.0006954,
+          "latencyMs": 1418,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 1,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": false
     }
   ],
   "pending": [
-    "vitest-dev/vitest#10656",
-    "vitest-dev/vitest#9132",
-    "vitest-dev/vitest#10170",
     "vitest-dev/vitest#11594",
     "vitest-dev/vitest#6070",
     "vitest-dev/vitest#11623",
@@ -926,6 +1042,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at vitest-dev/vitest#10656: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199239, Requested 1572. Please try again "
+    "reviewer daily quota exhausted at vitest-dev/vitest#11594: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 197886, Requested 2679. Please try again "
   ]
 }

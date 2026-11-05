@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-05T22-11-32-638Z_baseline-v2_groq_openai_gpt-oss-20b",
+  "runId": "2026-11-05T23-13-35-648Z_baseline-v2_groq_openai_gpt-oss-20b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-20b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-05T22:11:32.638Z",
-  "finishedAt": "2026-11-05T22:11:33.281Z",
+  "startedAt": "2026-11-05T23:13:35.648Z",
+  "finishedAt": "2026-11-05T23:13:37.267Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -2108,10 +2108,47 @@
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
       "cached": true
+    },
+    {
+      "caseId": "colinhacks/zod#6371",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/zod/src/v4/core/util.ts",
+            "line": 613,
+            "severity": "major",
+            "body": "The `shape` getter assumes that `mask` is always defined. If `mask` is `undefined`, the `for (const key in mask)` loop will throw a TypeError. The original implementation guarded the loop with `if (mask) { ... }`. This change removes that guard, potentially causing runtime crashes when `mask` is omitted."
+          }
+        ],
+        "usage": {
+          "inputTokens": 9903,
+          "outputTokens": 881,
+          "costUsd": 0.001007025,
+          "latencyMs": 4069,
+          "model": "openai/gpt-oss-20b",
+          "calls": 3
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": false
     }
   ],
   "pending": [
-    "colinhacks/zod#6371",
     "colinhacks/zod#5793",
     "colinhacks/zod#4602",
     "colinhacks/zod#5610",
@@ -2168,6 +2205,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at colinhacks/zod#6371: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 197042, Requested 4628. Please try again in 12"
+    "reviewer daily quota exhausted at colinhacks/zod#5793: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199208, Requested 1595. Please try again in 5m"
   ]
 }
