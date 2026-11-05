@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-05T20-14-07-834Z_baseline-v2_groq_openai_gpt-oss-20b",
+  "runId": "2026-11-05T21-14-47-676Z_baseline-v2_groq_openai_gpt-oss-20b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-20b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-05T20:14:07.834Z",
-  "finishedAt": "2026-11-05T20:14:08.261Z",
+  "startedAt": "2026-11-05T21:14:47.676Z",
+  "finishedAt": "2026-11-05T21:14:48.112Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -1869,10 +1869,33 @@
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
       "cached": true
+    },
+    {
+      "caseId": "colinhacks/zod#6652",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 2865,
+          "outputTokens": 340,
+          "costUsd": 0.000316875,
+          "latencyMs": 1585,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
     }
   ],
   "pending": [
-    "colinhacks/zod#6652",
     "colinhacks/zod#6386",
     "colinhacks/zod#6347",
     "colinhacks/zod#6371",
@@ -1932,6 +1955,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at colinhacks/zod#6652: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 196998, Requested 3172. Please try again in 1m"
+    "reviewer daily quota exhausted at colinhacks/zod#6386: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 197268, Requested 4084. Please try again in 9m"
   ]
 }
