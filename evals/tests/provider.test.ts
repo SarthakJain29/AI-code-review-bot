@@ -129,5 +129,10 @@ describe('runEval quota stop + resume', async () => {
     expect(second.pending).toEqual([]);
     expect(second.results.filter((r) => r.cached).map((r) => r.caseId)).toEqual(['a', 'b']);
     expect(calls).toBe(2);
+    // A fresh cache (e.g. new container) can resume from the previous results file alone.
+    calls = 0;
+    const third = await runEval({ reviewer, judge: new KeywordJudge(), cases, cache: new DiskCache(mkdtempSync(join(tmpdir(), 'run2-'))), datasetVersion: 1, previous: second });
+    expect(third.results).toHaveLength(4);
+    expect(calls).toBe(0);
   });
 });

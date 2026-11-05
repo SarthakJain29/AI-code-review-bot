@@ -17,6 +17,11 @@ export interface RunOptions {
   notes?: string[];
   /** Only produce (and cache) reviews; judge later in a second pass. */
   skipJudge?: boolean;
+  /**
+   * A previous result file for the same reviewer. Successful reviews (and verdicts from the same
+   * judge) are reused, so a run can resume even if the local .cache was lost.
+   */
+  previous?: RunResult;
   onProgress?: (done: number, total: number, r: CaseResult) => void;
 }
 
@@ -30,12 +35,16 @@ export async function runEval(opts: RunOptions): Promise<RunResult> {
   let next = 0;
   let done = 0;
   let quotaStop: string | null = null;
+  const prev = new Map(
+    (opts.previous?.reviewerId === opts.reviewer.id ? opts.previous.results : []).filter((r) => !r.review.error).map((r) => [r.caseId, r]),
+  );
   const worker = async () => {
     while (next < opts.cases.length && !quotaStop) {
       const i = next++;
       const c = opts.cases[i]!;
       const key = reviewCacheKey(opts.reviewer.id, c);
-      let review = opts.noCache ? undefined : opts.cache.get<ReviewResult>(key);
+      const p = opts.noCache ? undefined : prev.get(c.id);
+      let review = opts.noCache ? undefined : (p?.review ?? opts.cache.get<ReviewResult>(key));
       const cached = review !== undefined;
       if (!review) {
         review = await opts.reviewer.review({ diff: c.diff, repo: c.repo, title: c.pr.title });
@@ -46,8 +55,8 @@ export async function runEval(opts: RunOptions): Promise<RunResult> {
         }
         if (!review.error) opts.cache.set(key, review); // never cache failures
       }
-      let verdict;
-      if (c.kind === 'buggy' && !opts.skipJudge) {
+      let verdict = p?.verdict && p.verdict.judgeModel === opts.judge.id ? p.verdict : undefined;
+      if (c.kind === 'buggy' && !opts.skipJudge && !verdict) {
         try {
           verdict = await opts.judge.judge(c, review.comments);
         } catch (e) {

@@ -82,13 +82,13 @@ export class TpmLimiter {
 
 /** Rough token estimate (no tokenizer dependency): ~3.5 chars/token for code-heavy text. */
 export function estimateTokens(text: string): number {
-  return Math.ceil(text.length / 3.5);
+  return Math.ceil(text.length / 3.2); // slightly pessimistic so the throttle rarely under-reserves
 }
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 /** Retry transient failures (429/5xx/network) with exponential backoff. */
-export async function withRetry<T>(fn: () => Promise<T>, attempts = 5, baseMs = 2000): Promise<T> {
+export async function withRetry<T>(fn: () => Promise<T>, attempts = 8, baseMs = 2000): Promise<T> {
   let last: unknown;
   for (let i = 0; i < attempts; i++) {
     try {
@@ -201,24 +201,20 @@ export class GroqProvider implements LlmProvider {
   async complete(req: LlmRequest): Promise<LlmResponse> {
     const maxOut = req.maxOutputTokens ?? 2048;
     const reserve = estimateTokens(req.system + req.prompt) + maxOut + 50;
+    // Groq's JSON mode sometimes rejects an empty/invalid generation (400 json_validate_failed);
+    // in that case retry once in plain mode and let extractJson() parse the text.
+    let jsonMode = Boolean(req.json);
     const { data: raw, ms } = await withRetry(async () => {
       await groqLimiter(this.model).acquire(reserve);
-      return postJson(
-        'https://api.groq.com/openai/v1/chat/completions',
-        {
-          model: this.model,
-          temperature: req.temperature ?? 0,
-          // Groq's TPM limiter reserves max_completion_tokens up front, so keep it tight.
-          max_completion_tokens: maxOut,
-          ...(this.model.startsWith('openai/gpt-oss') ? { reasoning_effort: 'low' } : {}),
-          messages: [
-            { role: 'system', content: req.system },
-            { role: 'user', content: req.prompt },
-          ],
-          ...(req.json ? { response_format: { type: 'json_object' } } : {}),
-        },
-        { authorization: `Bearer ${this.apiKey}` },
-      );
+      try {
+        return await this.post(req, maxOut, jsonMode);
+      } catch (e) {
+        if (jsonMode && e instanceof LlmError && e.status === 400 && /json_validate_failed/.test(e.message)) {
+          jsonMode = false;
+          throw new LlmError(e.message, 400, true);
+        }
+        throw e;
+      }
     });
     const data = raw as {
       choices?: { message?: { content?: string } }[];
@@ -234,6 +230,25 @@ export class GroqProvider implements LlmProvider {
       costUsd: estimateCostUsd(this.model, inputTokens, outputTokens),
       model: this.model,
     };
+  }
+
+  private post(req: LlmRequest, maxOut: number, jsonMode: boolean) {
+    return postJson(
+      'https://api.groq.com/openai/v1/chat/completions',
+      {
+        model: this.model,
+        temperature: req.temperature ?? 0,
+        // Groq's TPM limiter reserves max_completion_tokens up front, so keep it tight.
+        max_completion_tokens: maxOut,
+        ...(this.model.startsWith('openai/gpt-oss') ? { reasoning_effort: 'low' } : {}),
+        messages: [
+          { role: 'system', content: req.system },
+          { role: 'user', content: req.prompt },
+        ],
+        ...(jsonMode ? { response_format: { type: 'json_object' } } : {}),
+      },
+      { authorization: `Bearer ${this.apiKey}` },
+    );
   }
 }
 

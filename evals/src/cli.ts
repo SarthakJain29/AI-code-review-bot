@@ -117,6 +117,9 @@ program
   .option('--judge <kind>', 'llm | keyword', 'llm')
   .option('--judge-provider <name>', 'judge LLM provider: groq | gemini')
   .option('--judge-model <id>', 'judge model id')
+  .option('--until-done', 'keep resuming (waiting out daily quotas) until every case has a result', false)
+  .option('--wait-minutes <n>', 'wait between resume passes', '20')
+  .option('--max-hours <n>', 'give up after this long', '60')
   .option('--skip-judge', 'only produce and cache reviews; judge in a later run', false)
   .option('--tolerance <n>', 'line tolerance for location match', '5')
   .option('--limit <n>', 'evaluate only n cases (stratified, ~20% clean)')
@@ -137,26 +140,49 @@ program
     const notes = [fallbackNote, judgeNote].filter((x): x is string => Boolean(x));
     for (const n of notes) console.warn(`! ${n}`);
     console.log(`Reviewer ${reviewer.id} · judge ${judge.id} · ${cases.length} cases`);
-    const run = await runEval({
-      reviewer,
-      judge,
-      cases,
-      cache,
-      datasetVersion: ds.version,
-      concurrency: Number(o.concurrency),
-      noCache: o.cache === false,
-      skipJudge: Boolean(o.skipJudge),
-      notes,
-      onProgress: (d, t, r) =>
-        console.log(`  [${d}/${t}] ${r.caseId} ${r.kind} comments=${r.review.comments.length}${r.verdict ? ` caught=${r.verdict.caught}` : ''}${r.cached ? ' (cached)' : ''}${r.review.error ? ` ERROR ${r.review.error.slice(0, 100)}` : ''}`),
-    });
     mkdirSync(RESULTS_DIR, { recursive: true });
-    const out = resolve(o.out ?? join(RESULTS_DIR, `${run.runId}.json`));
-    writeFileSync(out, JSON.stringify(run, null, 2) + '\n');
+    const outPath = o.out ? resolve(o.out) : undefined;
+    const deadline = Date.now() + Number(o.maxHours) * 3_600_000;
+    let previous: RunResult | undefined = outPath && existsSync(outPath) ? (JSON.parse(readFileSync(outPath, 'utf8')) as RunResult) : undefined;
+    if (previous) console.log(`Resuming from ${outPath} (${previous.results.filter((r) => !r.review.error).length} results reused)`);
+    let run: RunResult;
+    let errorPasses = 0;
+    for (let pass = 1; ; pass++) {
+      run = await runEval({
+        reviewer,
+        judge,
+        cases,
+        cache,
+        datasetVersion: ds.version,
+        concurrency: Number(o.concurrency),
+        noCache: o.cache === false && pass === 1 && !previous,
+        skipJudge: Boolean(o.skipJudge),
+        previous,
+        notes,
+        onProgress: (d, t, r) =>
+          console.log(
+            `  [${d}/${t}] ${r.caseId} ${r.kind} comments=${r.review.comments.length}${r.verdict ? ` caught=${r.verdict.caught}` : ''}${r.cached ? ' (cached)' : ''}${r.review.error ? ` ERROR ${r.review.error.slice(0, 100)}` : ''}`,
+          ),
+      });
+      const out = outPath ?? join(RESULTS_DIR, `${run.runId}.json`);
+      writeFileSync(out, JSON.stringify(run, null, 2) + '\n');
+      const errors = run.results.filter((r) => r.review.error).length;
+      const pending = run.pending?.length ?? 0;
+      console.log(`pass ${pass}: ${run.results.length - errors} ok, ${errors} errors, ${pending} pending -> ${out}`);
+      if (!o.untilDone) break;
+      if (pending === 0 && (errors === 0 || ++errorPasses >= 3)) break;
+      if (Date.now() > deadline) {
+        console.log('! max-hours reached; stopping with work left');
+        break;
+      }
+      previous = run;
+      const waitMs = pending > 0 ? Number(o.waitMinutes) * 60_000 : 60_000;
+      console.log(`waiting ${Math.round(waitMs / 60_000)} min before resuming (until ${new Date(Date.now() + waitMs).toISOString()})`);
+      await new Promise((r) => setTimeout(r, waitMs));
+    }
     const m = computeMetrics(run.results);
     console.log(`\nCatch rate ${m.catchRate.num}/${m.catchRate.den} · comments/clean PR ${m.noise.commentsPerCleanPr?.toFixed(2) ?? '–'} · cost $${m.cost.totalUsd.toFixed(4)} · p50 ${m.latencyMs.p50 ?? '–'}ms`);
-    if (run.pending?.length) console.log(`! ${run.pending.length} cases pending (daily quota). Re-run the same command later to resume; finished reviews are cached.`);
-    console.log(`Saved ${out}`);
+    if (run.pending?.length) console.log(`! ${run.pending.length} cases pending (daily quota). Re-run the same command later to resume.`);
   });
 
 const judgeCmd = program.command('judge').description('judge utilities');
