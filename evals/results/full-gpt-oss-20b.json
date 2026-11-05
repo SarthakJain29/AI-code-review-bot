@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-05T18-38-44-461Z_baseline-v2_groq_openai_gpt-oss-20b",
+  "runId": "2026-11-05T18-39-02-561Z_baseline-v2_groq_openai_gpt-oss-20b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-20b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-05T18:38:44.461Z",
-  "finishedAt": "2026-11-05T18:38:44.848Z",
+  "startedAt": "2026-11-05T18:39:02.561Z",
+  "finishedAt": "2026-11-05T18:39:02.876Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -1800,6 +1800,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at honojs/hono#1015: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 196904, Requested 4040. Please try again in 6m47."
+    "reviewer daily quota exhausted at honojs/hono#1015: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 196862, Requested 3954. Please try again in 5m52."
   ]
 }
