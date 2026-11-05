@@ -49,6 +49,8 @@ export function renderMarkdown(input: ReportInput): string {
   L.push(`Generated ${input.generatedAt ?? new Date().toISOString()} · dataset v${input.dataset.version}: ${ds.total} cases (${ds.buggy} buggy, ${ds.clean} clean) from ${ds.repos} repos · source: ${input.dataset.source}`, '');
   const sample = rs.some((r) => r.run.caseCount < ds.total);
   if (sample) L.push(`> **Sample run** — only a subset of the dataset was evaluated. Numbers have very wide error bars and are NOT a benchmark result.`, '');
+  for (const { run } of rs)
+    if (run.pending?.length) L.push(`> **Incomplete:** \`${run.reviewerId}\` has ${run.pending.length} cases pending (provider daily quota). Re-run to resume.`, '');
   L.push('## Scoreboard', '');
   L.push('| Reviewer | Catch rate (strict) | 95% CI | Catch rate (any line) | Comments / clean PR | Silent on clean | Precision ≥ | Cost / review | Latency p50 / p95 | Errors |');
   L.push('|---|---|---|---|---|---|---|---|---|---|');
@@ -199,6 +201,7 @@ dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;font-size:14p
 <h1>${esc(input.title)}</h1>
 <p class="meta">Generated ${esc(input.generatedAt ?? new Date().toISOString())} · dataset v${input.dataset.version}: ${ds.total} cases (${ds.buggy} buggy, ${ds.clean} clean) from ${ds.repos} repos · ${esc(input.dataset.source)}</p>
 ${sample ? '<p class="warn"><strong>Sample run.</strong> Only a subset of the dataset was evaluated; error bars are very wide and this is not a benchmark result.</p>' : ''}
+${rs.filter((r) => r.run.pending?.length).map((r) => `<p class="warn"><strong>Incomplete:</strong> <code>${esc(r.run.reviewerId)}</code> has ${r.run.pending!.length} cases pending (provider daily quota).</p>`).join('')}
 <section><h2>Scoreboard</h2><div class="scroll"><table>
 <thead><tr><th>Reviewer</th><th>Catch rate (strict)</th><th>Any line</th><th>Comments / clean PR</th><th>Silent on clean</th><th>Precision ≥</th><th>Cost / review</th><th>Latency p50 / p95</th><th>Errors</th></tr></thead>
 <tbody>${scoreRows}</tbody></table></div>
