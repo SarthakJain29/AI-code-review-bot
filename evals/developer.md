@@ -22,7 +22,9 @@ Requirements: Node ≥ 20 (developed on 22), git on PATH (the dataset builder cl
 | `GROQ_API_KEY` | LLM judge (default), dataset annotation (default) | https://console.groq.com/keys (free tier) | falls back to Gemini, then keyword judge / heuristic annotation |
 | `EVALS_GITHUB_TOKEN` | optional PR metadata (title/body) via GitHub REST while building the dataset | https://github.com/settings/tokens (fine-grained, public repos read-only, no scopes needed) | builder works from git history only |
 | `EVALS_REVIEWER_PROVIDER` / `EVALS_REVIEWER_MODEL` | override baseline model (default `gemini` / `gemini-3.1-flash-lite`) | – | defaults |
-| `EVALS_JUDGE_PROVIDER` / `EVALS_JUDGE_MODEL` | override judge (default `groq` / `openai/gpt-oss-120b`) | – | defaults |
+| `EVALS_JUDGE_PROVIDER` / `EVALS_JUDGE_MODEL` | override judge (default `groq` / `qwen/qwen3.8-27b`; also `--judge-provider/--judge-model`) | – | defaults |
+| `EVALS_GROQ_TPM` | client-side tokens/minute throttle per Groq model (default 8000 = free tier) | – | default |
+| `EVALS_REVIEW_CHUNK_TOKENS` | max diff tokens per baseline call before chunking (default 4500) | – | default |
 | `EVALS_REPOS_DIR` | where the builder clones repos (default `.cache/repos`, ~550 MB for the default list) | – | default |
 | `DIFFWISE_REVIEW_URL` / `DIFFWISE_VERSION` | `--reviewer diffwise` HTTP adapter (future) | your local Diffwise | diffwise reviewer becomes `mock-silent` with a note |
 
@@ -74,6 +76,19 @@ reports/                 committed scoreboard (smoke run only)
 tests/                   vitest
 ```
 
+## Full runs (free tier)
+
+```bash
+NODE_USE_ENV_PROXY=1 npx tsx src/cli.ts run --reviewer baseline --provider groq --model openai/gpt-oss-120b --until-done --out results/full-gpt-oss-120b.json
+NODE_USE_ENV_PROXY=1 npx tsx src/cli.ts run --reviewer baseline --provider groq --model openai/gpt-oss-20b  --until-done --out results/full-gpt-oss-20b.json
+npx tsx src/cli.ts report --runs results/full-gpt-oss-120b.json,results/full-gpt-oss-20b.json --out reports/scoreboard
+```
+
+Groq free tier per model: 8k tokens/min, 1k requests/day, **200k tokens/day (rolling 24 h)**. One reviewer pass over the
+dataset needs ~300–400k tokens and the judge ~200–300k, so a full run spans 2+ days. `--until-done` stops a pass when
+a daily quota is hit (the remaining cases are listed as `pending`), waits `--wait-minutes`, and resumes. Resuming
+reads the `--out` file first, so it survives a lost `.cache/` (new container); commit the partial results file.
+
 ## Known issues
 
 - GitHub REST API is blocked for other repos in the cloud sandbox (proxy 403) → dataset built from git history only;
@@ -120,6 +135,19 @@ tests/                   vitest
 - **Repo's `claude.md` tutoring rules** (the user hand-writes core bot pieces) don't apply here: this task was explicitly
   delegated, is outside the bot, and touches none of the bot's core pieces.
 
+- **Full-run reviewers:** Groq `openai/gpt-oss-120b` (the best free model) vs `openai/gpt-oss-20b` (small/cheap), on
+  the same provider so latency and cost are comparable. Groq's prices were confirmed on console.groq.com/docs/models
+  (gpt-oss-120b $0.15/$0.60, gpt-oss-20b $0.075/$0.30, qwen3.8-27b $0.80/$4.00 per 1M in/out).
+- **Judge changed to Qwen (`qwen/qwen3.8-27b`)** because the reviewers are now gpt-oss; a gpt-oss judge would be grading
+  its own family. Re-validated on the 19 hand labels: Qwen 100% (κ 1.0); Gemini flash-lite 94.7% (accepted generic
+  "potential DoS" advice); the earlier gpt-oss-120b judge was 100%.
+- **Judge v2** sends only comments in a bug file to the LLM (others can't be strict catches) and caps the fix diff at
+  3500 chars. This cut judge tokens ~2–3× to fit 200k tokens/day. "Any line" is therefore "any line of a bug file".
+- **Baseline v2** = same prompt, but diffs over ~4500 tokens are reviewed in file/hunk chunks (one call each, comments
+  merged). Needed because one 8k-TPM request can't hold the largest diffs (max ≈11k tokens). Latency for chunked
+  reviews is the sum of their calls.
+- **Latency** now measures only successful HTTP calls (excludes throttle/retry waits), so rate limits don't distort it.
+
 ## Blockers & workarounds
 
 | What failed | What I tried | Workaround | What you need to do |
@@ -127,17 +155,15 @@ tests/                   vitest
 | GitHub REST API for other repos → proxy 403 "GitHub access to this repository is not enabled for this session" (with `EVALS_GITHUB_TOKEN`) | curl + Node fetch through the proxy | Dataset mined from `git clone` + `git log`/`git blame` (real merged PRs via squash subjects). Builder keeps the API path for PR metadata when it is reachable. | Optional: run `npm run evals -- dataset build` locally with `EVALS_GITHUB_TOKEN` to add PR bodies to annotation. |
 | `gemini-2.5-flash` → 404 "no longer available to new users" | listed models | tried `gemini-3.5-flash` | none |
 | `gemini-3.5-flash` free tier: 20 requests/day (quota hit during dataset annotation) | checked other models | default reviewer `gemini-3.1-flash-lite`; annotation on Groq models | for a full eval on a stronger Gemini, use a paid key (`EVALS_REVIEWER_MODEL=gemini-3.5-flash`) |
+| Groq 200k tokens/day per model (rolling); yesterday's dataset annotation had used most of today's gpt-oss quota | throttle + chunking + smaller judge prompt | `--until-done` resume loop; results committed as they accrue | nothing, or a Groq Dev-tier key to finish in ~1 h |
+| Groq JSON mode 400 `json_validate_failed` (gpt-oss-20b, empty generation) | – | retry once without JSON mode, parse text | none |
 | `gemini-3.5-flash` / `gemini-flash-latest` intermittent 503 | retry with backoff | Groq fallback for annotation; errors recorded per case | re-run failed cases later (cache skips successes) |
 | Groq `llama-3.3-70b-versatile` → model_not_found | listed models | `openai/gpt-oss-120b` | none |
 
 ## Progress
 
-- **Done:** scaffold (TS, ESLint, Vitest, CLI); diff parser; LLM providers + fallback; SZZ dataset builder; dataset
-  (91 buggy + 19 clean, `dataset/cases.json`); baseline, mock and silent reviewers + Diffwise HTTP adapter stub; LLM +
-  keyword judge; judge labels (19 items) + validation (LLM 100% / κ 1.0, keyword 89.5%); metrics; markdown/HTML report;
-  5-case smoke run (`results/smoke-*.json`, `reports/scoreboard.*`); README; tests.
-- **In progress:** none.
-- **Next (for you):** run the full eval (`npm run evals -- run --reviewer baseline`). On the free tier, flash-lite plus the Groq
-  judge at 8k TPM takes roughly an hour, mostly judge rate limits. Re-check `dataset/judge-labels.json` by hand, and
-  spot-check ~10 dataset cases for SZZ misattribution. When the Diffwise worker has a pure review function, wire
-  `src/reviewers/diffwise.ts`.
+- **Done:** harness, dataset (91 buggy + 19 clean), judge validation (Qwen v2 100%, κ 1.0), smoke run; full-run tooling
+  (TPM throttle, chunking, quota stop/resume, `--until-done`).
+- **In progress:** full runs of gpt-oss-120b and gpt-oss-20b (`results/full-gpt-oss-*.json`), resuming as Groq's daily quota frees up.
+- **Next:** when both have 0 pending: `report --runs results/full-gpt-oss-120b.json,results/full-gpt-oss-20b.json`, fill the
+  README "Results" section, push, update PR.
