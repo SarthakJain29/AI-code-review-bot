@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-05T21-13-46-299Z_baseline-v2_groq_openai_gpt-oss-120b",
+  "runId": "2026-11-05T21-59-48-201Z_baseline-v2_groq_openai_gpt-oss-120b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-120b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-05T21:13:46.299Z",
-  "finishedAt": "2026-11-05T21:13:46.817Z",
+  "startedAt": "2026-11-05T21:59:48.201Z",
+  "finishedAt": "2026-11-05T22:00:48.761Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -783,10 +783,59 @@
         }
       },
       "cached": true
+    },
+    {
+      "caseId": "vitest-dev/vitest#9745",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/browser/src/client/tester/tester-utils.ts",
+            "line": 227,
+            "severity": "major",
+            "body": "The new implementation of getIframeScale assumes it is always called from within an iframe and throws an error if window.frameElement is null. In non‑iframe contexts (e.g., when running tests without the UI), this will cause a runtime exception, breaking functionality that previously fell back to reading the data‑scale attribute from the parent tester element."
+          },
+          {
+            "file": "test/test-utils/cli.ts",
+            "line": 89,
+            "severity": "major",
+            "body": "The timeout fallback expression uses incorrect operator precedence: `timeout ?? process.env.CI ? 20_000 : 4_000` evaluates as `(timeout ?? process.env.CI) ? 20_000 : 4_000` instead of the intended `timeout ?? (process.env.CI ? 20_000 : 4_000)`. This can cause an unexpected timeout value (e.g., using 20_000 when `timeout` is undefined but `process.env.CI` is falsy). Wrap the ternary in parentheses to fix the precedence."
+          }
+        ],
+        "usage": {
+          "inputTokens": 9463,
+          "outputTokens": 1121,
+          "costUsd": 0.0020920500000000002,
+          "latencyMs": 5333,
+          "model": "openai/gpt-oss-120b",
+          "calls": 3
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 1,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
     }
   ],
   "pending": [
-    "vitest-dev/vitest#9745",
     "vitest-dev/vitest#10656",
     "vitest-dev/vitest#9132",
     "vitest-dev/vitest#10170",
@@ -877,6 +926,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at vitest-dev/vitest#9745: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 196823, Requested 4357. Please try again i"
+    "reviewer daily quota exhausted at vitest-dev/vitest#10656: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199239, Requested 1572. Please try again "
   ]
 }

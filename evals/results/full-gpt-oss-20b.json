@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-05T21-14-47-676Z_baseline-v2_groq_openai_gpt-oss-20b",
+  "runId": "2026-11-05T22-00-49-382Z_baseline-v2_groq_openai_gpt-oss-20b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-20b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-05T21:14:47.676Z",
-  "finishedAt": "2026-11-05T21:14:48.112Z",
+  "startedAt": "2026-11-05T22:00:49.382Z",
+  "finishedAt": "2026-11-05T22:01:50.010Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -1893,11 +1893,224 @@
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
       "cached": true
+    },
+    {
+      "caseId": "colinhacks/zod#6386",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/zod/src/v3/types.ts",
+            "line": 3252,
+            "severity": "major",
+            "body": "The code deletes the __proto__ property from the merged object after merging, but it does not prevent the property from being validated or included in the result when it is explicitly declared in a schema. This means that a schema like z.object({ __proto__: z.string() }) will still validate the value and keep it in the parsed output, violating the intended behaviour of stripping __proto__."
+          },
+          {
+            "file": "packages/zod/src/v4/classic/tests/object.test.ts",
+            "line": 720,
+            "severity": "major",
+            "body": "The test now expects that a declared __proto__ key is stripped and not validated. However, the implementation still validates the value and includes it in the parsed result. This mismatch indicates that the parsing logic does not correctly handle declared __proto__ keys."
+          },
+          {
+            "file": "packages/zod/src/v4/classic/tests/discriminated-unions.test.ts",
+            "line": 710,
+            "severity": "major",
+            "body": "The discriminated union test expects that a __proto__ key is not present in the parsed output. The current implementation still includes the __proto__ key when it is part of the union schema, meaning the union parsing logic does not strip __proto__ as required."
+          },
+          {
+            "file": "packages/zod/src/v4/classic/tests/from-json-schema.test.ts",
+            "line": 909,
+            "severity": "major",
+            "body": "The test asserts that a __proto__ property declared in a JSON schema is represented in the shape but stripped during parsing. The current implementation does not strip the __proto__ key during parsing, so the parsed object will still contain the __proto__ property, failing the test."
+          },
+          {
+            "file": "packages/zod/src/v4/core/schemas.ts",
+            "line": 1780,
+            "severity": "major",
+            "body": "handlePropertyResult now assigns to final.value[key] unconditionally. If key is \"__proto__\" this will attempt to set the prototype of the result object, which is a security risk and can break the intended stripping behaviour. The original code used setProp to avoid this. The new code should skip setting the property when key === \"__proto__\"."
+          },
+          {
+            "file": "packages/zod/src/v4/core/schemas.ts",
+            "line": 1784,
+            "severity": "major",
+            "body": "Similarly, the branch that assigns result.value to final.value[key] will also set __proto__ if present. This should be guarded or removed."
+          },
+          {
+            "file": "packages/zod/src/v4/core/schemas.ts",
+            "line": 1985,
+            "severity": "major",
+            "body": "In the loop over value.keys, the code now skips __proto__ but still calls el._zod.run with input[key]. If key is \"__proto__\" this will still run the schema on the prototype value, which may be unintended. The original code used getProperty to avoid this. The new code should skip processing __proto__ entirely."
+          },
+          {
+            "file": "packages/zod/src/v4/core/schemas.ts",
+            "line": 2001,
+            "severity": "major",
+            "body": "The generated fastpass function no longer passes setProp/getProperty/isPropertyPresent, but still uses direct assignment for all keys. If the shape contains a declared \"__proto__\" key, the generated code will incorrectly assign to __proto__ on the result object. The code should continue to skip __proto__ or use a safe assignment helper."
+          },
+          {
+            "file": "packages/zod/src/v4/core/schemas.ts",
+            "line": 2526,
+            "severity": "major",
+            "body": "After merging objects, the code deletes __proto__ from the merged result. However, if the original objects had a declared __proto__ key, this deletion removes the intended property. The logic should only delete __proto__ when it was not declared in the schema."
+          },
+          {
+            "file": "packages/zod/src/v4/core/schemas.ts",
+            "line": 2941,
+            "severity": "major",
+            "body": "When iterating over object keys, the code now skips __proto__ but still runs the value schema on input[key]. If the key is \"__proto__\", this will run the schema on the prototype value, which may be unintended. The original code used getProperty to avoid this. The new code should skip processing __proto__ entirely."
+          },
+          {
+            "file": "packages/zod/src/v4/core/schemas.ts",
+            "line": 2975,
+            "severity": "major",
+            "body": "During key iteration, the code now skips __proto__ but still assigns the key to the result object. This will create an own __proto__ property on the result, which is a security risk. The original code used setProp to avoid this. The new code should skip setting __proto__."
+          },
+          {
+            "file": "packages/zod/src/v4/core/schemas.ts",
+            "line": 2999,
+            "severity": "major",
+            "body": "When handling loose mode, the code assigns input[key] to payload.value[key] unconditionally. If key is \"__proto__\", this will set the prototype of the result object. The original code used setProp to avoid this. The new code should guard against setting __proto__."
+          },
+          {
+            "file": "packages/zod/src/v4/core/schemas.ts",
+            "line": 3027,
+            "severity": "major",
+            "body": "In the strict mode branch, the code assigns result.value to payload.value[outKey] unconditionally. If outKey is \"__proto__\", this will set the prototype of the result object. The original code used setProp to avoid this. The new code should skip setting __proto__."
+          }
+        ],
+        "usage": {
+          "inputTokens": 8581,
+          "outputTokens": 2067,
+          "costUsd": 0.0012636750000000001,
+          "latencyMs": 5091,
+          "model": "openai/gpt-oss-20b",
+          "calls": 3
+        }
+      },
+      "verdict": {
+        "caught": true,
+        "caughtAnyLocation": true,
+        "matchedIndices": [
+          11
+        ],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 1,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 2,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 3,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 4,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "Identifies a different issue (unconditional assignment in handlePropertyResult) at a different location, not the blanket skip of key schema validation for __proto__."
+          },
+          {
+            "index": 5,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "Identifies a different issue (unconditional assignment in a branch) at a different location, not the blanket skip of key schema validation for __proto__."
+          },
+          {
+            "index": 6,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "Identifies a different issue (running schema on prototype value) at a different location, not the blanket skip of key schema validation for __proto__."
+          },
+          {
+            "index": 7,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "Identifies a different issue (generated fastpass function) at a different location, not the blanket skip of key schema validation for __proto__."
+          },
+          {
+            "index": 8,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "Identifies a different issue (deleting __proto__ from merged result) at a different location, not the blanket skip of key schema validation for __proto__."
+          },
+          {
+            "index": 9,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "Identifies a different issue (running value schema on prototype value) at a different location, not the blanket skip of key schema validation for __proto__."
+          },
+          {
+            "index": 10,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "Identifies a different issue (assigning key to result object) at a different location, not the blanket skip of key schema validation for __proto__."
+          },
+          {
+            "index": 11,
+            "locationMatch": true,
+            "semanticMatch": true,
+            "reason": "Identifies the same root cause: the code skips validation for __proto__ keys (via the blanket continue) and then unconditionally assigns the value, leading to a security risk. This matches the known bug where __proto__ keys are silently accepted and never validated."
+          },
+          {
+            "index": 12,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "Identifies a different issue (unconditional assignment in strict mode) at a different location, not the blanket skip of key schema validation for __proto__."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 2194,
+          "outputTokens": 457,
+          "costUsd": 0.0035832,
+          "latencyMs": 1334,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "colinhacks/zod#6347",
+      "kind": "buggy",
+      "category": "regex-string",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 2636,
+          "outputTokens": 198,
+          "costUsd": 0.00025709999999999996,
+          "latencyMs": 1179,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": false
     }
   ],
   "pending": [
-    "colinhacks/zod#6386",
-    "colinhacks/zod#6347",
     "colinhacks/zod#6371",
     "colinhacks/zod#5793",
     "colinhacks/zod#4602",
@@ -1955,6 +2168,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at colinhacks/zod#6386: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 197268, Requested 4084. Please try again in 9m"
+    "reviewer daily quota exhausted at colinhacks/zod#6371: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198392, Requested 4685. Please try again in 22"
   ]
 }
