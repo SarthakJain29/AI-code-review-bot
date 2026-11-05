@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-05T18-39-02-561Z_baseline-v2_groq_openai_gpt-oss-20b",
+  "runId": "2026-11-05T19-11-03-670Z_baseline-v2_groq_openai_gpt-oss-20b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-20b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-05T18:39:02.561Z",
-  "finishedAt": "2026-11-05T18:39:02.876Z",
+  "startedAt": "2026-11-05T19:11:03.670Z",
+  "finishedAt": "2026-11-05T19:11:05.654Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -1732,11 +1732,82 @@
         }
       },
       "cached": true
+    },
+    {
+      "caseId": "honojs/hono#1015",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "src/utils/url.ts",
+            "line": 205,
+            "severity": "major",
+            "body": "`_getQueryParam` returns `undefined` when a key is not found, but the original implementation returned `null`. The public `getQueryParam` and `getQueryParams` functions now expose this change, which can break callers that explicitly check for `null` (e.g., `if (result === null)`). This regression is visible in `src/request.ts` where the code checks for `null` and will no longer convert the missing value to `undefined`. The change should either preserve the `null` return value or update all callers accordingly."
+          },
+          {
+            "file": "src/utils/url.ts",
+            "line": 205,
+            "severity": "major",
+            "body": "The refactor changed the return type of `getQueryParam` from `string | null | Record<string,string>` to `string | undefined | Record<string,string>`. Existing callers that rely on a `null` value when a key is not found will now receive `undefined`, potentially breaking logic that checks for `=== null`. This change should be reviewed to ensure backward compatibility or updated throughout the codebase."
+          }
+        ],
+        "usage": {
+          "inputTokens": 7832,
+          "outputTokens": 1906,
+          "costUsd": 0.0011592,
+          "latencyMs": 3915,
+          "model": "openai/gpt-oss-20b",
+          "calls": 2
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment identifies a regression regarding the return type (null vs undefined) for missing keys, which is a different issue from the known bug involving incorrect value retrieval for duplicate keys with mixed encoded/unencoded forms."
+          },
+          {
+            "index": 1,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment identifies a backward compatibility issue with the return type (null vs undefined) for missing keys, which is distinct from the known bug concerning the parser's failure to handle earlier encoded keys that decode to the same name."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1673,
+          "outputTokens": 129,
+          "costUsd": 0.0018544000000000002,
+          "latencyMs": 899,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "honojs/hono#4626",
+      "kind": "clean",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 1171,
+          "outputTokens": 241,
+          "costUsd": 0.000160125,
+          "latencyMs": 1890,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "cached": false
     }
   ],
   "pending": [
-    "honojs/hono#1015",
-    "honojs/hono#4626",
     "honojs/hono#4559",
     "colinhacks/zod#6705",
     "colinhacks/zod#6443",
@@ -1800,6 +1871,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at honojs/hono#1015: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 196862, Requested 3954. Please try again in 5m52."
+    "reviewer daily quota exhausted at honojs/hono#4559: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199191, Requested 1651. Please try again in 6m3.7"
   ]
 }
