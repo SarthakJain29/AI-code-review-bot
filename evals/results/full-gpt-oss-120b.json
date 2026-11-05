@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-05T07-52-47-066Z_baseline-v2_groq_openai_gpt-oss-120b",
+  "runId": "2026-11-05T09-55-05-172Z_baseline-v2_groq_openai_gpt-oss-120b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-120b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-05T07:52:47.066Z",
-  "finishedAt": "2026-11-05T07:54:48.190Z",
+  "startedAt": "2026-11-05T09:55:05.172Z",
+  "finishedAt": "2026-11-05T09:59:05.853Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -385,14 +385,242 @@
         }
       },
       "cached": true
+    },
+    {
+      "caseId": "sveltejs/svelte#10916",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/svelte/src/internal/client/dom/elements/attributes.js",
+            "line": 54,
+            "severity": "critical",
+            "body": "The function returns early after recording the original attribute during hydration (`return;` on line 54). This prevents the later logic that actually updates the element’s attribute from running, so attributes are never applied during hydration."
+          },
+          {
+            "file": "packages/svelte/src/internal/client/dom/elements/attributes.js",
+            "line": 306,
+            "severity": "major",
+            "body": "`check_src_in_dev_hydration` now returns early only when `!DEV` (line 306) instead of when not hydrating. This causes the dev‑only warning to fire during normal client updates, potentially spamming the console and misreporting errors."
+          }
+        ],
+        "usage": {
+          "inputTokens": 2486,
+          "outputTokens": 648,
+          "costUsd": 0.0007617,
+          "latencyMs": 1942,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The known bug is about redundant attribute writes (performance/efficiency issue) where the code writes attributes that were already rendered by the server. Comment [0] claims the early return prevents attributes from being applied at all (a functional correctness bug where attributes are missing). These are different defects: one is about unnecessary work, the other is about missing work."
+          },
+          {
+            "index": 1,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The known bug is in the `set_attribute` function regarding redundant writes during hydration. Comment [1] discusses a different function (`check_src_in_dev_hydration`) and a different issue (dev warnings firing incorrectly). This is a completely different problem in a different part of the code."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1654,
+          "outputTokens": 168,
+          "costUsd": 0.0019952,
+          "latencyMs": 1623,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "sveltejs/svelte#18944",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/svelte/src/internal/client/proxy.js",
+            "line": 242,
+            "severity": "major",
+            "body": "The condition now checks `active_reaction` instead of `active_effect`. However, elsewhere in the code `active_effect` is used to determine whether a write should trigger tracking. Switching to `active_reaction` may cause writes performed during an effect (but not a reaction) to be ignored, breaking reactivity for certain derived stores."
+          },
+          {
+            "file": "packages/svelte/tests/signals/test.ts",
+            "line": 188,
+            "severity": "major",
+            "body": "The test expects that setting `value.length = 0` will cause the derived `has_first` to recompute. The proxy's `set` trap only tracks writes to existing properties or writable descriptors; changing the `length` property does not automatically trigger a re‑evaluation of the `in` check for index `0`. This may result in the derived not updating, indicating a missing edge‑case handling for array length mutations."
+          }
+        ],
+        "usage": {
+          "inputTokens": 979,
+          "outputTokens": 413,
+          "costUsd": 0.00039464999999999997,
+          "latencyMs": 1604,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment suggests that the code is incorrectly using `active_reaction` instead of `active_effect`, implying the bug is that `active_effect` is missing or ignored. However, the known bug is that the code *only* checks `active_reaction` and fails to include `active_effect` in the condition, causing state sources not to be created when an effect is active but no reaction is. The comment misidentifies the direction of the error (claiming `active_reaction` is the wrong choice when it's actually the incomplete one) and focuses on a different consequence (writes being ignored) rather than the root cause (missing state source creation for `in` checks during effect initialization)."
+          },
+          {
+            "index": 1,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1476,
+          "outputTokens": 161,
+          "costUsd": 0.0018248,
+          "latencyMs": 602,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "sveltejs/svelte#16333",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 2026,
+          "outputTokens": 222,
+          "costUsd": 0.00043709999999999995,
+          "latencyMs": 1282,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "sveltejs/svelte#17105",
+      "kind": "buggy",
+      "category": "state-mutation",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/svelte/src/internal/client/reactivity/effects.js",
+            "line": 106,
+            "severity": "major",
+            "body": "The reaction object is always created with the CONNECTED flag (f: type | DIRTY | CONNECTED). CONNECTED is meant to indicate that a reaction is part of an effect tree (i.e., an effect or a derived that is depended on by an effect). Adding it to every reaction, including pure deriveds that have no dependents, incorrectly marks them as connected. This prevents deriveds from being treated as unconnected and can stop them from being marked MAYBE_DIRTY, breaking the intended reconnection logic and potentially causing stale values."
+          },
+          {
+            "file": "packages/svelte/src/internal/client/runtime.js",
+            "line": 647,
+            "severity": "major",
+            "body": "The reconnect function toggles the CONNECTED flag using XOR (derived.f ^= CONNECTED). This will incorrectly clear the flag if the derived is already connected, causing it to become disconnected again. It should set the flag (derived.f |= CONNECTED) instead of toggling."
+          }
+        ],
+        "usage": {
+          "inputTokens": 7084,
+          "outputTokens": 872,
+          "costUsd": 0.0015858,
+          "latencyMs": 3227,
+          "model": "openai/gpt-oss-120b",
+          "calls": 2
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 1,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment identifies a potential issue with the CONNECTED flag being toggled via XOR, which is a different concern from the known bug. The known bug is about the `reconnect` function unconditionally pushing the derived onto the dependency's `reactions` array, leading to duplicate subscriptions. The comment does not mention duplicate subscriptions, the `reactions` array, or the lack of a check for existing entries."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1453,
+          "outputTokens": 106,
+          "costUsd": 0.0015864000000000002,
+          "latencyMs": 550,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "sveltejs/svelte#11879",
+      "kind": "buggy",
+      "category": "state-mutation",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/svelte/src/compiler/phases/3-transform/client/visitors/template.js",
+            "line": 2776,
+            "severity": "major",
+            "body": "Added handling for `activeElement` binding but omitted similar handling for the newly introduced `pointerLockElement` binding. As a result, `<svelte:document bind:pointerLockElement={...}>` will not generate the appropriate binding code, breaking the feature."
+          }
+        ],
+        "usage": {
+          "inputTokens": 2092,
+          "outputTokens": 240,
+          "costUsd": 0.0004578,
+          "latencyMs": 1253,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": false
     }
   ],
   "pending": [
-    "sveltejs/svelte#10916",
-    "sveltejs/svelte#18944",
-    "sveltejs/svelte#16333",
-    "sveltejs/svelte#17105",
-    "sveltejs/svelte#11879",
     "sveltejs/svelte#15460",
     "sveltejs/svelte#12285",
     "sveltejs/svelte#17575",
@@ -489,6 +717,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at sveltejs/svelte#10916: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198347, Requested 2621. Please try again in"
+    "reviewer daily quota exhausted at sveltejs/svelte#15460: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198976, Requested 2637. Please try again in"
   ]
 }

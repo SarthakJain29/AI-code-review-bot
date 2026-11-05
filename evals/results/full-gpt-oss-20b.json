@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-05T07-52-47-076Z_baseline-v2_groq_openai_gpt-oss-20b",
+  "runId": "2026-11-05T09-55-05-172Z_baseline-v2_groq_openai_gpt-oss-20b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-20b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-05T07:52:47.076Z",
-  "finishedAt": "2026-11-05T07:54:49.223Z",
+  "startedAt": "2026-11-05T09:55:05.172Z",
+  "finishedAt": "2026-11-05T09:59:05.913Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -674,10 +674,47 @@
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
       "cached": true
+    },
+    {
+      "caseId": "vitest-dev/vitest#9745",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/browser/src/client/tester/tester-utils.ts",
+            "line": 235,
+            "severity": "major",
+            "body": "`new DOMMatrix(getComputedStyle(iframe).transform)` will throw if the computed transform is the string \"none\" (the default when no transform is applied). The code assumes a matrix is always returned, which can cause a runtime crash when the iframe has no transform. A safe fallback (e.g., `new DOMMatrix(getComputedStyle(iframe).transform || '1')`) or a check for \"none\" should be added."
+          }
+        ],
+        "usage": {
+          "inputTokens": 9463,
+          "outputTokens": 1454,
+          "costUsd": 0.001145925,
+          "latencyMs": 4454,
+          "model": "openai/gpt-oss-20b",
+          "calls": 3
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": false
     }
   ],
   "pending": [
-    "vitest-dev/vitest#9745",
     "vitest-dev/vitest#10656",
     "vitest-dev/vitest#9132",
     "vitest-dev/vitest#10170",
@@ -768,6 +805,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at vitest-dev/vitest#9745: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 197530, Requested 3652. Please try again in"
+    "reviewer daily quota exhausted at vitest-dev/vitest#10656: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198831, Requested 2883. Please try again i"
   ]
 }
