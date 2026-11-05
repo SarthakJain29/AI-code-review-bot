@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-05T23-13-35-648Z_baseline-v2_groq_openai_gpt-oss-20b",
+  "runId": "2026-11-05T23-59-39-507Z_baseline-v2_groq_openai_gpt-oss-20b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-20b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-05T23:13:35.648Z",
-  "finishedAt": "2026-11-05T23:13:37.267Z",
+  "startedAt": "2026-11-05T23:59:39.507Z",
+  "finishedAt": "2026-11-05T23:59:40.221Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -2145,12 +2145,93 @@
         ],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
-      "cached": false
+      "cached": true
+    },
+    {
+      "caseId": "colinhacks/zod#5793",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/zod/src/v3/types.ts",
+            "line": 1355,
+            "severity": "major",
+            "body": "The new implementation of floatSafeRemainder does not guard against a zero step value. If step is 0, the division val / step will produce Infinity or NaN, leading to incorrect remainder calculations and potentially causing runtime errors in multipleOf validation. The original implementation implicitly avoided this by using integer arithmetic, which would throw on division by zero. Add a guard to return NaN or throw an error when step === 0."
+          }
+        ],
+        "usage": {
+          "inputTokens": 1329,
+          "outputTokens": 369,
+          "costUsd": 0.000210375,
+          "latencyMs": 1243,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "colinhacks/zod#4602",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/zod/src/v4/core/checks.ts",
+            "line": 956,
+            "severity": "major",
+            "body": "The `position` option is used directly in a regex quantifier without validation. If `def.position` is negative, a non‑integer, or otherwise invalid, the resulting regex will be malformed (e.g., `^.{-5}foo` or `^.{3.5}foo`). This can cause runtime errors or silent failures. The code should validate that `def.position` is a non‑negative integer before constructing the regex, and throw a clear error if it is not."
+          }
+        ],
+        "usage": {
+          "inputTokens": 1045,
+          "outputTokens": 481,
+          "costUsd": 0.00022267499999999998,
+          "latencyMs": 1728,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment identifies a lack of input validation for the `position` parameter (handling negative or non-integer values), which is a different issue from the known bug. The known bug is a semantic off-by-one error where the regex quantifier `{N}` forces the match to start exactly at offset N, whereas `String.prototype.includes` allows the match to start at N or any later position (requiring `{N,}`). The comment does not address the incorrect matching semantics."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1257,
+          "outputTokens": 118,
+          "costUsd": 0.0014776,
+          "latencyMs": 612,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
     }
   ],
   "pending": [
-    "colinhacks/zod#5793",
-    "colinhacks/zod#4602",
     "colinhacks/zod#5610",
     "colinhacks/zod#5599",
     "axios/axios#6518",
@@ -2205,6 +2286,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at colinhacks/zod#5793: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199208, Requested 1595. Please try again in 5m"
+    "reviewer daily quota exhausted at colinhacks/zod#5610: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 196039, Requested 4933. Please try again in 6m"
   ]
 }
