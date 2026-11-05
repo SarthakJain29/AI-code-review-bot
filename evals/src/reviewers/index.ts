@@ -1,3 +1,4 @@
+import type { DiskCache } from '../cache.js';
 import { providerFromEnv, type ProviderName } from '../llm/provider.js';
 import type { Reviewer } from '../types.js';
 import { BaselineReviewer } from './baseline.js';
@@ -13,12 +14,12 @@ export interface ReviewerChoice {
   fallbackNote?: string;
 }
 
-export function createReviewer(name: ReviewerName, opts: { provider?: ProviderName; model?: string } = {}): ReviewerChoice {
+export function createReviewer(name: ReviewerName, opts: { provider?: ProviderName; model?: string; chunkCache?: DiskCache } = {}): ReviewerChoice {
   switch (name) {
     case 'baseline': {
       const llm = providerFromEnv(opts.provider ?? (process.env.EVALS_REVIEWER_PROVIDER as ProviderName) ?? 'gemini', opts.model ?? process.env.EVALS_REVIEWER_MODEL);
       if (!llm) return { reviewer: new HeuristicMockReviewer(), fallbackNote: 'No GEMINI_API_KEY/GROQ_API_KEY: baseline replaced by mock-heuristic.' };
-      return { reviewer: new BaselineReviewer(llm) };
+      return { reviewer: new BaselineReviewer(llm, { chunkCache: opts.chunkCache }) };
     }
     case 'diffwise': {
       const url = process.env.DIFFWISE_REVIEW_URL;

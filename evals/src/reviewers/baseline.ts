@@ -5,7 +5,8 @@
  */
 import { z } from 'zod';
 import { commentableLines, parseDiff, renderNumberedDiff, type DiffFile } from '../diff.js';
-import { estimateTokens, extractJson, LlmError, type LlmProvider } from '../llm/provider.js';
+import { DiskCache } from '../cache.js';
+import { estimateTokens, extractJson, LlmError, type LlmProvider, type LlmResponse } from '../llm/provider.js';
 import { SEVERITIES, type ReviewComment, type ReviewInput, type ReviewResult, type Reviewer } from '../types.js';
 
 /** v2: same prompt as v1, plus file/hunk chunking for diffs over the per-call token budget. */
@@ -89,18 +90,25 @@ export interface BaselineOptions {
    */
   chunkTokens?: number;
   maxOutputTokens?: number;
+  /**
+   * Per-chunk response cache. Without it, a chunked review that hits a daily quota on chunk k
+   * throws away chunks 1..k-1 and re-spends their tokens on every retry.
+   */
+  chunkCache?: DiskCache;
 }
 
 export class BaselineReviewer implements Reviewer {
   readonly id: string;
   private readonly chunkTokens: number;
   private readonly maxOutputTokens: number;
+  private readonly chunkCache?: DiskCache;
   constructor(
     private readonly llm: LlmProvider,
     opts: BaselineOptions = {},
   ) {
     this.chunkTokens = opts.chunkTokens ?? Number(process.env.EVALS_REVIEW_CHUNK_TOKENS ?? 4500);
     this.maxOutputTokens = opts.maxOutputTokens ?? 2048;
+    this.chunkCache = opts.chunkCache;
     this.id = `baseline-${BASELINE_PROMPT_VERSION}:${llm.name}:${llm.model}`;
   }
 
@@ -112,7 +120,12 @@ export class BaselineReviewer implements Reviewer {
       for (const [i, chunk] of chunks.entries()) {
         const part = chunks.length > 1 ? ` (part ${i + 1} of ${chunks.length}; other files are reviewed separately)` : '';
         const prompt = `Repository: ${input.repo}\nPR title: ${input.title}\n\nNumbered diff${part}:\n${renderNumberedDiff(chunk)}`;
-        const res = await this.llm.complete({ system: BASELINE_SYSTEM, prompt, json: true, temperature: 0, maxOutputTokens: this.maxOutputTokens });
+        const key = DiskCache.key('chunk', this.id, String(this.maxOutputTokens), prompt);
+        let res = this.chunkCache?.get<LlmResponse>(key);
+        if (!res) {
+          res = await this.llm.complete({ system: BASELINE_SYSTEM, prompt, json: true, temperature: 0, maxOutputTokens: this.maxOutputTokens });
+          this.chunkCache?.set(key, res);
+        }
         comments.push(...parseReviewOutput(res.text, input.diff));
         usage.inputTokens += res.inputTokens;
         usage.outputTokens += res.outputTokens;

@@ -131,7 +131,7 @@ program
   .action(async (o) => {
     const ds = loadDataset();
     const cache = new DiskCache(join(CACHE_DIR, 'reviews'));
-    const { reviewer, fallbackNote } = createReviewer(o.reviewer as ReviewerName, { provider: o.provider, model: o.model });
+    const { reviewer, fallbackNote } = createReviewer(o.reviewer as ReviewerName, { provider: o.provider, model: o.model, chunkCache: new DiskCache(join(CACHE_DIR, 'chunks')) });
     const { judge, note: judgeNote } = makeJudge(o.judge, new DiskCache(join(CACHE_DIR, 'judge')), Number(o.tolerance), {
       provider: o.judgeProvider,
       model: o.judgeModel,

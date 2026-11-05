@@ -156,6 +156,7 @@ reads the `--out` file first, so it survives a lost `.cache/` (new container); c
 | `gemini-2.5-flash` → 404 "no longer available to new users" | listed models | tried `gemini-3.5-flash` | none |
 | `gemini-3.5-flash` free tier: 20 requests/day (quota hit during dataset annotation) | checked other models | default reviewer `gemini-3.1-flash-lite`; annotation on Groq models | for a full eval on a stronger Gemini, use a paid key (`EVALS_REVIEWER_MODEL=gemini-3.5-flash`) |
 | Groq 200k tokens/day per model (rolling); yesterday's dataset annotation had used most of today's gpt-oss quota | throttle + chunking + smaller judge prompt | `--until-done` resume loop; results committed as they accrue | nothing, or a Groq Dev-tier key to finish in ~1 h |
+| Chunked reviews that hit the daily quota mid-diff discarded their finished chunks, so each 15-min retry re-spent ~5k tokens and kept the 120b quota pinned at ~199k for hours | – | per-chunk response cache (`.cache/chunks`); reviewer id unchanged since outputs are identical | none |
 | Groq JSON mode 400 `json_validate_failed` (gpt-oss-20b, empty generation) | – | retry once without JSON mode, parse text | none |
 | `gemini-3.5-flash` / `gemini-flash-latest` intermittent 503 | retry with backoff | Groq fallback for annotation; errors recorded per case | re-run failed cases later (cache skips successes) |
 | Groq `llama-3.3-70b-versatile` → model_not_found | listed models | `openai/gpt-oss-120b` | none |

@@ -89,6 +89,32 @@ describe('BaselineReviewer', () => {
     expect(r.error).toContain('429');
     expect(r.comments).toEqual([]);
   });
+  it('caches finished chunks so a quota retry does not re-spend them', async () => {
+    const { DiskCache } = await import('../src/cache.js');
+    const { mkdtempSync } = await import('node:fs');
+    const { tmpdir } = await import('node:os');
+    const { join } = await import('node:path');
+    const chunkCache = new DiskCache(mkdtempSync(join(tmpdir(), 'chunks-')));
+    let calls = 0;
+    let budget = 1;
+    const llm: LlmProvider = {
+      name: 'groq',
+      model: 'm',
+      complete: async (): Promise<LlmResponse> => {
+        calls++;
+        if (budget-- <= 0) throw new LlmError('HTTP 429: tokens per day (TPD)', 429, false, undefined, true);
+        return { text: '{"comments":[]}', inputTokens: 1, outputTokens: 1, latencyMs: 1, costUsd: 0, model: 'm' };
+      },
+    };
+    const rev = new BaselineReviewer(llm, { chunkTokens: 1200, chunkCache });
+    expect((await rev.review({ diff, repo: 'o/r', title: 't' })).quotaExhausted).toBe(true);
+    const total = (await new BaselineReviewer(new MockProvider(() => '{"comments":[]}'), { chunkTokens: 1200 }).review({ diff, repo: 'o/r', title: 't' })).usage.calls!;
+    calls = 0;
+    budget = 100;
+    const r = await rev.review({ diff, repo: 'o/r', title: 't' });
+    expect(r.error).toBeUndefined();
+    expect(calls).toBe(total - 1); // first chunk came from the cache
+  });
 });
 
 describe('runEval quota stop + resume', async () => {

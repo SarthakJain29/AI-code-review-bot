@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-05T19-11-03-670Z_baseline-v2_groq_openai_gpt-oss-20b",
+  "runId": "2026-11-05T20-14-07-834Z_baseline-v2_groq_openai_gpt-oss-20b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-20b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-05T19:11:03.670Z",
-  "finishedAt": "2026-11-05T19:11:05.654Z",
+  "startedAt": "2026-11-05T20:14:07.834Z",
+  "finishedAt": "2026-11-05T20:14:08.261Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -1804,13 +1804,74 @@
           "calls": 1
         }
       },
-      "cached": false
+      "cached": true
+    },
+    {
+      "caseId": "honojs/hono#4559",
+      "kind": "clean",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 1329,
+          "outputTokens": 469,
+          "costUsd": 0.000240375,
+          "latencyMs": 1369,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "colinhacks/zod#6705",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 2738,
+          "outputTokens": 578,
+          "costUsd": 0.00037875,
+          "latencyMs": 1721,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "colinhacks/zod#6443",
+      "kind": "buggy",
+      "category": "performance",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 1155,
+          "outputTokens": 291,
+          "costUsd": 0.000173925,
+          "latencyMs": 2199,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
     }
   ],
   "pending": [
-    "honojs/hono#4559",
-    "colinhacks/zod#6705",
-    "colinhacks/zod#6443",
     "colinhacks/zod#6652",
     "colinhacks/zod#6386",
     "colinhacks/zod#6347",
@@ -1871,6 +1932,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at honojs/hono#4559: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199191, Requested 1651. Please try again in 6m3.7"
+    "reviewer daily quota exhausted at colinhacks/zod#6652: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 196998, Requested 3172. Please try again in 1m"
   ]
 }
