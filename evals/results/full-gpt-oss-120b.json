@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-05T13-06-10-983Z_baseline-v2_groq_openai_gpt-oss-120b",
+  "runId": "2026-11-05T14-56-16-419Z_baseline-v2_groq_openai_gpt-oss-120b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-120b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-05T13:06:10.983Z",
-  "finishedAt": "2026-11-05T13:06:11.378Z",
+  "startedAt": "2026-11-05T14:56:16.419Z",
+  "finishedAt": "2026-11-05T14:56:17.250Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -709,11 +709,83 @@
         }
       },
       "cached": true
+    },
+    {
+      "caseId": "sveltejs/svelte#17088",
+      "kind": "clean",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/svelte/src/compiler/phases/1-parse/read/options.js",
+            "line": 141,
+            "severity": "major",
+            "body": "The error handler references an undefined variable 'attribute' instead of the 'shadow' node. This will cause a ReferenceError when an invalid shadow option is encountered."
+          },
+          {
+            "file": "packages/svelte/types/index.d.ts",
+            "line": 1237,
+            "severity": "major",
+            "body": "The new type for the `shadow` option is declared as `ObjectExpression | undefined`, which is a Babel AST node type and does not represent the runtime shape of a `ShadowRootInit` object. This will cause type errors for legitimate `ShadowRootInit` values (e.g., `{ mode: \"open\", delegatesFocus: true }`) and may break consumers' TypeScript typings. The type should be something like `ShadowRootInit` or a generic object type, not `ObjectExpression`."
+          }
+        ],
+        "usage": {
+          "inputTokens": 5064,
+          "outputTokens": 874,
+          "costUsd": 0.001284,
+          "latencyMs": 3617,
+          "model": "openai/gpt-oss-120b",
+          "calls": 2
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vitest-dev/vitest#5135",
+      "kind": "buggy",
+      "category": "state-mutation",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/expect/src/jest-extend.ts",
+            "line": 1,
+            "severity": "major",
+            "body": "Importing `use` (and `util`) as named exports from 'chai' is incorrect; `use` is a method on the chai instance, not a named export. This will be undefined at runtime, causing a failure when calling `use(JestExtendPlugin(...))`."
+          }
+        ],
+        "usage": {
+          "inputTokens": 857,
+          "outputTokens": 331,
+          "costUsd": 0.00032714999999999996,
+          "latencyMs": 1300,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment claims that importing `use` from 'chai' is incorrect and will be undefined, which is factually wrong (chai does export `use`). More importantly, it identifies a potential runtime error due to incorrect import syntax rather than the actual bug, which is a memory leak caused by the global state mutation of registering plugins via `chai.use`."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1499,
+          "outputTokens": 94,
+          "costUsd": 0.0015752000000000001,
+          "latencyMs": 504,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
     }
   ],
   "pending": [
-    "sveltejs/svelte#17088",
-    "vitest-dev/vitest#5135",
     "vitest-dev/vitest#9745",
     "vitest-dev/vitest#10656",
     "vitest-dev/vitest#9132",
@@ -805,6 +877,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at sveltejs/svelte#17088: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 195629, Requested 4679. Please try again in"
+    "reviewer daily quota exhausted at vitest-dev/vitest#9745: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 197779, Requested 3394. Please try again i"
   ]
 }
