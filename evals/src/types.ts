@@ -130,7 +130,7 @@ export interface CommentVerdict {
 export interface JudgeVerdict {
   /** Strict: some comment matches the bug semantically AND is within the location tolerance. */
   caught: boolean;
-  /** Lenient: some comment matches semantically, anywhere in the diff. */
+  /** Lenient: some comment in a bug file matches semantically, at any line (LLM judge v2; the keyword judge checks all comments). */
   caughtAnyLocation: boolean;
   matchedIndices: number[];
   perComment: CommentVerdict[];

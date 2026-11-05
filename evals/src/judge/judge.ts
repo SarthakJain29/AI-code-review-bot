@@ -13,7 +13,12 @@ import { isTestFile, parseDiff, renderDiff } from '../diff.js';
 import { extractJson, type LlmProvider } from '../llm/provider.js';
 import type { BugLocation, CommentVerdict, EvalCase, JudgeVerdict, ReviewComment } from '../types.js';
 
-export const JUDGE_PROMPT_VERSION = 'v1';
+/**
+ * v2: only comments in a bug file are sent to the LLM (others cannot be strict catches), and the
+ * fix diff is capped at 3500 chars (source first). Same instructions as v1. Cuts judge tokens ~2-3x,
+ * which matters on 200k tokens/day free tiers.
+ */
+export const JUDGE_PROMPT_VERSION = 'v2';
 export const DEFAULT_LINE_TOLERANCE = 5;
 
 function normPath(p: string): string {
@@ -124,12 +129,12 @@ function sourceFirst(diff: string): string {
 export function buildJudgePrompt(c: EvalCase, comments: ReviewComment[]): string {
   const bug = c.bug!;
   const locs = bug.locations.map((l) => `${l.file}:${l.lines.start}-${l.lines.end}`).join(', ');
-  const list = comments.map((cm, i) => `[${i}] ${cm.file}:${cm.line} (${cm.severity}) ${cm.body}`).join('\n');
+  const list = comments.map((cm, i) => `[${i}] ${cm.file}:${cm.line} (${cm.severity}) ${cm.body.slice(0, 800)}`).join('\n');
   return `Known bug (${bug.category}) at ${locs}:
 ${bug.description}
 
 How it was fixed later (${bug.fixPr.title}):
-${sourceFirst(bug.fixDiff).slice(0, 6000)}
+${sourceFirst(bug.fixDiff).slice(0, 3500)}
 
 Review comments:
 ${list}`;
@@ -148,8 +153,16 @@ export class LlmJudge implements Judge {
   async judge(c: EvalCase, comments: ReviewComment[]): Promise<JudgeVerdict> {
     const bug = c.bug;
     if (!bug || comments.length === 0) return combine(this.id, []);
-    const shown = comments.slice(0, 30);
-    const prompt = buildJudgePrompt(c, shown);
+    // Only comments in a bug file can be a (strict) catch; skip the LLM for the rest.
+    const inBugFile = comments.map((cm, index) => ({ cm, index })).filter(({ cm }) => bug.locations.some((l) => pathsMatch(cm.file, l.file)));
+    const shown = inBugFile.slice(0, 20);
+    const notInFile = 'not in a bug file (not sent to judge)';
+    if (shown.length === 0)
+      return combine(
+        this.id,
+        comments.map((_, index) => ({ index, locationMatch: false, semanticMatch: false, reason: notInFile })),
+      );
+    const prompt = buildJudgePrompt(c, shown.map((x) => x.cm));
     const key = DiskCache.key('judge', this.id, prompt);
     let raw = this.cache.get<{ verdicts: { index: number; match: boolean; reason: string }[]; usage: JudgeVerdict['judgeUsage'] }>(key);
     if (!raw) {
@@ -161,12 +174,16 @@ export class LlmJudge implements Judge {
       };
       this.cache.set(key, raw);
     }
-    const byIndex = new Map(raw.verdicts.map((v) => [v.index, v]));
+    // Map prompt-local indices back to the reviewer's comment indices.
+    const local = new Map(raw.verdicts.map((v) => [v.index, v]));
+    const byIndex = new Map(shown.map((x, i) => [x.index, local.get(i)]));
+    const sent = new Set(shown.map((x) => x.index));
+    const inFile = new Set(inBugFile.map((x) => x.index));
     const per: CommentVerdict[] = comments.map((cm, index) => ({
       index,
       locationMatch: locationMatches(cm, bug.locations, this.tolerance),
       semanticMatch: byIndex.get(index)?.match ?? false,
-      reason: byIndex.get(index)?.reason ?? (index >= shown.length ? 'not shown to judge (over limit)' : 'no verdict returned'),
+      reason: byIndex.get(index)?.reason ?? (!inFile.has(index) ? notInFile : !sent.has(index) ? 'not shown to judge (over limit)' : 'no verdict returned'),
     }));
     return combine(this.id, per, raw.usage);
   }

@@ -41,7 +41,7 @@ export interface Metrics {
   cases: { total: number; buggy: number; clean: number; errored: number };
   /** Recall: buggy cases where a comment matched the bug semantically AND by location. */
   catchRate: Rate;
-  /** Same, ignoring location (comment found the right bug but pointed at the wrong line). */
+  /** Same, but any line of a bug file (comment found the right bug but pointed at the wrong line). */
   catchRateAnyLocation: Rate;
   noise: {
     /** Mean comments per clean PR (every comment on a clean PR is a presumed false positive). */

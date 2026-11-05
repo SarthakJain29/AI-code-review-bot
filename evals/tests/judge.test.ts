@@ -97,6 +97,22 @@ describe('LLM judge', () => {
     expect((await j.judge(bugCase, [c('src/retry.ts', 41)])).caught).toBe(false);
     expect(calls).toBe(1);
   });
+  it('only sends comments in bug files to the LLM and maps indices back', async () => {
+    const prompts: string[] = [];
+    const llm = new MockProvider((req) => {
+      prompts.push(req.prompt);
+      return JSON.stringify({ verdicts: [{ index: 0, match: true, reason: 'same bug' }] });
+    });
+    const j = new LlmJudge(llm, cache());
+    const v = await j.judge(bugCase, [c('src/other.ts', 41, 'unrelated'), c('src/retry.ts', 41, 'off by one')]);
+    expect(prompts).toHaveLength(1);
+    expect(prompts[0]).not.toContain('src/other.ts:41');
+    expect(v.matchedIndices).toEqual([1]);
+    expect(v.perComment[0]).toMatchObject({ semanticMatch: false, reason: expect.stringContaining('not in a bug file') });
+    // no comment in a bug file -> no LLM call at all
+    await j.judge(bugCase, [c('src/other.ts', 41, 'x')]);
+    expect(prompts).toHaveLength(1);
+  });
   it('caches verdicts', async () => {
     let calls = 0;
     const llm = new MockProvider(() => {

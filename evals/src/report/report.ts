@@ -52,7 +52,7 @@ export function renderMarkdown(input: ReportInput): string {
   for (const { run } of rs)
     if (run.pending?.length) L.push(`> **Incomplete:** \`${run.reviewerId}\` has ${run.pending.length} cases pending (provider daily quota). Re-run to resume.`, '');
   L.push('## Scoreboard', '');
-  L.push('| Reviewer | Catch rate (strict) | 95% CI | Catch rate (any line) | Comments / clean PR | Silent on clean | Precision ≥ | Cost / review | Latency p50 / p95 | Errors |');
+  L.push('| Reviewer | Catch rate (strict) | 95% CI | Catch rate (bug file, any line) | Comments / clean PR | Silent on clean | Precision ≥ | Cost / review | Latency p50 / p95 | Errors |');
   L.push('|---|---|---|---|---|---|---|---|---|---|');
   for (const { run, m } of rs)
     L.push(
@@ -87,7 +87,7 @@ export function renderMarkdown(input: ReportInput): string {
   L.push('## Per-case results', '');
   for (const { run } of rs) {
     L.push(`### \`${run.reviewerId}\``, '');
-    L.push('| Case | Kind | Category | Comments | Caught (strict / any line) | Notes |', '|---|---|---|---|---|---|');
+    L.push('| Case | Kind | Category | Comments | Caught (strict / bug file) | Notes |', '|---|---|---|---|---|---|');
     for (const r of run.results) {
       const c = input.dataset.cases.find((x) => x.id === r.caseId);
       const link = c?.pr.url ? `[${r.caseId}](${c.pr.url})` : r.caseId;
@@ -203,10 +203,10 @@ dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;font-size:14p
 ${sample ? '<p class="warn"><strong>Sample run.</strong> Only a subset of the dataset was evaluated; error bars are very wide and this is not a benchmark result.</p>' : ''}
 ${rs.filter((r) => r.run.pending?.length).map((r) => `<p class="warn"><strong>Incomplete:</strong> <code>${esc(r.run.reviewerId)}</code> has ${r.run.pending!.length} cases pending (provider daily quota).</p>`).join('')}
 <section><h2>Scoreboard</h2><div class="scroll"><table>
-<thead><tr><th>Reviewer</th><th>Catch rate (strict)</th><th>Any line</th><th>Comments / clean PR</th><th>Silent on clean</th><th>Precision ≥</th><th>Cost / review</th><th>Latency p50 / p95</th><th>Errors</th></tr></thead>
+<thead><tr><th>Reviewer</th><th>Catch rate (strict)</th><th>Bug file, any line</th><th>Comments / clean PR</th><th>Silent on clean</th><th>Precision ≥</th><th>Cost / review</th><th>Latency p50 / p95</th><th>Errors</th></tr></thead>
 <tbody>${scoreRows}</tbody></table></div>
 <dl style="margin-top:12px"><dt>Catch rate</dt><dd>Buggy PRs where a comment matches the known bug semantically (LLM judge) and lands within ±5 lines of it. Bar shows value and 95% Wilson CI.</dd>
-<dt>Any line</dt><dd>Semantic match only, location ignored.</dd><dt>Comments / clean PR</dt><dd>Mean comments on PRs with no known bug (presumed false positives).</dd>
+<dt>Bug file, any line</dt><dd>Semantic match in a file the bug is in, line ignored.</dd><dt>Comments / clean PR</dt><dd>Mean comments on PRs with no known bug (presumed false positives).</dd>
 <dt>Precision ≥</dt><dd>Comments matching the known bug ÷ all comments on buggy PRs. A lower bound: other comments may be valid.</dd>
 <dt>Cost</dt><dd>List-price equivalent from token counts; free tiers bill $0.</dd></dl></section>
 ${cats.length ? `<section><h2>Catch rate by bug category</h2><div class="scroll"><table><thead><tr><th>Category</th>${rs.map((r) => `<th><code>${esc(r.run.reviewerId)}</code></th>`).join('')}</tr></thead><tbody>${catRows}</tbody></table></div></section>` : ''}
