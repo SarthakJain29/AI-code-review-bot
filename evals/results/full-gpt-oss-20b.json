@@ -1,0 +1,773 @@
+{
+  "runId": "2026-11-05T07-52-47-076Z_baseline-v2_groq_openai_gpt-oss-20b",
+  "reviewerId": "baseline-v2:groq:openai/gpt-oss-20b",
+  "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+  "startedAt": "2026-11-05T07:52:47.076Z",
+  "finishedAt": "2026-11-05T07:54:49.223Z",
+  "datasetVersion": 1,
+  "caseCount": 110,
+  "results": [
+    {
+      "caseId": "vuejs/core#16109",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/runtime-core/src/components/Suspense.ts",
+            "line": 120,
+            "severity": "major",
+            "body": "`n2.ssContent!` is accessed without checking if it exists. In cases where the Suspense node has no ssContent (e.g., when it is a root replacement or has no fallback), this will throw a runtime error. The code should guard against `n2.ssContent` being undefined before calling `isSameVNodeType`."
+          },
+          {
+            "file": "packages/runtime-core/src/components/Suspense.ts",
+            "line": 128,
+            "severity": "major",
+            "body": "`parentSuspense.pendingBranch` can be `null` or `undefined`. The code passes it directly to `isSameVNodeType` which expects a VNode. This can cause a crash when the parent suspense has no pending branch. A null check should be added before calling `isSameVNodeType`."
+          },
+          {
+            "file": "packages/runtime-core/src/components/Suspense.ts",
+            "line": 124,
+            "severity": "minor",
+            "body": "`owner.suspenseId` may be `undefined` if the owner component has not yet been assigned an ID. Comparing it to `parentSuspense.pendingId` without a null check could lead to incorrect logic. Ensure that `owner.suspenseId` is defined before the comparison."
+          }
+        ],
+        "usage": {
+          "inputTokens": 3477,
+          "outputTokens": 373,
+          "costUsd": 0.00037267499999999994,
+          "latencyMs": 1461,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment identifies a potential null reference error for `n2.ssContent`, which is a different issue from the logic bug where the `!suspense.isInFallback` guard incorrectly allows root replacements to be applied when a nested boundary is showing its fallback."
+          },
+          {
+            "index": 1,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment identifies a potential null reference error for `parentSuspense.pendingBranch`, which is a different issue from the logic bug involving the incorrect condition `!suspense.isInFallback`."
+          },
+          {
+            "index": 2,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment identifies a potential undefined value for `owner.suspenseId`, which is a different issue from the logic bug involving the incorrect condition `!suspense.isInFallback`."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1561,
+          "outputTokens": 184,
+          "costUsd": 0.0019848,
+          "latencyMs": 1159,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vuejs/core#15430",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/runtime-core/src/components/Suspense.ts",
+            "line": 763,
+            "severity": "critical",
+            "body": "`hydratedEl` is referenced but never defined in this scope, which will throw a ReferenceError during runtime. It should likely refer to `vnode.el` or another existing variable that holds the hydrated element."
+          }
+        ],
+        "usage": {
+          "inputTokens": 6767,
+          "outputTokens": 515,
+          "costUsd": 0.0006620249999999999,
+          "latencyMs": 2461,
+          "model": "openai/gpt-oss-20b",
+          "calls": 3
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vuejs/core#12255",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/runtime-core/src/hydration.ts",
+            "line": 720,
+            "severity": "major",
+            "body": "The code updates `parentComponent.vnode.el` and calls `updateHOCHostEl(parentComponent, vnode.el)` unconditionally when a mismatch occurs. However, `vnode.el` may be `null` or `undefined` during a mismatch (e.g., when the component is being removed or replaced). Passing a falsy value to `updateHOCHostEl` could lead to runtime errors or incorrect DOM updates. It would be safer to guard against a missing `el` before assigning and updating the host element, e.g., `if (vnode.el) { parentComponent.vnode.el = vnode.el; updateHOCHostEl(parentComponent, vnode.el); }`. This ensures the component vnode's `el` is only updated when a valid element exists."
+          }
+        ],
+        "usage": {
+          "inputTokens": 1041,
+          "outputTokens": 435,
+          "costUsd": 0.000208575,
+          "latencyMs": 862,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment suggests guarding against `vnode.el` being null/undefined to prevent runtime errors. The known bug is a logic error where the parent's `el` is updated unconditionally even when it does not correspond to the replaced node (i.e., the parent's el is a different node than the one being replaced). The fix checks `parentComponent.vnode.el === node`, not whether `vnode.el` is truthy. The comment identifies a different potential issue (null safety) rather than the specific logic flaw of incorrect reference assignment."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1512,
+          "outputTokens": 133,
+          "costUsd": 0.0017416,
+          "latencyMs": 989,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vuejs/core#15627",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 871,
+          "outputTokens": 100,
+          "costUsd": 0.000095325,
+          "latencyMs": 827,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vuejs/core#11639",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 878,
+          "outputTokens": 727,
+          "costUsd": 0.00028395,
+          "latencyMs": 1162,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vuejs/core#10734",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 3152,
+          "outputTokens": 281,
+          "costUsd": 0.0003207,
+          "latencyMs": 1154,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vuejs/core#14902",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 870,
+          "outputTokens": 280,
+          "costUsd": 0.00014925,
+          "latencyMs": 670,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vuejs/core#12308",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 1804,
+          "outputTokens": 174,
+          "costUsd": 0.00018749999999999998,
+          "latencyMs": 1534,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vuejs/core#14348",
+      "kind": "clean",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 987,
+          "outputTokens": 320,
+          "costUsd": 0.00017002499999999997,
+          "latencyMs": 550,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vuejs/core#14308",
+      "kind": "clean",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 1862,
+          "outputTokens": 332,
+          "costUsd": 0.00023925,
+          "latencyMs": 1032,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "sveltejs/svelte#12604",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 614,
+          "outputTokens": 310,
+          "costUsd": 0.00013905000000000002,
+          "latencyMs": 738,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "sveltejs/svelte#10916",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/svelte/src/internal/client/dom/elements/attributes.js",
+            "line": 58,
+            "severity": "critical",
+            "body": "The comparison logic in `attr` is incorrect: `if (attributes[attribute] === (attributes[attribute] = value)) return;` assigns `value` to `attributes[attribute]` before comparing, so the condition is always true and the function returns immediately, preventing any attribute updates. It should compare the old value before assignment, e.g. `const old = attributes[attribute]; if (old === value) return; attributes[attribute] = value;`."
+          },
+          {
+            "file": "packages/svelte/src/internal/client/dom/operations.js",
+            "line": 71,
+            "severity": "major",
+            "body": "`element_prototype.__attributes` is initialized to `null`. Subsequent code expects it to be an object (e.g., `element.__attributes ??= {}` in `attr`). This mismatch can lead to runtime errors when accessing or assigning properties on `__attributes`. It should be initialized to `{}` instead of `null`."
+          }
+        ],
+        "usage": {
+          "inputTokens": 2486,
+          "outputTokens": 565,
+          "costUsd": 0.00035595,
+          "latencyMs": 1615,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment identifies a different defect: it claims the comparison logic `attributes[attribute] === (attributes[attribute] = value)` is always true and prevents updates, which is incorrect (it correctly returns only when the value hasn't changed). The known bug is about redundant attribute writes during hydration for primitive values that were already rendered as strings on the server, not about the comparison logic being broken."
+          },
+          {
+            "index": 1,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1626,
+          "outputTokens": 102,
+          "costUsd": 0.0017088000000000001,
+          "latencyMs": 524,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "sveltejs/svelte#18944",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/svelte/src/internal/client/proxy.js",
+            "line": 242,
+            "severity": "critical",
+            "body": "The original logic used `active_effect` to determine whether a property should be considered writable when tracking derived signals. Replacing it with `active_reaction` changes the semantics: `active_reaction` is used for reactions, not effects, and may be null in contexts where an effect is active. This can cause missing or incorrect dependency tracking for derived signals that rely on property existence checks, leading to stale values or missed updates. The import of `active_effect` was removed, but the code still needs to reference it. The correct implementation should keep using `active_effect` for this check."
+          }
+        ],
+        "usage": {
+          "inputTokens": 979,
+          "outputTokens": 236,
+          "costUsd": 0.000144225,
+          "latencyMs": 1695,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": true,
+        "caughtAnyLocation": true,
+        "matchedIndices": [
+          0
+        ],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": true,
+            "reason": "The comment correctly identifies that the logic fails to account for `active_effect` when `active_reaction` is null, leading to missed dependency tracking for property existence checks. This aligns with the known bug where the proxy getter ignored the case where an effect was active but no reaction was, causing property-in checks to be missed."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1526,
+          "outputTokens": 88,
+          "costUsd": 0.0015727999999999998,
+          "latencyMs": 865,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "sveltejs/svelte#16333",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 2026,
+          "outputTokens": 800,
+          "costUsd": 0.00039195,
+          "latencyMs": 1708,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "sveltejs/svelte#17105",
+      "kind": "buggy",
+      "category": "state-mutation",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/svelte/src/internal/client/reactivity/effects.js",
+            "line": 55,
+            "severity": "critical",
+            "body": "The code references the removed flag `UNOWNED` in the condition `if (active_reaction !== null && (active_reaction.f & UNOWNED) !== 0 && active_effect === null)`. Since `UNOWNED` has been deleted from `#client/constants`, this will throw a ReferenceError at runtime. The check should be removed or replaced with the appropriate flag (e.g., `CONNECTED`)."
+          }
+        ],
+        "usage": {
+          "inputTokens": 7084,
+          "outputTokens": 1046,
+          "costUsd": 0.0008451,
+          "latencyMs": 2943,
+          "model": "openai/gpt-oss-20b",
+          "calls": 2
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "sveltejs/svelte#11879",
+      "kind": "buggy",
+      "category": "state-mutation",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 2092,
+          "outputTokens": 129,
+          "costUsd": 0.00019559999999999998,
+          "latencyMs": 1076,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "sveltejs/svelte#15460",
+      "kind": "buggy",
+      "category": "async-concurrency",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 2068,
+          "outputTokens": 1063,
+          "costUsd": 0.000474,
+          "latencyMs": 2295,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "sveltejs/svelte#12285",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/svelte/src/reactivity/url-search-params.js",
+            "line": 59,
+            "severity": "critical",
+            "body": "The `delete` method incorrectly accepts a second `value` argument and calls `super.delete(name, value)`. `URLSearchParams.delete` only takes a single key argument. This causes the method to delete all values for the key regardless of the provided value and prevents the `has_value` check from working. The method should be defined as `delete(name)` and should use `super.has(name)` to determine if the key existed before deletion, then call `super.delete(name)` and update the URL and version accordingly."
+          }
+        ],
+        "usage": {
+          "inputTokens": 6752,
+          "outputTokens": 1382,
+          "costUsd": 0.0009209999999999999,
+          "latencyMs": 3360,
+          "model": "openai/gpt-oss-20b",
+          "calls": 2
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment identifies a bug in the `delete` method regarding incorrect argument handling and logic for deleting specific values. The known bug is in the `#update_url` method, where calling `this.toString()` creates an unintended reactive dependency. These are two distinct defects with different root causes and locations."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 998,
+          "outputTokens": 82,
+          "costUsd": 0.0011264,
+          "latencyMs": 414,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "sveltejs/svelte#17575",
+      "kind": "clean",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 1658,
+          "outputTokens": 329,
+          "costUsd": 0.00022305,
+          "latencyMs": 1183,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "sveltejs/svelte#17088",
+      "kind": "clean",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/svelte/src/compiler/phases/1-parse/read/options.js",
+            "line": 136,
+            "severity": "critical",
+            "body": "The parser now stores the raw AST ObjectExpression for `shadow` instead of a plain object. Later code (in transform-client.js) expects `ce.shadow` to be either the string \"open\"/\"none\" or a plain ShadowRootInit object. Passing the AST node to `attachShadow` will throw a runtime error because it is not a valid options object. The code should evaluate the ObjectExpression into a plain object before passing it to `attachShadow`."
+          },
+          {
+            "file": "packages/svelte/src/compiler/phases/3-transform/client/transform-client.js",
+            "line": 644,
+            "severity": "critical",
+            "body": "`shadow_root_init` is set to `ce.shadow` when `ce.shadow` is an ObjectExpression. However, `ce.shadow` is an ESTree node, not a runtime object. This will cause `$.create_custom_element` to receive an AST node instead of a ShadowRootInit, leading to a crash when `attachShadow` is called."
+          },
+          {
+            "file": "packages/svelte/src/internal/client/dom/elements/custom-element.js",
+            "line": 44,
+            "severity": "critical",
+            "body": "The constructor signature changed to accept `shadow_root_init`, but the implementation still checks `if (shadow_root_init)` and calls `attachShadow(shadow_root_init)`. If `shadow_root_init` is an AST node (as currently passed), `attachShadow` will throw. The code must ensure that `shadow_root_init` is a plain object before calling `attachShadow`."
+          },
+          {
+            "file": "packages/svelte/src/internal/client/dom/elements/custom-element.js",
+            "line": 51,
+            "severity": "major",
+            "body": "When a closed shadow root is created, the code stores it in `$$shadowRoot` but never exposes it via the standard `shadowRoot` property. While this is intentional for closed roots, the rest of the library (e.g., `create_custom_element`) still uses `this.$$shadowRoot || this` as the target. This means that for closed roots, the component will render into the custom element itself, which is correct, but the `shadowRoot` property remains `null`. The test `closed-shadow-dom` expects `el.shadowRoot` to be `null`, which is correct, but the implementation relies on the side‑effect of `attachShadow` setting `this.shadowRoot` only for open roots. This is fragile and could break if the browser changes the behavior of `attachShadow` for closed roots. A more robust approach would be to always set `this.shadowRoot` to the result of `attachShadow` and then, if the mode is closed, delete the property or keep a separate reference."
+          }
+        ],
+        "usage": {
+          "inputTokens": 4761,
+          "outputTokens": 985,
+          "costUsd": 0.0006525750000000001,
+          "latencyMs": 2106,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vitest-dev/vitest#5135",
+      "kind": "buggy",
+      "category": "state-mutation",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 857,
+          "outputTokens": 1028,
+          "costUsd": 0.00037267499999999994,
+          "latencyMs": 1971,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    }
+  ],
+  "pending": [
+    "vitest-dev/vitest#9745",
+    "vitest-dev/vitest#10656",
+    "vitest-dev/vitest#9132",
+    "vitest-dev/vitest#10170",
+    "vitest-dev/vitest#11594",
+    "vitest-dev/vitest#6070",
+    "vitest-dev/vitest#11623",
+    "vitest-dev/vitest#9581",
+    "vitest-dev/vitest#9533",
+    "TanStack/query#11679",
+    "TanStack/query#11036",
+    "TanStack/query#8496",
+    "TanStack/query#9338",
+    "TanStack/query#11166",
+    "TanStack/query#8049",
+    "TanStack/query#7312",
+    "TanStack/query#6982",
+    "TanStack/query#9914",
+    "TanStack/query#9866",
+    "honojs/hono#2350",
+    "honojs/hono#5222",
+    "honojs/hono#1215",
+    "honojs/hono#5121",
+    "honojs/hono#2314",
+    "honojs/hono#2684",
+    "honojs/hono#4078",
+    "honojs/hono#1015",
+    "honojs/hono#4626",
+    "honojs/hono#4559",
+    "colinhacks/zod#6705",
+    "colinhacks/zod#6443",
+    "colinhacks/zod#6652",
+    "colinhacks/zod#6386",
+    "colinhacks/zod#6347",
+    "colinhacks/zod#6371",
+    "colinhacks/zod#5793",
+    "colinhacks/zod#4602",
+    "colinhacks/zod#5610",
+    "colinhacks/zod#5599",
+    "axios/axios#6518",
+    "axios/axios#10861",
+    "axios/axios#10957",
+    "axios/axios#11087",
+    "axios/axios#11138",
+    "axios/axios#10660",
+    "axios/axios#10795",
+    "axios/axios#10788",
+    "axios/axios#6265",
+    "axios/axios#7202",
+    "date-fns/date-fns#2720",
+    "date-fns/date-fns#2382",
+    "date-fns/date-fns#1105",
+    "date-fns/date-fns#1914",
+    "date-fns/date-fns#1765",
+    "date-fns/date-fns#1690",
+    "date-fns/date-fns#962",
+    "pmndrs/zustand#3206",
+    "pmndrs/zustand#2678",
+    "pmndrs/zustand#1144",
+    "pmndrs/zustand#1789",
+    "pmndrs/zustand#1486",
+    "pmndrs/zustand#1460",
+    "pmndrs/zustand#1463",
+    "pmndrs/zustand#724",
+    "pmndrs/zustand#3032",
+    "pmndrs/zustand#2277",
+    "immerjs/immer#1255",
+    "immerjs/immer#912",
+    "immerjs/immer#1014",
+    "immerjs/immer#771",
+    "immerjs/immer#1164",
+    "sindresorhus/ky#736",
+    "sindresorhus/ky#751",
+    "sindresorhus/ky#760",
+    "sindresorhus/ky#540",
+    "sindresorhus/ky#601",
+    "sindresorhus/ky#466",
+    "sindresorhus/ky#632",
+    "sindresorhus/ky#536",
+    "unjs/h3#1137",
+    "unjs/h3#1212",
+    "unjs/h3#1097",
+    "unjs/h3#480",
+    "unjs/h3#1509",
+    "unjs/h3#315",
+    "unjs/h3#847",
+    "unjs/h3#1008",
+    "unjs/h3#1242",
+    "unjs/h3#1234"
+  ],
+  "notes": [
+    "reviewer daily quota exhausted at vitest-dev/vitest#9745: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 197530, Requested 3652. Please try again in"
+  ]
+}

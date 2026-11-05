@@ -1,0 +1,494 @@
+{
+  "runId": "2026-11-05T07-52-47-066Z_baseline-v2_groq_openai_gpt-oss-120b",
+  "reviewerId": "baseline-v2:groq:openai/gpt-oss-120b",
+  "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+  "startedAt": "2026-11-05T07:52:47.066Z",
+  "finishedAt": "2026-11-05T07:54:48.190Z",
+  "datasetVersion": 1,
+  "caseCount": 110,
+  "results": [
+    {
+      "caseId": "vuejs/core#16109",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/runtime-core/src/components/Suspense.ts",
+            "line": 130,
+            "severity": "minor",
+            "body": "The code accesses `n2.ssContent!` which is not a standard property on a VNode in Vue's Suspense implementation. This may be undefined, causing a runtime error when `isSameVNodeType` is called. It likely should reference the appropriate content vnode property (e.g., `n2.suspense?.activeBranch` or similar)."
+          }
+        ],
+        "usage": {
+          "inputTokens": 3477,
+          "outputTokens": 348,
+          "costUsd": 0.0007303499999999999,
+          "latencyMs": 1704,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment identifies a potential runtime error due to accessing a non-standard property `n2.ssContent!`, which is a different issue from the known bug. The known bug is a logic error where the guard `!suspense.isInFallback` is incorrectly placed, causing root replacements to be applied when they should be skipped. The comment does not address the logical inversion or the specific behavior of mounting new content into a retained page."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1402,
+          "outputTokens": 110,
+          "costUsd": 0.0015616000000000002,
+          "latencyMs": 897,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vuejs/core#15430",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/runtime-core/src/hydration.ts",
+            "line": 319,
+            "severity": "major",
+            "body": "The added condition accesses `vnode.component!.asyncDep` without guaranteeing that `vnode.component` is defined. In cases where `vnode.component` is null, this will throw a runtime error. The check should safely guard against a null component, e.g., `vnode.component && vnode.component.asyncDep`."
+          }
+        ],
+        "usage": {
+          "inputTokens": 6767,
+          "outputTokens": 399,
+          "costUsd": 0.0012544499999999998,
+          "latencyMs": 3525,
+          "model": "openai/gpt-oss-120b",
+          "calls": 3
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vuejs/core#12255",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/runtime-core/src/hydration.ts",
+            "line": 721,
+            "severity": "major",
+            "body": "The added code unconditionally sets `parentComponent.vnode.el = vnode.el` even when `vnode.el` may be null (e.g., during a mismatch before the new element is created). Overwriting the parent component's vnode.el with null can break subsequent DOM operations that expect a valid element reference."
+          }
+        ],
+        "usage": {
+          "inputTokens": 1041,
+          "outputTokens": 302,
+          "costUsd": 0.00033735000000000004,
+          "latencyMs": 1559,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment identifies a potential null reference issue (vnode.el being null), whereas the known bug is a logic error where the parent's el is updated unconditionally even when it does not correspond to the replaced node, leading to an incorrect (but non-null) element reference. The root causes are different."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1417,
+          "outputTokens": 84,
+          "costUsd": 0.0014696000000000002,
+          "latencyMs": 562,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vuejs/core#15627",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 871,
+          "outputTokens": 274,
+          "costUsd": 0.00029505,
+          "latencyMs": 1068,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vuejs/core#11639",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/runtime-core/src/hydrationStrategies.ts",
+            "line": 34,
+            "severity": "minor",
+            "body": "The visibility check uses `top > 0 && top < innerHeight` (and similar for left/right). This excludes elements that are exactly at the viewport edge (e.g., top===0) which are still visible. Using `>= 0` would be more correct."
+          },
+          {
+            "file": "packages/runtime-core/src/hydrationStrategies.ts",
+            "line": 34,
+            "severity": "minor",
+            "body": "The visibility logic also fails for elements larger than the viewport: if an element spans the whole viewport, both `top` and `bottom` may be outside the 0‑innerHeight range, causing the function to incorrectly report it as not visible. Consider checking for any overlap rather than both coordinates being within the range."
+          }
+        ],
+        "usage": {
+          "inputTokens": 878,
+          "outputTokens": 505,
+          "costUsd": 0.0004347,
+          "latencyMs": 1565,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment identifies a boundary condition bug in the `elementIsVisibleInViewport` helper (off-by-one at viewport edges). The known bug is a logic flaw in the `hydrateOnVisible` strategy where it fails to observe children of `display: contents` elements, causing the observer to never trigger for nested visible content. These are different root causes and behaviors."
+          },
+          {
+            "index": 1,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment identifies a bug in the `elementIsVisibleInViewport` helper regarding elements larger than the viewport. The known bug is about the `hydrateOnVisible` strategy not observing children of `display: contents` elements. These are different defects."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1493,
+          "outputTokens": 162,
+          "costUsd": 0.0018424000000000001,
+          "latencyMs": 949,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vuejs/core#10734",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 3152,
+          "outputTokens": 363,
+          "costUsd": 0.0006905999999999999,
+          "latencyMs": 1462,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vuejs/core#14902",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/reactivity/src/watch.ts",
+            "line": 223,
+            "severity": "critical",
+            "body": "The once wrapper calls the original callback twice: first with `_cb(...args)` and then again when assigning `const res = _cb(...args)`. This duplicate invocation can cause side effects, double execution, and incorrect behavior, especially for async callbacks. The first call should be removed so the callback is invoked only once and its result returned."
+          }
+        ],
+        "usage": {
+          "inputTokens": 870,
+          "outputTokens": 295,
+          "costUsd": 0.0003075,
+          "latencyMs": 975,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment claims the callback is invoked twice (duplicate invocation), which is factually incorrect based on the provided code snippet (`const res = _cb(...args)` is a single call). The known bug is that `watchHandle()` is not called if the callback throws, not that the callback is called twice. Therefore, the comment identifies a different (and non-existent) defect."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 797,
+          "outputTokens": 99,
+          "costUsd": 0.0010336,
+          "latencyMs": 449,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vuejs/core#12308",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 1804,
+          "outputTokens": 503,
+          "costUsd": 0.0005723999999999999,
+          "latencyMs": 1814,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vuejs/core#14348",
+      "kind": "clean",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 987,
+          "outputTokens": 376,
+          "costUsd": 0.00037365,
+          "latencyMs": 999,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vuejs/core#14308",
+      "kind": "clean",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 1862,
+          "outputTokens": 129,
+          "costUsd": 0.0003567,
+          "latencyMs": 962,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "sveltejs/svelte#12604",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/svelte/src/internal/client/dom/hydration.js",
+            "line": 4,
+            "severity": "major",
+            "body": "The code imports HYDRATION_ERROR from '../../../constants.js', but that constant does not exist in the Svelte codebase. Importing a non‑existent export will cause a runtime error and break hydration."
+          }
+        ],
+        "usage": {
+          "inputTokens": 614,
+          "outputTokens": 241,
+          "costUsd": 0.00023669999999999998,
+          "latencyMs": 695,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment claims that HYDRATION_ERROR is a non-existent export causing a runtime error. This is factually incorrect (HYDRATION_ERROR is a valid constant used in the codebase) and does not identify the actual bug, which is the failure to handle HYDRATION_START_FAILED in the skip_nodes logic."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1443,
+          "outputTokens": 86,
+          "costUsd": 0.0014984,
+          "latencyMs": 828,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    }
+  ],
+  "pending": [
+    "sveltejs/svelte#10916",
+    "sveltejs/svelte#18944",
+    "sveltejs/svelte#16333",
+    "sveltejs/svelte#17105",
+    "sveltejs/svelte#11879",
+    "sveltejs/svelte#15460",
+    "sveltejs/svelte#12285",
+    "sveltejs/svelte#17575",
+    "sveltejs/svelte#17088",
+    "vitest-dev/vitest#5135",
+    "vitest-dev/vitest#9745",
+    "vitest-dev/vitest#10656",
+    "vitest-dev/vitest#9132",
+    "vitest-dev/vitest#10170",
+    "vitest-dev/vitest#11594",
+    "vitest-dev/vitest#6070",
+    "vitest-dev/vitest#11623",
+    "vitest-dev/vitest#9581",
+    "vitest-dev/vitest#9533",
+    "TanStack/query#11679",
+    "TanStack/query#11036",
+    "TanStack/query#8496",
+    "TanStack/query#9338",
+    "TanStack/query#11166",
+    "TanStack/query#8049",
+    "TanStack/query#7312",
+    "TanStack/query#6982",
+    "TanStack/query#9914",
+    "TanStack/query#9866",
+    "honojs/hono#2350",
+    "honojs/hono#5222",
+    "honojs/hono#1215",
+    "honojs/hono#5121",
+    "honojs/hono#2314",
+    "honojs/hono#2684",
+    "honojs/hono#4078",
+    "honojs/hono#1015",
+    "honojs/hono#4626",
+    "honojs/hono#4559",
+    "colinhacks/zod#6705",
+    "colinhacks/zod#6443",
+    "colinhacks/zod#6652",
+    "colinhacks/zod#6386",
+    "colinhacks/zod#6347",
+    "colinhacks/zod#6371",
+    "colinhacks/zod#5793",
+    "colinhacks/zod#4602",
+    "colinhacks/zod#5610",
+    "colinhacks/zod#5599",
+    "axios/axios#6518",
+    "axios/axios#10861",
+    "axios/axios#10957",
+    "axios/axios#11087",
+    "axios/axios#11138",
+    "axios/axios#10660",
+    "axios/axios#10795",
+    "axios/axios#10788",
+    "axios/axios#6265",
+    "axios/axios#7202",
+    "date-fns/date-fns#2720",
+    "date-fns/date-fns#2382",
+    "date-fns/date-fns#1105",
+    "date-fns/date-fns#1914",
+    "date-fns/date-fns#1765",
+    "date-fns/date-fns#1690",
+    "date-fns/date-fns#962",
+    "pmndrs/zustand#3206",
+    "pmndrs/zustand#2678",
+    "pmndrs/zustand#1144",
+    "pmndrs/zustand#1789",
+    "pmndrs/zustand#1486",
+    "pmndrs/zustand#1460",
+    "pmndrs/zustand#1463",
+    "pmndrs/zustand#724",
+    "pmndrs/zustand#3032",
+    "pmndrs/zustand#2277",
+    "immerjs/immer#1255",
+    "immerjs/immer#912",
+    "immerjs/immer#1014",
+    "immerjs/immer#771",
+    "immerjs/immer#1164",
+    "sindresorhus/ky#736",
+    "sindresorhus/ky#751",
+    "sindresorhus/ky#760",
+    "sindresorhus/ky#540",
+    "sindresorhus/ky#601",
+    "sindresorhus/ky#466",
+    "sindresorhus/ky#632",
+    "sindresorhus/ky#536",
+    "unjs/h3#1137",
+    "unjs/h3#1212",
+    "unjs/h3#1097",
+    "unjs/h3#480",
+    "unjs/h3#1509",
+    "unjs/h3#315",
+    "unjs/h3#847",
+    "unjs/h3#1008",
+    "unjs/h3#1242",
+    "unjs/h3#1234"
+  ],
+  "notes": [
+    "reviewer daily quota exhausted at sveltejs/svelte#10916: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198347, Requested 2621. Please try again in"
+  ]
+}
