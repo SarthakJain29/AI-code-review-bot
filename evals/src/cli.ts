@@ -29,9 +29,19 @@ function loadDataset(path = DATASET_PATH): Dataset {
   return DatasetSchema.parse(JSON.parse(readFileSync(path, 'utf8')));
 }
 
-function makeJudge(kind: string, cache: DiskCache, tolerance: number): { judge: Judge; note?: string } {
+/** Default judge: Qwen on Groq, a different model family from both gpt-oss baselines (no self-grading). */
+export const DEFAULT_JUDGE = { provider: 'groq' as ProviderName, model: 'qwen/qwen3.8-27b' };
+
+function makeJudge(
+  kind: string,
+  cache: DiskCache,
+  tolerance: number,
+  over: { provider?: string; model?: string } = {},
+): { judge: Judge; note?: string } {
   if (kind === 'keyword') return { judge: new KeywordJudge(0.25, tolerance) };
-  const llm = providerFromEnv((process.env.EVALS_JUDGE_PROVIDER as ProviderName) ?? 'groq', process.env.EVALS_JUDGE_MODEL);
+  const provider = (over.provider ?? process.env.EVALS_JUDGE_PROVIDER ?? DEFAULT_JUDGE.provider) as ProviderName;
+  const model = over.model ?? process.env.EVALS_JUDGE_MODEL ?? (provider === DEFAULT_JUDGE.provider ? DEFAULT_JUDGE.model : undefined);
+  const llm = providerFromEnv(provider, model);
   if (!llm) return { judge: new KeywordJudge(0.25, tolerance), note: 'No LLM key for the judge: fell back to keyword judge (much less accurate).' };
   return { judge: new LlmJudge(llm, cache, tolerance) };
 }
@@ -105,6 +115,9 @@ program
   .option('--provider <name>', 'LLM provider for the baseline: gemini | groq')
   .option('--model <id>', 'model id override')
   .option('--judge <kind>', 'llm | keyword', 'llm')
+  .option('--judge-provider <name>', 'judge LLM provider: groq | gemini')
+  .option('--judge-model <id>', 'judge model id')
+  .option('--skip-judge', 'only produce and cache reviews; judge in a later run', false)
   .option('--tolerance <n>', 'line tolerance for location match', '5')
   .option('--limit <n>', 'evaluate only n cases (stratified, ~20% clean)')
   .option('--ids <list>', 'comma-separated case ids')
@@ -116,7 +129,10 @@ program
     const ds = loadDataset();
     const cache = new DiskCache(join(CACHE_DIR, 'reviews'));
     const { reviewer, fallbackNote } = createReviewer(o.reviewer as ReviewerName, { provider: o.provider, model: o.model });
-    const { judge, note: judgeNote } = makeJudge(o.judge, new DiskCache(join(CACHE_DIR, 'judge')), Number(o.tolerance));
+    const { judge, note: judgeNote } = makeJudge(o.judge, new DiskCache(join(CACHE_DIR, 'judge')), Number(o.tolerance), {
+      provider: o.judgeProvider,
+      model: o.judgeModel,
+    });
     const cases = selectCases(ds.cases, { limit: o.limit ? Number(o.limit) : undefined, ids: o.ids ? String(o.ids).split(',') : undefined, kind: o.kind });
     const notes = [fallbackNote, judgeNote].filter((x): x is string => Boolean(x));
     for (const n of notes) console.warn(`! ${n}`);
@@ -129,6 +145,7 @@ program
       datasetVersion: ds.version,
       concurrency: Number(o.concurrency),
       noCache: o.cache === false,
+      skipJudge: Boolean(o.skipJudge),
       notes,
       onProgress: (d, t, r) =>
         console.log(`  [${d}/${t}] ${r.caseId} ${r.kind} comments=${r.review.comments.length}${r.verdict ? ` caught=${r.verdict.caught}` : ''}${r.cached ? ' (cached)' : ''}${r.review.error ? ` ERROR ${r.review.error.slice(0, 100)}` : ''}`),
@@ -138,6 +155,7 @@ program
     writeFileSync(out, JSON.stringify(run, null, 2) + '\n');
     const m = computeMetrics(run.results);
     console.log(`\nCatch rate ${m.catchRate.num}/${m.catchRate.den} · comments/clean PR ${m.noise.commentsPerCleanPr?.toFixed(2) ?? '–'} · cost $${m.cost.totalUsd.toFixed(4)} · p50 ${m.latencyMs.p50 ?? '–'}ms`);
+    if (run.pending?.length) console.log(`! ${run.pending.length} cases pending (daily quota). Re-run the same command later to resume; finished reviews are cached.`);
     console.log(`Saved ${out}`);
   });
 
@@ -146,11 +164,13 @@ judgeCmd
   .command('validate')
   .description('compare the judge with hand labels in dataset/judge-labels.json')
   .option('--judge <kind>', 'llm | keyword', 'llm')
+  .option('--judge-provider <name>', 'judge LLM provider: groq | gemini')
+  .option('--judge-model <id>', 'judge model id')
   .option('--labels <path>', 'labels file', LABELS_PATH)
   .option('--out <path>', 'output file', join(RESULTS_DIR, 'judge-validation.json'))
   .action(async (o) => {
     const ds = loadDataset();
-    const { judge, note } = makeJudge(o.judge, new DiskCache(join(CACHE_DIR, 'judge')), 5);
+    const { judge, note } = makeJudge(o.judge, new DiskCache(join(CACHE_DIR, 'judge')), 5, { provider: o.judgeProvider, model: o.judgeModel });
     if (note) console.warn(`! ${note}`);
     const res = await validateJudge(judge, loadLabels(resolve(o.labels)), ds.cases);
     mkdirSync(RESULTS_DIR, { recursive: true });

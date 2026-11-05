@@ -88,8 +88,11 @@ export interface Usage {
   outputTokens: number;
   /** Estimated list-price cost in USD (free tiers are $0 in practice). */
   costUsd: number;
+  /** Time spent in successful provider calls (excludes retry/rate-limit waits). */
   latencyMs: number;
   model: string;
+  /** Number of LLM calls (chunked reviews make several). */
+  calls?: number;
 }
 
 export interface ReviewResult {
@@ -97,6 +100,8 @@ export interface ReviewResult {
   usage: Usage;
   /** Set if the reviewer failed; the case then counts as "no comments" and is flagged. */
   error?: string;
+  /** The failure was a daily quota; the runner stops and the case can be resumed later. */
+  quotaExhausted?: boolean;
 }
 
 export interface ReviewInput {
@@ -151,5 +156,7 @@ export interface RunResult {
   datasetVersion: number;
   caseCount: number;
   results: CaseResult[];
+  /** Cases not yet evaluated (stopped on a daily quota). Re-run to resume; finished reviews come from the cache. */
+  pending?: string[];
   notes: string[];
 }

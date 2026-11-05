@@ -15,8 +15,10 @@ export const PRICES: Record<string, Price> = {
   'gemini-3.5-flash': { inputPerM: 0.3, outputPerM: 2.5, assumed: true },
   'gemini-3.1-flash-lite': { inputPerM: 0.1, outputPerM: 0.4, assumed: true },
   'gemini-2.5-flash': { inputPerM: 0.3, outputPerM: 2.5 },
-  'openai/gpt-oss-120b': { inputPerM: 0.15, outputPerM: 0.6, assumed: true },
-  'openai/gpt-oss-20b': { inputPerM: 0.075, outputPerM: 0.3, assumed: true },
+  // Groq prices confirmed on https://console.groq.com/docs/models (2026-11-05).
+  'openai/gpt-oss-120b': { inputPerM: 0.15, outputPerM: 0.6 },
+  'openai/gpt-oss-20b': { inputPerM: 0.075, outputPerM: 0.3 },
+  'qwen/qwen3.8-27b': { inputPerM: 0.8, outputPerM: 4.0 },
   mock: { inputPerM: 0, outputPerM: 0 },
 };
 

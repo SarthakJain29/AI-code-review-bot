@@ -35,9 +35,54 @@ export class LlmError extends Error {
     readonly retryable = false,
     /** Server-requested wait (Retry-After), if any. */
     readonly retryAfterMs?: number,
+    /** Daily quota (RPD/TPD) exhausted: retrying today is pointless, stop the run and resume later. */
+    readonly quotaExhausted = false,
   ) {
     super(message);
   }
+}
+
+/** True for provider messages that mean a per-day quota is used up (Groq TPD/RPD, Gemini daily free-tier quota). */
+export function isDailyQuotaMessage(text: string): boolean {
+  return /per day|\bTPD\b|\bRPD\b|PerDay|requests per day|tokens per day/i.test(text);
+}
+
+/**
+ * Client-side tokens-per-minute throttle (sliding 60 s window). Groq's free tier counts
+ * prompt tokens + max_completion_tokens against TPM, so we reserve the same amount before
+ * sending. This avoids most 429s instead of reacting to them.
+ */
+export class TpmLimiter {
+  private events: { at: number; tokens: number }[] = [];
+  constructor(
+    readonly tokensPerMinute: number,
+    private readonly now: () => number = Date.now,
+    private readonly sleepFn: (ms: number) => Promise<void> = (ms) => new Promise((r) => setTimeout(r, ms)),
+  ) {}
+
+  /** Wait until `tokens` fit in the window, then record them. Returns ms waited. */
+  async acquire(tokens: number): Promise<number> {
+    const want = Math.min(tokens, this.tokensPerMinute);
+    let waited = 0;
+    for (;;) {
+      const t = this.now();
+      this.events = this.events.filter((e) => t - e.at < 60_000);
+      const used = this.events.reduce((a, e) => a + e.tokens, 0);
+      if (used + want <= this.tokensPerMinute) {
+        this.events.push({ at: t, tokens: want });
+        return waited;
+      }
+      const oldest = this.events[0]!;
+      const ms = Math.max(250, 60_000 - (t - oldest.at) + 50);
+      await this.sleepFn(ms);
+      waited += ms;
+    }
+  }
+}
+
+/** Rough token estimate (no tokenizer dependency): ~3.5 chars/token for code-heavy text. */
+export function estimateTokens(text: string): number {
+  return Math.ceil(text.length / 3.5);
 }
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -59,8 +104,10 @@ export async function withRetry<T>(fn: () => Promise<T>, attempts = 5, baseMs = 
   throw last;
 }
 
-async function postJson(url: string, body: unknown, headers: Record<string, string>): Promise<unknown> {
+/** Returns the parsed body and the duration of this (successful) HTTP call only. */
+async function postJson(url: string, body: unknown, headers: Record<string, string>): Promise<{ data: unknown; ms: number }> {
   let res: Response;
+  const started = Date.now();
   try {
     res = await fetch(url, {
       method: 'POST',
@@ -78,11 +125,12 @@ async function postJson(url: string, body: unknown, headers: Record<string, stri
     throw new LlmError(
       `HTTP ${res.status}: ${text.slice(0, 300)}`,
       res.status,
-      res.status === 429 || res.status >= 500,
+      (res.status === 429 && !isDailyQuotaMessage(text)) || res.status >= 500,
       Number.isFinite(ra) && ra > 0 ? ra * 1000 + 500 : undefined,
+      res.status === 429 && isDailyQuotaMessage(text),
     );
   }
-  return JSON.parse(text) as unknown;
+  return { data: JSON.parse(text) as unknown, ms: Date.now() - started };
 }
 
 export class GeminiProvider implements LlmProvider {
@@ -93,8 +141,7 @@ export class GeminiProvider implements LlmProvider {
   ) {}
 
   async complete(req: LlmRequest): Promise<LlmResponse> {
-    const started = Date.now();
-    const data = (await withRetry(() =>
+    const { data: raw, ms } = await withRetry(() =>
       postJson(
         `https://generativelanguage.googleapis.com/v1beta/models/${this.model}:generateContent`,
         {
@@ -109,7 +156,8 @@ export class GeminiProvider implements LlmProvider {
         },
         { 'x-goog-api-key': this.apiKey },
       ),
-    )) as {
+    );
+    const data = raw as {
       candidates?: { content?: { parts?: { text?: string; thought?: boolean }[] } }[];
       usageMetadata?: { promptTokenCount?: number; candidatesTokenCount?: number; thoughtsTokenCount?: number };
     };
@@ -125,11 +173,22 @@ export class GeminiProvider implements LlmProvider {
       text,
       inputTokens,
       outputTokens,
-      latencyMs: Date.now() - started,
+      latencyMs: ms,
       costUsd: estimateCostUsd(this.model, inputTokens, outputTokens),
       model: this.model,
     };
   }
+}
+
+const groqLimiters = new Map<string, TpmLimiter>();
+/** One limiter per model per process (Groq limits are per model). EVALS_GROQ_TPM overrides the 8k free-tier default. */
+function groqLimiter(model: string): TpmLimiter {
+  let l = groqLimiters.get(model);
+  if (!l) {
+    l = new TpmLimiter(Number(process.env.EVALS_GROQ_TPM ?? 8000) * 0.95);
+    groqLimiters.set(model, l);
+  }
+  return l;
 }
 
 export class GroqProvider implements LlmProvider {
@@ -140,15 +199,17 @@ export class GroqProvider implements LlmProvider {
   ) {}
 
   async complete(req: LlmRequest): Promise<LlmResponse> {
-    const started = Date.now();
-    const data = (await withRetry(() =>
-      postJson(
+    const maxOut = req.maxOutputTokens ?? 2048;
+    const reserve = estimateTokens(req.system + req.prompt) + maxOut + 50;
+    const { data: raw, ms } = await withRetry(async () => {
+      await groqLimiter(this.model).acquire(reserve);
+      return postJson(
         'https://api.groq.com/openai/v1/chat/completions',
         {
           model: this.model,
           temperature: req.temperature ?? 0,
           // Groq's TPM limiter reserves max_completion_tokens up front, so keep it tight.
-          max_completion_tokens: req.maxOutputTokens ?? 2048,
+          max_completion_tokens: maxOut,
           ...(this.model.startsWith('openai/gpt-oss') ? { reasoning_effort: 'low' } : {}),
           messages: [
             { role: 'system', content: req.system },
@@ -157,8 +218,9 @@ export class GroqProvider implements LlmProvider {
           ...(req.json ? { response_format: { type: 'json_object' } } : {}),
         },
         { authorization: `Bearer ${this.apiKey}` },
-      ),
-    )) as {
+      );
+    });
+    const data = raw as {
       choices?: { message?: { content?: string } }[];
       usage?: { prompt_tokens?: number; completion_tokens?: number };
     };
@@ -168,7 +230,7 @@ export class GroqProvider implements LlmProvider {
       text: data.choices?.[0]?.message?.content ?? '',
       inputTokens,
       outputTokens,
-      latencyMs: Date.now() - started,
+      latencyMs: ms,
       costUsd: estimateCostUsd(this.model, inputTokens, outputTokens),
       model: this.model,
     };
