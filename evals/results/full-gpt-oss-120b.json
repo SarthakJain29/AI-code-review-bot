@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-06T03-09-08-823Z_baseline-v2_groq_openai_gpt-oss-120b",
+  "runId": "2026-11-06T03-25-09-434Z_baseline-v2_groq_openai_gpt-oss-120b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-120b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-06T03:09:08.823Z",
-  "finishedAt": "2026-11-06T03:10:09.354Z",
+  "startedAt": "2026-11-06T03:25:09.434Z",
+  "finishedAt": "2026-11-06T03:26:09.989Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -1161,11 +1161,55 @@
           "calls": 3
         }
       },
+      "cached": true
+    },
+    {
+      "caseId": "TanStack/query#11679",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/query-core/src/retryer.ts",
+            "line": 176,
+            "severity": "major",
+            "body": "The `pause` function signature was changed to require a `canResume` callback, but existing calls to `pause()` without arguments (e.g., elsewhere in the codebase) will now receive `undefined` and cause a runtime error when `canResume()` is invoked. All call sites must be updated to pass an appropriate predicate or provide a default fallback inside `pause`."
+          }
+        ],
+        "usage": {
+          "inputTokens": 1465,
+          "outputTokens": 243,
+          "costUsd": 0.00036554999999999997,
+          "latencyMs": 1413,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment identifies a potential runtime error caused by a signature change to the `pause` function (missing argument), which is a different issue from the known logic bug where a cancelled retry incorrectly schedules a pause. The known bug is about the control flow logic (checking `isResolved` or `canContinue` before pausing), not about the function signature or argument passing."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1484,
+          "outputTokens": 97,
+          "costUsd": 0.0015752000000000001,
+          "latencyMs": 1677,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
       "cached": false
     }
   ],
   "pending": [
-    "TanStack/query#11679",
     "TanStack/query#11036",
     "TanStack/query#8496",
     "TanStack/query#9338",
@@ -1247,6 +1291,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at TanStack/query#11679: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198816, Requested 1690. Please try again in "
+    "reviewer daily quota exhausted at TanStack/query#11036: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198301, Requested 3124. Please try again in "
   ]
 }

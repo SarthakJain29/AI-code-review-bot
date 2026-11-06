@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-06T03-24-14-459Z_baseline-v2_groq_openai_gpt-oss-20b",
+  "runId": "2026-11-06T03-39-14-970Z_baseline-v2_groq_openai_gpt-oss-20b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-20b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-06T03:24:14.459Z",
-  "finishedAt": "2026-11-06T03:24:14.948Z",
+  "startedAt": "2026-11-06T03:39:14.970Z",
+  "finishedAt": "2026-11-06T03:40:15.508Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -2430,10 +2430,47 @@
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
       "cached": true
+    },
+    {
+      "caseId": "axios/axios#10660",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "lib/core/AxiosHeaders.js",
+            "line": 8,
+            "severity": "critical",
+            "body": "The file uses `utils.isArray` in `assertValidHeaderValue` and `normalizeValue`, but `utils` is never imported or defined in this module. This will cause a ReferenceError at runtime, breaking header validation and any code that uses AxiosHeaders."
+          }
+        ],
+        "usage": {
+          "inputTokens": 2605,
+          "outputTokens": 275,
+          "costUsd": 0.000277875,
+          "latencyMs": 1002,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": false
     }
   ],
   "pending": [
-    "axios/axios#10660",
     "axios/axios#10795",
     "axios/axios#10788",
     "axios/axios#6265",
@@ -2480,6 +2517,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at axios/axios#10660: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 197109, Requested 2940. Please try again in 21.1"
+    "reviewer daily quota exhausted at axios/axios#10795: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 197767, Requested 4517. Please try again in 16m2"
   ]
 }
