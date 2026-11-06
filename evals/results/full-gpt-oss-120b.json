@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-06T10-13-25-343Z_baseline-v2_groq_openai_gpt-oss-120b",
+  "runId": "2026-11-06T11-16-05-181Z_baseline-v2_groq_openai_gpt-oss-120b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-120b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-06T10:13:25.343Z",
-  "finishedAt": "2026-11-06T10:14:26.126Z",
+  "startedAt": "2026-11-06T11:16:05.181Z",
+  "finishedAt": "2026-11-06T11:17:05.761Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -1875,11 +1875,67 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
+      "cached": true
+    },
+    {
+      "caseId": "honojs/hono#1015",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "deno_dist/utils/url.ts",
+            "line": 169,
+            "severity": "major",
+            "body": "When the URL contains no percent-encoded characters or plus signs, the function returns undefined immediately (lines 169‑171). This breaks the expected behavior for URLs without encoded characters, as getQueryParam should return either the specific value (if a key is provided) or the full parameter map. Returning undefined discards all query parameters for such URLs."
+          },
+          {
+            "file": "src/utils/url.ts",
+            "line": 151,
+            "severity": "major",
+            "body": "The optimized path for unencoded keys assumes the URL contains a scheme and looks for the query start at position 8 (url.indexOf('? ',8)). This fails for raw query strings like 'name=hey' which lack a scheme. In such cases the function returns undefined instead of the expected value, breaking backward compatibility."
+          }
+        ],
+        "usage": {
+          "inputTokens": 7832,
+          "outputTokens": 884,
+          "costUsd": 0.0017052,
+          "latencyMs": 3380,
+          "model": "openai/gpt-oss-120b",
+          "calls": 2
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 1,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment identifies a bug related to the hardcoded offset (position 8) for finding the query string, which fails for raw query strings without a scheme. The known bug is about the logic for handling duplicate keys where an earlier encoded key decodes to the same name as a later unencoded key, causing the wrong value to be returned. These are distinct defects."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1532,
+          "outputTokens": 96,
+          "costUsd": 0.0016096,
+          "latencyMs": 646,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
       "cached": false
     }
   ],
   "pending": [
-    "honojs/hono#1015",
     "honojs/hono#4626",
     "honojs/hono#4559",
     "colinhacks/zod#6705",
@@ -1944,6 +2000,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at honojs/hono#1015: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198992, Requested 4110. Please try again in 22m2"
+    "reviewer daily quota exhausted at honojs/hono#4626: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199007, Requested 1490. Please try again in 3m34"
   ]
 }
