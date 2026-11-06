@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-06T03-25-09-434Z_baseline-v2_groq_openai_gpt-oss-120b",
+  "runId": "2026-11-06T03-41-10-078Z_baseline-v2_groq_openai_gpt-oss-120b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-120b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-06T03:25:09.434Z",
-  "finishedAt": "2026-11-06T03:26:09.989Z",
+  "startedAt": "2026-11-06T03:41:10.078Z",
+  "finishedAt": "2026-11-06T03:42:10.628Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -1206,11 +1206,55 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
+      "cached": true
+    },
+    {
+      "caseId": "TanStack/query#11036",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/query-core/src/queryObserver.ts",
+            "line": 341,
+            "severity": "major",
+            "body": "The new Promise.race combines the fetch promise with a cache subscriber promise, but the fetch branch does not handle rejections. If query.fetch() rejects (e.g., network error), the race will reject even if the cachePromise later resolves with valid data, causing an unhandled rejection and breaking fetchOptimistic's contract. A catch should be added to the fetch branch to swallow errors (or resolveEarly) so that the race can still settle with the cachePromise when appropriate."
+          }
+        ],
+        "usage": {
+          "inputTokens": 2881,
+          "outputTokens": 353,
+          "costUsd": 0.0006439499999999999,
+          "latencyMs": 1581,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment identifies a different defect: it claims that the fetch branch of the Promise.race does not handle rejections, leading to unhandled rejections or incorrect race settlement. The known bug is that query.fetch() is called without passing the observer's options (defaultedOptions), causing it to fail when the query is recreated without a queryFn. The comment does not mention missing options or the queryFn issue."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1121,
+          "outputTokens": 106,
+          "costUsd": 0.0013208000000000002,
+          "latencyMs": 914,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
       "cached": false
     }
   ],
   "pending": [
-    "TanStack/query#11036",
     "TanStack/query#8496",
     "TanStack/query#9338",
     "TanStack/query#11166",
@@ -1291,6 +1335,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at TanStack/query#11036: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198301, Requested 3124. Please try again in "
+    "reviewer daily quota exhausted at TanStack/query#8496: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199312, Requested 2195. Please try again in 1"
   ]
 }
