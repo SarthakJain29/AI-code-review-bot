@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-06T05-30-29-720Z_baseline-v2_groq_openai_gpt-oss-120b",
+  "runId": "2026-11-06T07-04-45-246Z_baseline-v2_groq_openai_gpt-oss-120b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-120b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-06T05:30:29.720Z",
-  "finishedAt": "2026-11-06T05:31:30.195Z",
+  "startedAt": "2026-11-06T07:04:45.246Z",
+  "finishedAt": "2026-11-06T07:05:45.776Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -1365,12 +1365,177 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
+      "cached": true
+    },
+    {
+      "caseId": "TanStack/query#8049",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/query-core/src/infiniteQueryBehavior.ts",
+            "line": 94,
+            "severity": "critical",
+            "body": "ReferenceError: the variable `pages` is used but never defined. The line `const remainingPages = pages ?? oldPages.length` will throw at runtime, breaking infinite query fetching."
+          }
+        ],
+        "usage": {
+          "inputTokens": 2013,
+          "outputTokens": 287,
+          "costUsd": 0.00047414999999999995,
+          "latencyMs": 1209,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment identifies a ReferenceError caused by an undefined variable `pages`, which is a different defect (syntax/runtime error) than the known logic bug where a stored `null` page parameter is incorrectly treated as falsy and replaced by `initialPageParam`."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1057,
+          "outputTokens": 75,
+          "costUsd": 0.0011455999999999999,
+          "latencyMs": 430,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "TanStack/query#7312",
+      "kind": "buggy",
+      "category": "async-concurrency",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/query-core/src/__tests__/hydration.test.tsx",
+            "line": 727,
+            "severity": "major",
+            "body": "The test asserts that `dehydrated.mutations[0]?.scope?.id` equals `'scope'`. However, the current implementation of `dehydrate` does not serialize the `scope` property of a mutation, so the `scope` field will be `undefined` in the dehydrated state. This will cause the test to fail and indicates that mutation scopes are not being persisted across hydration, breaking the intended scoped‑mutation feature."
+          },
+          {
+            "file": "packages/query-core/src/__tests__/mutations.test.tsx",
+            "line": 590,
+            "severity": "major",
+            "body": "The expectation for the execution order of mutations across different scopes assumes a specific interleaving (`start-A1`, `start-A2`, `finish-A1`, …). The current mutation queue implementation does not guarantee that mutations from different scopes start in parallel; they may start sequentially depending on the internal scheduling, causing flaky or failing tests. The test’s ordering assumption is too strict and should be relaxed or the queue logic should be adjusted to explicitly start mutations from different scopes concurrently."
+          },
+          {
+            "file": "packages/query-core/src/mutation.ts",
+            "line": 107,
+            "severity": "critical",
+            "body": "The setOptions method signature was changed to require an options argument (no longer optional). Existing callers that rely on the previous optional parameter will now throw a runtime error or TypeScript compile error."
+          },
+          {
+            "file": "packages/query-core/src/mutation.ts",
+            "line": 107,
+            "severity": "major",
+            "body": "The implementation of setOptions now overwrites this.options with the passed object instead of merging with default options (previously it spread #defaultOptions). This removes default option handling and can cause unexpected behavior when defaults are expected."
+          },
+          {
+            "file": "packages/query-core/src/mutation.ts",
+            "line": 165,
+            "severity": "major",
+            "body": "createRetryer is called with a new 'canRun' option, but the Retryer implementation in the codebase does not accept a 'canRun' parameter. Passing an unknown option will likely cause a TypeScript error or be ignored, breaking the intended pause/resume logic."
+          },
+          {
+            "file": "packages/query-core/src/mutation.ts",
+            "line": 300,
+            "severity": "major",
+            "body": "The reducer handling for the 'pending' action now expects action.isPaused, but the action type definition was only updated in this file. Other parts of the codebase that create or type‑check PendingAction may not include the new isPaused field, leading to type mismatches or undefined values."
+          },
+          {
+            "file": "packages/query-core/src/mutationCache.ts",
+            "line": 91,
+            "severity": "major",
+            "body": "`#mutationId` is initialized with `Date.now()` and never incremented, so all mutations will share the same ID. This breaks the default scope fallback (`String(mutation.mutationId)`) and can cause collisions in the mutation map, breaking `canRun`/`runNext` logic."
+          },
+          {
+            "file": "packages/query-core/src/mutationCache.ts",
+            "line": 205,
+            "severity": "minor",
+            "body": "`scopeFor` falls back to `String(mutation.mutationId)`. If a mutation's ID hasn't been assigned yet (e.g., before being added to the cache), this will be `undefined`, resulting in the string \"undefined\" as a scope and mixing unrelated mutations together."
+          }
+        ],
+        "usage": {
+          "inputTokens": 10282,
+          "outputTokens": 1444,
+          "costUsd": 0.0024086999999999997,
+          "latencyMs": 5287,
+          "model": "openai/gpt-oss-120b",
+          "calls": 3
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 1,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 2,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 3,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 4,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 5,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 6,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 7,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
       "cached": false
     }
   ],
   "pending": [
-    "TanStack/query#8049",
-    "TanStack/query#7312",
     "TanStack/query#6982",
     "TanStack/query#9914",
     "TanStack/query#9866",
@@ -1446,6 +1611,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at TanStack/query#8049: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198291, Requested 2361. Please try again in 4"
+    "reviewer daily quota exhausted at TanStack/query#6982: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199230, Requested 1065. Please try again in 2"
   ]
 }

@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-06T04-58-31-769Z_baseline-v2_groq_openai_gpt-oss-20b",
+  "runId": "2026-11-06T06-46-52-602Z_baseline-v2_groq_openai_gpt-oss-20b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-20b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-06T04:58:31.769Z",
-  "finishedAt": "2026-11-06T04:59:33.309Z",
+  "startedAt": "2026-11-06T06:46:52.602Z",
+  "finishedAt": "2026-11-06T06:48:53.252Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -2538,7 +2538,7 @@
           "calls": 1
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "axios/axios#7202",
@@ -2554,13 +2554,160 @@
           "calls": 1
         }
       },
+      "cached": true
+    },
+    {
+      "caseId": "date-fns/date-fns#2720",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "src/locale/tr/_lib/formatDistance/index.ts",
+            "line": 92,
+            "severity": "major",
+            "body": "The implementation assumes that every token passed to formatDistance exists in formatDistanceLocale. If an unknown token is supplied, tokenValue will be undefined, leading to a runtime error when accessing tokenValue.one or tokenValue.other. The original JavaScript version also did not guard against this, but the TypeScript version should either validate the token or provide a fallback. This could cause crashes when an unsupported token is used."
+          },
+          {
+            "file": "src/locale/tr/_lib/match/index.ts",
+            "line": 91,
+            "severity": "minor",
+            "body": "The `matchDayPeriodPatterns.narrow` regex contains duplicate alternatives (`ös` appears twice). This is harmless but unnecessary and may confuse future maintainers."
+          },
+          {
+            "file": "src/locale/tr/_lib/match/index.ts",
+            "line": 91,
+            "severity": "minor",
+            "body": "The `gy` alternative in `matchDayPeriodPatterns.narrow` does not correspond to any Turkish day‑period abbreviation and is likely a typo. It should probably be removed or replaced with a valid token."
+          },
+          {
+            "file": "src/locale/tr/_lib/match/index.ts",
+            "line": 96,
+            "severity": "minor",
+            "body": "The `parseDayPeriodPatterns.am` regex `/^ö.?ö.?/i` seems to be a typo. The intended pattern for Turkish \"ö\" (morning) is usually `/^ö.?ö.?/i` or `/^ö.?ö.?/i`. Double‑checking the correct abbreviation is recommended."
+          }
+        ],
+        "usage": {
+          "inputTokens": 9903,
+          "outputTokens": 1054,
+          "costUsd": 0.001058925,
+          "latencyMs": 3000,
+          "model": "openai/gpt-oss-20b",
+          "calls": 2
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 1,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment identifies a duplicate alternative in `matchDayPeriodPatterns.narrow`, which is a different object and a different issue (redundancy/typo) than the known bug in `matchDayPatterns.wide` and `parseDayPatterns.wide` regarding weekday name matching."
+          },
+          {
+            "index": 2,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment identifies a potential typo in `matchDayPeriodPatterns.narrow`, which is unrelated to the known bug in the weekday matching logic for 'pazar' and 'cuma'."
+          },
+          {
+            "index": 3,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment identifies a potential typo in `parseDayPeriodPatterns.am`, which is unrelated to the known bug in the weekday matching logic for 'pazar' and 'cuma'."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1916,
+          "outputTokens": 188,
+          "costUsd": 0.0022848,
+          "latencyMs": 3392,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "date-fns/date-fns#2382",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "src/eachMinuteOfInterval/index.ts",
+            "line": 50,
+            "severity": "major",
+            "body": "The interval validation uses `startTime >= endTime`, which rejects intervals where the start and end are the same minute. The function should allow an interval that starts and ends at the same minute and return that single minute. Change the comparison to `>` instead of `>=`."
+          }
+        ],
+        "usage": {
+          "inputTokens": 2791,
+          "outputTokens": 231,
+          "costUsd": 0.000278625,
+          "latencyMs": 1042,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The known bug is that `startOfMinute` is applied to the interval end, causing intervals shorter than a minute to be treated as zero-length and rejected. The comment suggests changing the validation comparison from `>=` to `>`, which is a different fix (allowing zero-length intervals) and does not identify the root cause of truncating the end date."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 782,
+          "outputTokens": 96,
+          "costUsd": 0.0010096,
+          "latencyMs": 417,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "date-fns/date-fns#1105",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 1255,
+          "outputTokens": 237,
+          "costUsd": 0.000165225,
+          "latencyMs": 1002,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
       "cached": false
     }
   ],
   "pending": [
-    "date-fns/date-fns#2720",
-    "date-fns/date-fns#2382",
-    "date-fns/date-fns#1105",
     "date-fns/date-fns#1914",
     "date-fns/date-fns#1765",
     "date-fns/date-fns#1690",
@@ -2600,6 +2747,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at date-fns/date-fns#2720: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199294, Requested 5449. Please try again in"
+    "reviewer daily quota exhausted at date-fns/date-fns#1914: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199583, Requested 4514. Please try again in"
   ]
 }
