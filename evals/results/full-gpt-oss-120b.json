@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-06T01-52-06-048Z_baseline-v2_groq_openai_gpt-oss-120b",
+  "runId": "2026-11-06T03-09-08-823Z_baseline-v2_groq_openai_gpt-oss-120b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-120b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-06T01:52:06.048Z",
-  "finishedAt": "2026-11-06T01:52:06.391Z",
+  "startedAt": "2026-11-06T03:09:08.823Z",
+  "finishedAt": "2026-11-06T03:10:09.354Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -1115,10 +1115,56 @@
         }
       },
       "cached": true
+    },
+    {
+      "caseId": "vitest-dev/vitest#9533",
+      "kind": "clean",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/vitest/src/node/cli/cli-config.ts",
+            "line": 831,
+            "severity": "major",
+            "body": "The `print` subcommand now declares an argument `<boolean|on-warn>` but the `transform` function only handles the special string `'on-warn'`. It returns the raw value for all other inputs, meaning values like `'true'` or `'false'` remain strings instead of being converted to booleans. Downstream code expects a boolean (e.g., `resolved.experimental.importDurations.print ??= false` and truthy checks), so passing `'true'` will be truthy but not a boolean, and `'false'` will be truthy as a non‑empty string, causing the print option to be incorrectly enabled. The transform should coerce `'true'`/`'false'` to actual booleans."
+          },
+          {
+            "file": "packages/vitest/src/node/cli/cli-config.ts",
+            "line": 848,
+            "severity": "minor",
+            "body": "The `thresholds` subcommand is defined with `argument: ''`. An empty argument string is not a valid CLI definition and may cause the command parser to reject the option or behave unexpectedly. It should either omit the `argument` field or provide a proper placeholder (e.g., `<number>` for each sub‑command)."
+          },
+          {
+            "file": "packages/vitest/src/node/reporters/base.ts",
+            "line": 616,
+            "severity": "major",
+            "body": "`thresholds` is accessed without a null‑check. The config makes `thresholds` optional, so if a user doesn’t provide it the code will throw when reading `thresholds.danger` or `thresholds.warn`."
+          },
+          {
+            "file": "packages/vitest/src/node/reporters/base.ts",
+            "line": 732,
+            "severity": "major",
+            "body": "Same issue as above: `thresholds` may be undefined, causing a runtime error when determining the colour for import durations."
+          },
+          {
+            "file": "test/cli/test/reporters/import-durations.test.ts",
+            "line": 19,
+            "severity": "critical",
+            "body": "The function `normalizeImportDurationsOutput` returns `section` at line 19, making the subsequent replace calls (lines 20‑26) unreachable. As a result, timing values, bar characters, and extra spaces are never normalized, causing the snapshot test to compare raw output instead of the intended normalized form."
+          }
+        ],
+        "usage": {
+          "inputTokens": 8851,
+          "outputTokens": 1212,
+          "costUsd": 0.00205485,
+          "latencyMs": 5073,
+          "model": "openai/gpt-oss-120b",
+          "calls": 3
+        }
+      },
+      "cached": false
     }
   ],
   "pending": [
-    "vitest-dev/vitest#9533",
     "TanStack/query#11679",
     "TanStack/query#11036",
     "TanStack/query#8496",
@@ -1201,6 +1247,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at vitest-dev/vitest#9533: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199666, Requested 4192. Please try again i"
+    "reviewer daily quota exhausted at TanStack/query#11679: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198816, Requested 1690. Please try again in "
   ]
 }

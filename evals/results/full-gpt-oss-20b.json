@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-06T01-50-11-105Z_baseline-v2_groq_openai_gpt-oss-20b",
+  "runId": "2026-11-06T03-24-14-459Z_baseline-v2_groq_openai_gpt-oss-20b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-20b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-06T01:50:11.105Z",
-  "finishedAt": "2026-11-06T01:50:11.424Z",
+  "startedAt": "2026-11-06T03:24:14.459Z",
+  "finishedAt": "2026-11-06T03:24:14.948Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -2299,13 +2299,140 @@
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
       "cached": true
+    },
+    {
+      "caseId": "axios/axios#10861",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "lib/helpers/Http2Sessions.js",
+            "line": 58,
+            "severity": "critical",
+            "body": "`authoritySessions` can be undefined when no session exists for the authority. The code then assigns `entries = authoritySessions` and immediately accesses `entries.length`, which throws a TypeError. The original implementation guarded against this by only executing the removal logic when `authoritySessions` was truthy. The refactor removed that guard, causing a crash on the first request to a new authority. This needs to be fixed by ensuring `entries` is always an array (e.g., `let entries = authoritySessions || [];`) and by guarding the removal loop accordingly."
+          }
+        ],
+        "usage": {
+          "inputTokens": 4718,
+          "outputTokens": 401,
+          "costUsd": 0.00047415,
+          "latencyMs": 4387,
+          "model": "openai/gpt-oss-20b",
+          "calls": 2
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment identifies a TypeError crash caused by accessing `entries.length` when `authoritySessions` is undefined. This is a null-safety/refactoring bug. The known bug is a logic error where the HTTP/2 GOAWAY event is not handled, leading to session reuse and delayed process exit. These are distinct defects with different root causes and behaviors."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1182,
+          "outputTokens": 99,
+          "costUsd": 0.0013415999999999999,
+          "latencyMs": 665,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "axios/axios#10957",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 2027,
+          "outputTokens": 156,
+          "costUsd": 0.000198825,
+          "latencyMs": 1286,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "axios/axios#11087",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 3666,
+          "outputTokens": 522,
+          "costUsd": 0.00043154999999999995,
+          "latencyMs": 1373,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "axios/axios#11138",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "lib/helpers/fromDataURI.js",
+            "line": 12,
+            "severity": "critical",
+            "body": "The regular expression used to parse data URLs is now case-insensitive for the entire pattern (the `i` flag). This causes a media type parameter such as `;BASE64` to be incorrectly interpreted as the base64 marker, because the regex will match the first occurrence of `;base64` (case-insensitive) after the optional parameters. The tests expect that a parameter like `;BASE64=x` or `name=BASE64` is treated as a normal media type parameter and not as a base64 marker. The current pattern therefore fails those tests and incorrectly parses URLs where the base64 token appears in a parameter. The pattern should only make the `;base64` token case-insensitive, not the rest of the URL. A possible fix is to remove the global `i` flag and instead use a case-insensitive match only for the `;base64` part, e.g. by using a separate regex or a lookahead that matches `;base64` case-insensitively while keeping the rest of the pattern case-sensitive."
+          }
+        ],
+        "usage": {
+          "inputTokens": 3441,
+          "outputTokens": 593,
+          "costUsd": 0.000435975,
+          "latencyMs": 2000,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
     }
   ],
   "pending": [
-    "axios/axios#10861",
-    "axios/axios#10957",
-    "axios/axios#11087",
-    "axios/axios#11138",
     "axios/axios#10660",
     "axios/axios#10795",
     "axios/axios#10788",
@@ -2353,6 +2480,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at axios/axios#10861: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 197211, Requested 2886. Please try again in 41.9"
+    "reviewer daily quota exhausted at axios/axios#10660: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 197109, Requested 2940. Please try again in 21.1"
   ]
 }
