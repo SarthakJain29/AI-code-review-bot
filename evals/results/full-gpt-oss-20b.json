@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-06T08-52-10-583Z_baseline-v2_groq_openai_gpt-oss-20b",
+  "runId": "2026-11-06T09-12-11-482Z_baseline-v2_groq_openai_gpt-oss-20b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-20b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-06T08:52:10.583Z",
-  "finishedAt": "2026-11-06T08:57:11.380Z",
+  "startedAt": "2026-11-06T09:12:11.482Z",
+  "finishedAt": "2026-11-06T09:12:12.063Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -2705,59 +2705,11 @@
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
       "cached": true
-    },
-    {
-      "caseId": "date-fns/date-fns#1914",
-      "kind": "buggy",
-      "category": "logic",
-      "review": {
-        "comments": [],
-        "usage": {
-          "inputTokens": 3971,
-          "outputTokens": 1106,
-          "costUsd": 0.000629625,
-          "latencyMs": 2209,
-          "model": "openai/gpt-oss-20b",
-          "calls": 1
-        },
-        "error": "HTTP 413: {\"error\":{\"message\":\"Request too large for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Requested 9106, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today"
-      },
-      "verdict": {
-        "caught": false,
-        "caughtAnyLocation": false,
-        "matchedIndices": [],
-        "perComment": [],
-        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
-      },
-      "cached": false
-    },
-    {
-      "caseId": "date-fns/date-fns#1765",
-      "kind": "buggy",
-      "category": "logic",
-      "review": {
-        "comments": [],
-        "usage": {
-          "inputTokens": 1743,
-          "outputTokens": 346,
-          "costUsd": 0.00023452499999999997,
-          "latencyMs": 1247,
-          "model": "openai/gpt-oss-20b",
-          "calls": 1
-        },
-        "error": "HTTP 413: {\"error\":{\"message\":\"Request too large for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Requested 9466, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today"
-      },
-      "verdict": {
-        "caught": false,
-        "caughtAnyLocation": false,
-        "matchedIndices": [],
-        "perComment": [],
-        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
-      },
-      "cached": false
     }
   ],
   "pending": [
+    "date-fns/date-fns#1914",
+    "date-fns/date-fns#1765",
     "date-fns/date-fns#1690",
     "date-fns/date-fns#962",
     "pmndrs/zustand#3206",
@@ -2795,6 +2747,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at date-fns/date-fns#1690: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198393, Requested 3189. Please try again in"
+    "reviewer daily quota exhausted at date-fns/date-fns#1914: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 196309, Requested 9054. Please try again in"
   ]
 }
