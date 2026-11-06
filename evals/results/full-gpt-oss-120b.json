@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-06T04-28-27-227Z_baseline-v2_groq_openai_gpt-oss-120b",
+  "runId": "2026-11-06T05-30-29-720Z_baseline-v2_groq_openai_gpt-oss-120b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-120b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-06T04:28:27.227Z",
-  "finishedAt": "2026-11-06T04:29:27.758Z",
+  "startedAt": "2026-11-06T05:30:29.720Z",
+  "finishedAt": "2026-11-06T05:31:30.195Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -1320,11 +1320,55 @@
         "perComment": [],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
+      "cached": true
+    },
+    {
+      "caseId": "TanStack/query#11166",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/preact-query/src/errorBoundaryUtils.ts",
+            "line": 28,
+            "severity": "major",
+            "body": "The `ensurePreventErrorBoundaryRetry` function signature was changed to accept a third `query` argument, but the function definition itself was not updated to include this new parameter. This will cause a runtime TypeError when the function tries to access the undefined argument, and also breaks TypeScript type checking."
+          }
+        ],
+        "usage": {
+          "inputTokens": 3286,
+          "outputTokens": 526,
+          "costUsd": 0.0008085,
+          "latencyMs": 1839,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment identifies a signature mismatch/missing parameter issue, which is a different defect from the known bug. The known bug is a logic error where `query?.state.error` is used as a truthy check to decide whether to call the `throwOnError` function, causing falsy errors to be mishandled. The comment does not address this logic flaw."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1218,
+          "outputTokens": 96,
+          "costUsd": 0.0013584,
+          "latencyMs": 448,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
       "cached": false
     }
   ],
   "pending": [
-    "TanStack/query#11166",
     "TanStack/query#8049",
     "TanStack/query#7312",
     "TanStack/query#6982",
@@ -1402,6 +1446,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at TanStack/query#11166: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199617, Requested 3822. Please try again in "
+    "reviewer daily quota exhausted at TanStack/query#8049: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198291, Requested 2361. Please try again in 4"
   ]
 }
