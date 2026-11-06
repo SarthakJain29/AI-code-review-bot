@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-06T11-16-05-181Z_baseline-v2_groq_openai_gpt-oss-120b",
+  "runId": "2026-11-06T12-27-15-815Z_baseline-v2_groq_openai_gpt-oss-120b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-120b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-06T11:16:05.181Z",
-  "finishedAt": "2026-11-06T11:17:05.761Z",
+  "startedAt": "2026-11-06T12:27:15.815Z",
+  "finishedAt": "2026-11-06T12:31:17.845Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -1932,15 +1932,170 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
+      "cached": true
+    },
+    {
+      "caseId": "honojs/hono#4626",
+      "kind": "clean",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 1171,
+          "outputTokens": 211,
+          "costUsd": 0.00030225,
+          "latencyMs": 1281,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "honojs/hono#4559",
+      "kind": "clean",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 1329,
+          "outputTokens": 166,
+          "costUsd": 0.00029895,
+          "latencyMs": 722,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "colinhacks/zod#6705",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/zod/src/v4/core/memoizer.ts",
+            "line": 40,
+            "severity": "major",
+            "body": "The `record` function stores a length for each issue using `iss.path?.length`. When an issue has no path, this stores `undefined`. Later `replay` assumes this entry is a number and does arithmetic `iss.path.length - (rec[i + 1] as number)`. If the stored value is `undefined` the subtraction yields `NaN`, and `Array.prototype.slice(NaN)` behaves like `slice(0)`, potentially producing an incorrect (empty) path. This can corrupt error paths for issues that originally had no path. The code should store `0` instead of `undefined` for missing paths, or `replay` should guard against `undefined` values."
+          }
+        ],
+        "usage": {
+          "inputTokens": 2738,
+          "outputTokens": 639,
+          "costUsd": 0.0007941,
+          "latencyMs": 2151,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment identifies a potential bug in the `record` function regarding how it stores path lengths for issues without paths (storing `undefined` instead of `0`), which could lead to `NaN` in `replay`. However, the known bug is about the memoizer reusing issue lists from unchecked passes (encode passes that skip checks) because it didn't account for the start index of newly added issues. The fix involves separating buckets for checked and unchecked passes and passing a `start` index to `record` to only record new issues. The comment's suggested fix (handling `undefined` path lengths) does not address the root cause of reusing stale issue lists from different pass types."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1527,
+          "outputTokens": 164,
+          "costUsd": 0.0018776,
+          "latencyMs": 2117,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "colinhacks/zod#6443",
+      "kind": "buggy",
+      "category": "performance",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/zod/src/v4/core/memoizer.ts",
+            "line": 188,
+            "severity": "major",
+            "body": "When a memoized node has no issues, the code assigns the shared constant NO_ISSUES (an empty array) to entry.issues. Later code may push into entry.issues assuming it’s a fresh mutable array, which would mutate the shared constant and affect other cache entries. This can cause cross‑contamination of issue lists across different nodes. Use a new empty array (e.g., []) instead of the shared NO_ISSUES constant."
+          }
+        ],
+        "usage": {
+          "inputTokens": 1155,
+          "outputTokens": 405,
+          "costUsd": 0.00041625,
+          "latencyMs": 1475,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment identifies a potential bug regarding mutation of the shared `NO_ISSUES` constant, which is a different issue (correctness/safety of shared state) than the known performance bug (memory growth due to deep cloning of issue lists on every cache hit). The known bug is about the cost of `cloneIssues`, not the mutability of the empty array constant."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1529,
+          "outputTokens": 97,
+          "costUsd": 0.0016112000000000001,
+          "latencyMs": 545,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "colinhacks/zod#6652",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/zod/src/v4/core/compile.ts",
+            "line": 1556,
+            "severity": "major",
+            "body": "The generated size gate uses `numericOperand(max, check._zod.def.check)` where `check._zod.def.check` is a string identifier of the check (e.g., \"max\"). `numericOperand` expects a numeric value, so passing a string will produce incorrect code and likely a runtime error. It should compare against the numeric `max` directly, e.g., `if (${size} > ${max}) return INVALID;`. This bug could cause size checks to malfunction or throw."
+          }
+        ],
+        "usage": {
+          "inputTokens": 2865,
+          "outputTokens": 346,
+          "costUsd": 0.0006373500000000001,
+          "latencyMs": 1455,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
       "cached": false
     }
   ],
   "pending": [
-    "honojs/hono#4626",
-    "honojs/hono#4559",
-    "colinhacks/zod#6705",
-    "colinhacks/zod#6443",
-    "colinhacks/zod#6652",
     "colinhacks/zod#6386",
     "colinhacks/zod#6347",
     "colinhacks/zod#6371",
@@ -2000,6 +2155,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at honojs/hono#4626: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199007, Requested 1490. Please try again in 3m34"
+    "reviewer daily quota exhausted at colinhacks/zod#6386: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199731, Requested 3567. Please try again in 2"
   ]
 }
