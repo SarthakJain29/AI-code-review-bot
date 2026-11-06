@@ -4,7 +4,7 @@
  * This is the bar any real reviewer (e.g. Diffwise) should clear.
  */
 import { z } from 'zod';
-import { commentableLines, parseDiff, renderNumberedDiff, type DiffFile } from '../diff.js';
+import { commentableLines, parseDiff, renderNumberedDiff, type DiffFile, type DiffHunk, type DiffLine } from '../diff.js';
 import { DiskCache } from '../cache.js';
 import { estimateTokens, extractJson, LlmError, type LlmProvider, type LlmResponse } from '../llm/provider.js';
 import { SEVERITIES, type ReviewComment, type ReviewInput, type ReviewResult, type Reviewer } from '../types.js';
@@ -15,12 +15,13 @@ export const BASELINE_PROMPT_VERSION = 'v2';
 /**
  * Split a parsed diff into chunks whose numbered rendering stays under `maxTokens`.
  * Files are kept whole when possible; a file that is too big on its own is split by hunks.
- * A single hunk larger than the budget becomes its own (oversized) chunk.
+ * A single hunk larger than the budget is split into consecutive runs of lines.
  */
 export function chunkDiff(files: DiffFile[], maxTokens: number): DiffFile[][] {
   const size = (fs: DiffFile[]) => estimateTokens(renderNumberedDiff(fs));
   const pieces: DiffFile[] = [];
-  for (const f of files) {
+  for (const f0 of files) {
+    const f: DiffFile = { ...f0, hunks: f0.hunks.flatMap((h) => splitHunk(f0, h, maxTokens, size)) };
     if (size([f]) <= maxTokens || f.hunks.length <= 1) {
       pieces.push(f);
       continue;
@@ -46,6 +47,23 @@ export function chunkDiff(files: DiffFile[], maxTokens: number): DiffFile[][] {
   }
   if (cur.length) chunks.push(cur);
   return chunks;
+}
+
+function splitHunk(f: DiffFile, h: DiffHunk, maxTokens: number, size: (fs: DiffFile[]) => number): DiffHunk[] {
+  if (h.lines.length <= 1 || size([{ ...f, hunks: [h] }]) <= maxTokens) return [h];
+  const mid = Math.floor(h.lines.length / 2);
+  const part = (lines: DiffLine[]): DiffHunk => {
+    const firstOld = lines.find((l) => l.oldLine !== undefined)?.oldLine ?? h.oldStart;
+    const firstNew = lines.find((l) => l.newLine !== undefined)?.newLine ?? h.newStart;
+    return {
+      oldStart: firstOld,
+      oldLines: lines.filter((l) => l.type !== 'add').length,
+      newStart: firstNew,
+      newLines: lines.filter((l) => l.type !== 'del').length,
+      lines,
+    };
+  };
+  return [part(h.lines.slice(0, mid)), part(h.lines.slice(mid))].flatMap((x) => splitHunk(f, x, maxTokens, size));
 }
 
 export const BASELINE_SYSTEM = `You are a senior software engineer reviewing a pull request.
@@ -117,13 +135,27 @@ export class BaselineReviewer implements Reviewer {
     const comments: ReviewComment[] = [];
     const usage = { inputTokens: 0, outputTokens: 0, costUsd: 0, latencyMs: 0, model: this.llm.model, calls: 0 };
     try {
-      for (const [i, chunk] of chunks.entries()) {
-        const part = chunks.length > 1 ? ` (part ${i + 1} of ${chunks.length}; other files are reviewed separately)` : '';
+      const queue = chunks.map((c) => ({ chunk: c, budget: this.chunkTokens }));
+      for (let i = 0; i < queue.length; i++) {
+        const { chunk, budget } = queue[i]!;
+        const part = queue.length > 1 ? ` (part ${i + 1} of ${queue.length}; other files are reviewed separately)` : '';
         const prompt = `Repository: ${input.repo}\nPR title: ${input.title}\n\nNumbered diff${part}:\n${renderNumberedDiff(chunk)}`;
         const key = DiskCache.key('chunk', this.id, String(this.maxOutputTokens), prompt);
         let res = this.chunkCache?.get<LlmResponse>(key);
         if (!res) {
-          res = await this.llm.complete({ system: BASELINE_SYSTEM, prompt, json: true, temperature: 0, maxOutputTokens: this.maxOutputTokens });
+          try {
+            res = await this.llm.complete({ system: BASELINE_SYSTEM, prompt, json: true, temperature: 0, maxOutputTokens: this.maxOutputTokens });
+          } catch (e) {
+            // 413 = one request is larger than the provider's per-request/TPM cap (our token
+            // estimate was low). Re-split this chunk at half the budget and review the pieces.
+            const smaller = e instanceof LlmError && e.status === 413 && budget > 500 ? chunkDiff(chunk, Math.floor(budget / 2)) : [];
+            if (smaller.length > 1) {
+              queue.splice(i, 1, ...smaller.map((c) => ({ chunk: c, budget: Math.floor(budget / 2) })));
+              i--;
+              continue;
+            }
+            throw e;
+          }
           this.chunkCache?.set(key, res);
         }
         comments.push(...parseReviewOutput(res.text, input.diff));

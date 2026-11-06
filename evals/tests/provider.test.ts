@@ -59,6 +59,14 @@ describe('chunkDiff', () => {
     expect(chunks.flatMap((c) => added(c)).sort()).toEqual(added(files).sort());
     for (const c of chunks) if (c.length > 1 || c[0]!.hunks.length > 1) expect(estimateTokens(renderNumberedDiff(c))).toBeLessThanOrEqual(1500);
   });
+  it('splits a single oversized hunk into line runs', () => {
+    const files = parseDiff(bigDiff(1, 1, 200));
+    const chunks = chunkDiff(files, 1000);
+    expect(chunks.length).toBeGreaterThan(1);
+    for (const c of chunks) expect(estimateTokens(renderNumberedDiff(c))).toBeLessThanOrEqual(1000);
+    const added = (fs: typeof files) => fs.flatMap((f) => f.hunks.flatMap((h) => h.lines.map((l) => l.newLine)));
+    expect(chunks.flatMap((c) => added(c))).toEqual(added(files));
+  });
 });
 
 describe('BaselineReviewer', () => {
@@ -75,6 +83,22 @@ describe('BaselineReviewer', () => {
     expect(prompts[0]).toContain('(part 1 of');
     expect(r.comments).toHaveLength(prompts.length);
     expect(r.usage.calls).toBe(prompts.length);
+  });
+  it('re-splits a chunk at half the budget when the provider says the request is too large (413)', async () => {
+    let calls = 0;
+    const llm: LlmProvider = {
+      name: 'groq',
+      model: 'm',
+      complete: async (req: LlmRequest): Promise<LlmResponse> => {
+        calls++;
+        if (estimateTokens(req.prompt) > 1000) throw new LlmError('HTTP 413: Request too large', 413, false);
+        return { text: '{"comments":[]}', inputTokens: 1, outputTokens: 1, latencyMs: 1, costUsd: 0, model: 'm' };
+      },
+    };
+    const r = await new BaselineReviewer(llm, { chunkTokens: 1600 }).review({ diff, repo: 'o/r', title: 't' });
+    expect(r.error).toBeUndefined();
+    expect(r.usage.calls).toBeGreaterThan(1);
+    expect(calls).toBeGreaterThan(r.usage.calls!);
   });
   it('flags daily-quota failures so the runner can stop and resume', async () => {
     const failing: LlmProvider = {
