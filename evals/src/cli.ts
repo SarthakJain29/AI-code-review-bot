@@ -165,9 +165,12 @@ program
           ),
       });
       const out = outPath ?? join(RESULTS_DIR, `${run.runId}.json`);
-      writeFileSync(out, JSON.stringify(run, null, 2) + '\n');
       const errors = run.results.filter((r) => r.review.error).length;
       const pending = run.pending?.length ?? 0;
+      // A pass that made no progress (quota still exhausted) only differs in timestamps; skip the write.
+      const unchanged =
+        previous && previous.results.length === run.results.length && (previous.pending?.length ?? 0) === pending && previous.results.filter((r) => r.review.error).length === errors;
+      if (!unchanged) writeFileSync(out, JSON.stringify(run, null, 2) + '\n');
       console.log(`pass ${pass}: ${run.results.length - errors} ok, ${errors} errors, ${pending} pending -> ${out}`);
       if (!o.untilDone) break;
       if (pending === 0 && (errors === 0 || ++errorPasses >= 3)) break;
