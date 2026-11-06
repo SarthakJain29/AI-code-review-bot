@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-06T03-41-10-078Z_baseline-v2_groq_openai_gpt-oss-120b",
+  "runId": "2026-11-06T04-28-27-227Z_baseline-v2_groq_openai_gpt-oss-120b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-120b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-06T03:41:10.078Z",
-  "finishedAt": "2026-11-06T03:42:10.628Z",
+  "startedAt": "2026-11-06T04:28:27.227Z",
+  "finishedAt": "2026-11-06T04:29:27.758Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -1251,12 +1251,79 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
+      "cached": true
+    },
+    {
+      "caseId": "TanStack/query#8496",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/query-core/src/mutationCache.ts",
+            "line": 232,
+            "severity": "major",
+            "body": "The new implementation of `scopeFor` returns `undefined` when a mutation has no explicit scope, whereas the previous version fell back to `String(mutation.mutationId)`. This changes the grouping semantics: unscoped mutations are no longer grouped together. As a result, `canRun` now always returns true for unscoped mutations, allowing them to run concurrently, which differs from the original behavior where unscoped mutations were serialized per generated scope ID. This regression can lead to race conditions and broken mutation ordering."
+          }
+        ],
+        "usage": {
+          "inputTokens": 1857,
+          "outputTokens": 506,
+          "costUsd": 0.00058215,
+          "latencyMs": 1706,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment identifies a regression in the `scopeFor` method regarding how unscoped mutations are grouped and serialized, which is a different logic issue from the known bug where `clear()` notifies subscribers before removing mutations from the cache."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1427,
+          "outputTokens": 68,
+          "costUsd": 0.0014136,
+          "latencyMs": 464,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "TanStack/query#9338",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 4068,
+          "outputTokens": 438,
+          "costUsd": 0.000873,
+          "latencyMs": 1639,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
       "cached": false
     }
   ],
   "pending": [
-    "TanStack/query#8496",
-    "TanStack/query#9338",
     "TanStack/query#11166",
     "TanStack/query#8049",
     "TanStack/query#7312",
@@ -1335,6 +1402,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at TanStack/query#8496: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199312, Requested 2195. Please try again in 1"
+    "reviewer daily quota exhausted at TanStack/query#11166: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199617, Requested 3822. Please try again in "
   ]
 }

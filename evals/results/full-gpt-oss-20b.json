@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-06T03-39-14-970Z_baseline-v2_groq_openai_gpt-oss-20b",
+  "runId": "2026-11-06T04-58-31-769Z_baseline-v2_groq_openai_gpt-oss-20b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-20b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-06T03:39:14.970Z",
-  "finishedAt": "2026-11-06T03:40:15.508Z",
+  "startedAt": "2026-11-06T04:58:31.769Z",
+  "finishedAt": "2026-11-06T04:59:33.309Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -2467,14 +2467,97 @@
         ],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
+      "cached": true
+    },
+    {
+      "caseId": "axios/axios#10795",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 4176,
+          "outputTokens": 290,
+          "costUsd": 0.00040019999999999997,
+          "latencyMs": 1424,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "axios/axios#10788",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 5151,
+          "outputTokens": 459,
+          "costUsd": 0.000524025,
+          "latencyMs": 1720,
+          "model": "openai/gpt-oss-20b",
+          "calls": 2
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "axios/axios#6265",
+      "kind": "clean",
+      "review": {
+        "comments": [
+          {
+            "file": "lib/utils.js",
+            "line": 262,
+            "severity": "major",
+            "body": "The `forEach` function now expects an options object, but callers may still pass a boolean for `allOwnKeys`. Destructuring `{allOwnKeys} = {}` will throw if a boolean is supplied, breaking backward compatibility. The function should detect a boolean and treat it as the `allOwnKeys` flag, e.g., `const {allOwnKeys = false} = typeof options === 'object' ? options : {allOwnKeys: options};`."
+          }
+        ],
+        "usage": {
+          "inputTokens": 945,
+          "outputTokens": 389,
+          "costUsd": 0.000187575,
+          "latencyMs": 1057,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "axios/axios#7202",
+      "kind": "clean",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 678,
+          "outputTokens": 449,
+          "costUsd": 0.00018554999999999998,
+          "latencyMs": 947,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
       "cached": false
     }
   ],
   "pending": [
-    "axios/axios#10795",
-    "axios/axios#10788",
-    "axios/axios#6265",
-    "axios/axios#7202",
     "date-fns/date-fns#2720",
     "date-fns/date-fns#2382",
     "date-fns/date-fns#1105",
@@ -2517,6 +2600,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at axios/axios#10795: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 197767, Requested 4517. Please try again in 16m2"
+    "reviewer daily quota exhausted at date-fns/date-fns#2720: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199294, Requested 5449. Please try again in"
   ]
 }
