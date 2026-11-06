@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-06T07-20-45-877Z_baseline-v2_groq_openai_gpt-oss-120b",
+  "runId": "2026-11-06T09-09-04-755Z_baseline-v2_groq_openai_gpt-oss-120b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-120b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-06T07:20:45.877Z",
-  "finishedAt": "2026-11-06T07:21:46.515Z",
+  "startedAt": "2026-11-06T09:09:04.755Z",
+  "finishedAt": "2026-11-06T09:11:05.365Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -1577,16 +1577,180 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
+      "cached": true
+    },
+    {
+      "caseId": "TanStack/query#9914",
+      "kind": "clean",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/vue-query/src/useIsFetching.ts",
+            "line": 27,
+            "severity": "major",
+            "body": "The listener only runs when the query cache changes, but when `fetchingFilters` is a getter function that depends on reactive refs, changes to those refs won't trigger the listener, so `isFetching` won't update reactively. A watchEffect (or similar) should be added to re‑evaluate the getter whenever its dependencies change."
+          }
+        ],
+        "usage": {
+          "inputTokens": 6331,
+          "outputTokens": 759,
+          "costUsd": 0.00140505,
+          "latencyMs": 3273,
+          "model": "openai/gpt-oss-120b",
+          "calls": 2
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "TanStack/query#9866",
+      "kind": "clean",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 1093,
+          "outputTokens": 444,
+          "costUsd": 0.00043034999999999997,
+          "latencyMs": 1470,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "honojs/hono#2350",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "src/utils/cookie.ts",
+            "line": 209,
+            "severity": "major",
+            "body": "The `serialize` function now declares `opt` as optional (`opt?: CookieConstraint<Name>`), but it forwards this value directly to `_serialize`. The original implementation defaulted `opt` to an empty object (`{}`), ensuring `_serialize` always received an object. If callers omit the options argument, `opt` will be `undefined`, and `_serialize` may attempt to read properties on `undefined`, causing a runtime TypeError. The function should provide a default empty object or handle `undefined` before calling `_serialize`."
+          }
+        ],
+        "usage": {
+          "inputTokens": 1667,
+          "outputTokens": 269,
+          "costUsd": 0.00041145,
+          "latencyMs": 1170,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment identifies a potential runtime TypeError caused by an optional `opt` parameter being passed as `undefined` to `_serialize`. This is a different issue from the known bug, which is a type-level case-sensitivity flaw in the `CookieConstraint` type definition that fails to recognize lower-case or mixed-case `__Secure-` and `__Host-` prefixes."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1150,
+          "outputTokens": 97,
+          "costUsd": 0.001308,
+          "latencyMs": 469,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "honojs/hono#5222",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 615,
+          "outputTokens": 164,
+          "costUsd": 0.00019064999999999997,
+          "latencyMs": 542,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "honojs/hono#1215",
+      "kind": "buggy",
+      "category": "regex-string",
+      "review": {
+        "comments": [
+          {
+            "file": "src/middleware/timing/index.ts",
+            "line": 66,
+            "severity": "major",
+            "body": "The middleware appends Server-Timing header using the local `headers` array, which remains empty. It should use the `metrics.headers` array (the one stored in context) that `setMetric` pushes metrics into. This results in no timing data being sent to the client."
+          }
+        ],
+        "usage": {
+          "inputTokens": 4277,
+          "outputTokens": 234,
+          "costUsd": 0.0007819499999999999,
+          "latencyMs": 1293,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": false
+    },
+    {
+      "caseId": "honojs/hono#5121",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 768,
+          "outputTokens": 250,
+          "costUsd": 0.0002652,
+          "latencyMs": 1121,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
       "cached": false
     }
   ],
   "pending": [
-    "TanStack/query#9914",
-    "TanStack/query#9866",
-    "honojs/hono#2350",
-    "honojs/hono#5222",
-    "honojs/hono#1215",
-    "honojs/hono#5121",
     "honojs/hono#2314",
     "honojs/hono#2684",
     "honojs/hono#4078",
@@ -1655,6 +1819,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at TanStack/query#9914: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 197973, Requested 5106. Please try again in 2"
+    "reviewer daily quota exhausted at honojs/hono#2314: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199667, Requested 3567. Please try again in 23m1"
   ]
 }
