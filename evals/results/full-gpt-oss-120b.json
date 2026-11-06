@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-06T00-02-48-820Z_baseline-v2_groq_openai_gpt-oss-120b",
+  "runId": "2026-11-06T01-19-51-748Z_baseline-v2_groq_openai_gpt-oss-120b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-120b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-06T00:02:48.820Z",
-  "finishedAt": "2026-11-06T00:02:49.071Z",
+  "startedAt": "2026-11-06T01:19:51.748Z",
+  "finishedAt": "2026-11-06T01:19:52.147Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -990,10 +990,56 @@
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
       "cached": true
+    },
+    {
+      "caseId": "vitest-dev/vitest#6070",
+      "kind": "buggy",
+      "category": "regex-string",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/ui/client/composables/explorer/state.ts",
+            "line": 35,
+            "severity": "major",
+            "body": "The `highlightRegex` computed value escapes HTML entities in the search string but does not escape RegExp meta‑characters. If a user searches for characters like '(' or ')' the generated RegExp will be invalid and throw at runtime, breaking the search/highlight feature."
+          }
+        ],
+        "usage": {
+          "inputTokens": 2103,
+          "outputTokens": 332,
+          "costUsd": 0.00051465,
+          "latencyMs": 1539,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": true,
+        "caughtAnyLocation": true,
+        "matchedIndices": [
+          0
+        ],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": true,
+            "reason": "The comment correctly identifies that the search string is being HTML-escaped instead of RegExp-escaped, leading to invalid Regular Expressions when searching for meta-characters like '('. This matches the root cause of the known bug where `escapeHtml` was used to build the RegExp, breaking highlighting for terms with regex meta-characters."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1419,
+          "outputTokens": 88,
+          "costUsd": 0.0014872000000000002,
+          "latencyMs": 547,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
     }
   ],
   "pending": [
-    "vitest-dev/vitest#6070",
     "vitest-dev/vitest#11623",
     "vitest-dev/vitest#9581",
     "vitest-dev/vitest#9533",
@@ -1079,6 +1125,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at vitest-dev/vitest#6070: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199685, Requested 2404. Please try again i"
+    "reviewer daily quota exhausted at vitest-dev/vitest#11623: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 195816, Requested 5187. Please try again "
   ]
 }

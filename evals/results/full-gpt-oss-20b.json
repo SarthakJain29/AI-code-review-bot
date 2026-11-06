@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-05T23-59-54-491Z_baseline-v2_groq_openai_gpt-oss-20b",
+  "runId": "2026-11-06T01-17-57-498Z_baseline-v2_groq_openai_gpt-oss-20b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-20b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-05T23:59:54.491Z",
-  "finishedAt": "2026-11-05T23:59:54.937Z",
+  "startedAt": "2026-11-06T01:17:57.498Z",
+  "finishedAt": "2026-11-06T01:18:58.116Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -2229,12 +2229,79 @@
         }
       },
       "cached": true
+    },
+    {
+      "caseId": "colinhacks/zod#5610",
+      "kind": "clean",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 4581,
+          "outputTokens": 235,
+          "costUsd": 0.00041407499999999997,
+          "latencyMs": 1240,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "colinhacks/zod#5599",
+      "kind": "clean",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 831,
+          "outputTokens": 268,
+          "costUsd": 0.00014272499999999999,
+          "latencyMs": 2218,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "axios/axios#6518",
+      "kind": "buggy",
+      "category": "state-mutation",
+      "review": {
+        "comments": [
+          {
+            "file": "lib/adapters/http.js",
+            "line": 366,
+            "severity": "major",
+            "body": "The call to progressEventDecorator for upload progress omits the `isDownload` flag. The third argument to progressEventDecorator indicates whether the progress is for a download. Without it, the decorator defaults to `false`, which is correct for uploads, but the surrounding code passes an extra argument to progressEventReducer (`false, 3`). This mismatch can lead to incorrect throttling and progress reporting. The call should explicitly pass `false` as the third argument to progressEventDecorator to match the intended semantics."
+          }
+        ],
+        "usage": {
+          "inputTokens": 7057,
+          "outputTokens": 1598,
+          "costUsd": 0.001008675,
+          "latencyMs": 3990,
+          "model": "openai/gpt-oss-20b",
+          "calls": 2
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": false
     }
   ],
   "pending": [
-    "colinhacks/zod#5610",
-    "colinhacks/zod#5599",
-    "axios/axios#6518",
     "axios/axios#10861",
     "axios/axios#10957",
     "axios/axios#11087",
@@ -2286,6 +2353,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at colinhacks/zod#5610: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 196005, Requested 4921. Please try again in 6m"
+    "reviewer daily quota exhausted at axios/axios#10861: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198979, Requested 2531. Please try again in 10m5"
   ]
 }
