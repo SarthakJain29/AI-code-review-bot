@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-06T09-09-04-755Z_baseline-v2_groq_openai_gpt-oss-120b",
+  "runId": "2026-11-06T10-13-25-343Z_baseline-v2_groq_openai_gpt-oss-120b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-120b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-06T09:09:04.755Z",
-  "finishedAt": "2026-11-06T09:11:05.365Z",
+  "startedAt": "2026-11-06T10:13:25.343Z",
+  "finishedAt": "2026-11-06T10:14:26.126Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -1723,7 +1723,7 @@
         ],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "honojs/hono#5121",
@@ -1747,13 +1747,138 @@
         "perComment": [],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
+      "cached": true
+    },
+    {
+      "caseId": "honojs/hono#2314",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "src/utils/cookie.ts",
+            "line": 130,
+            "severity": "major",
+            "body": "The __Host- cookie validation only checks that opt.path === '/' and throws otherwise. However, if opt.path is undefined (the default), the check passes, allowing creation of an invalid __Host- cookie. According to the spec, __Host- cookies must have a Path attribute of '/' explicitly set. The code should treat a missing path as an error."
+          }
+        ],
+        "usage": {
+          "inputTokens": 3248,
+          "outputTokens": 347,
+          "costUsd": 0.0006954,
+          "latencyMs": 1533,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment identifies a different defect: it claims that a missing `path` option allows invalid `__Host-` cookies to be created. The known bug is specifically about the case-sensitivity of the `startsWith` check for the `__Secure-` and `__Host-` prefixes, which allows bypassing validation entirely for mixed-case prefixes like `__secure-` or `__HOST-`. The comment does not mention case-sensitivity or the bypass of the prefix check."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1038,
+          "outputTokens": 120,
+          "costUsd": 0.0013104000000000002,
+          "latencyMs": 505,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "honojs/hono#2684",
+      "kind": "buggy",
+      "category": "api-contract",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 2687,
+          "outputTokens": 209,
+          "costUsd": 0.0005284500000000001,
+          "latencyMs": 1389,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "honojs/hono#4078",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "src/context.ts",
+            "line": 415,
+            "severity": "major",
+            "body": "In the `res` setter, `_res` is replaced with `new Response(_res.body, _res)` before copying headers from the previous response. This discards the original response’s headers and may also consume the body stream, leading to unexpected behavior."
+          },
+          {
+            "file": "src/context.ts",
+            "line": 515,
+            "severity": "critical",
+            "body": "The `header` method creates a new Response when the context is finalized, but it does so before copying the existing headers. It then iterates over `this.#res.headers`, which now refer to the newly created (empty) response, so original headers are lost. This also risks re‑throwing the same immutability error the guard is trying to avoid."
+          }
+        ],
+        "usage": {
+          "inputTokens": 1236,
+          "outputTokens": 391,
+          "costUsd": 0.00042,
+          "latencyMs": 1548,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": true,
+        "caughtAnyLocation": true,
+        "matchedIndices": [
+          1
+        ],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment identifies a potential issue in the `res` setter (line 415), whereas the known bug is in the `header` method (line 515). While both involve creating new Response instances, the specific defect described in the known bug is the unconditional reset in `header` when `finalized` is true, which the comment does not address."
+          },
+          {
+            "index": 1,
+            "locationMatch": true,
+            "semanticMatch": true,
+            "reason": "The comment correctly identifies that the `header` method creates a new Response when finalized, which discards existing state (headers/body) and leads to errors. This aligns with the known bug's root cause: the check `if (this.finalized)` triggers a reset that breaks subsequent operations like setting headers on the new, empty response instance."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 893,
+          "outputTokens": 184,
+          "costUsd": 0.0014504000000000001,
+          "latencyMs": 1489,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
       "cached": false
     }
   ],
   "pending": [
-    "honojs/hono#2314",
-    "honojs/hono#2684",
-    "honojs/hono#4078",
     "honojs/hono#1015",
     "honojs/hono#4626",
     "honojs/hono#4559",
@@ -1819,6 +1944,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at honojs/hono#2314: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199667, Requested 3567. Please try again in 23m1"
+    "reviewer daily quota exhausted at honojs/hono#1015: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198992, Requested 4110. Please try again in 22m2"
   ]
 }
