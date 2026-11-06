@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-05T23-45-36-255Z_baseline-v2_groq_openai_gpt-oss-120b",
+  "runId": "2026-11-06T00-01-36-890Z_baseline-v2_groq_openai_gpt-oss-120b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-120b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-05T23:45:36.255Z",
-  "finishedAt": "2026-11-05T23:46:36.793Z",
+  "startedAt": "2026-11-06T00:01:36.890Z",
+  "finishedAt": "2026-11-06T00:02:37.411Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -952,10 +952,47 @@
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
       "cached": true
+    },
+    {
+      "caseId": "vitest-dev/vitest#11594",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "test/browser/specs/trace-timeline.test.ts",
+            "line": 28,
+            "severity": "major",
+            "body": "The function extractTimelines assumes that each matched trace block contains at least one data line (rows[0]). If a trace block only contains a title with no subsequent lines, rows[0] will be undefined and rows[0].map will throw a TypeError, causing the test runner to crash. Add a guard to handle empty rows safely."
+          }
+        ],
+        "usage": {
+          "inputTokens": 7769,
+          "outputTokens": 725,
+          "costUsd": 0.00160035,
+          "latencyMs": 4488,
+          "model": "openai/gpt-oss-120b",
+          "calls": 3
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": false
     }
   ],
   "pending": [
-    "vitest-dev/vitest#11594",
     "vitest-dev/vitest#6070",
     "vitest-dev/vitest#11623",
     "vitest-dev/vitest#9581",
@@ -1042,6 +1079,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at vitest-dev/vitest#11594: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199185, Requested 2873. Please try again "
+    "reviewer daily quota exhausted at vitest-dev/vitest#6070: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199712, Requested 2386. Please try again i"
   ]
 }
