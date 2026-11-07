@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-07T12-26-45-812Z_baseline-v2_groq_openai_gpt-oss-20b",
+  "runId": "2026-11-07T12-36-03-633Z_baseline-v2_groq_openai_gpt-oss-20b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-20b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-07T12:26:45.812Z",
-  "finishedAt": "2026-11-07T12:34:48.558Z",
+  "startedAt": "2026-11-07T12:36:03.633Z",
+  "finishedAt": "2026-11-07T12:38:06.676Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -3922,7 +3922,7 @@
         ],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "unjs/h3#315",
@@ -3946,30 +3946,86 @@
         "perComment": [],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "unjs/h3#847",
       "kind": "buggy",
       "category": "performance",
       "review": {
-        "comments": [],
+        "comments": [
+          {
+            "file": "src/utils/internal/encoding.ts",
+            "line": 27,
+            "severity": "critical",
+            "body": "The base64Encode loop starts at i = 2 and increments by 3, which skips the first two bytes of the input and can produce incorrect output. It should start at 0 and process the buffer in 3-byte chunks. The padding logic that follows (i === len + 1 and i === len) is also incorrect and will never be true for valid inputs, leading to missing padding characters."
+          },
+          {
+            "file": "src/utils/internal/iterable.ts",
+            "line": 44,
+            "severity": "major",
+            "body": "`serializeIterableValue` returns an empty Uint8Array for unsupported types instead of `undefined`. This causes an empty chunk to be sent for values like `function` or `undefined`, which is not the intended behavior. The function should return `undefined` for unsupported types to skip them."
+          },
+          {
+            "file": "src/utils/internal/iterable.ts",
+            "line": 42,
+            "severity": "major",
+            "body": "serializeIterableValue still returns a Buffer when the input is a Buffer. The updated tests expect a Uint8Array instead. This mismatch will cause the test to fail and may break consumers that rely on a consistent Uint8Array output for binary data."
+          },
+          {
+            "file": "src/utils/internal/iterable.ts",
+            "line": 38,
+            "severity": "major",
+            "body": "serializeIterableValue returns undefined for undefined and function values, but the updated tests expect an empty string. The function should normalize these cases to an empty string to match the new contract."
+          }
+        ],
         "usage": {
-          "inputTokens": 0,
-          "outputTokens": 0,
-          "costUsd": 0,
-          "latencyMs": 0,
+          "inputTokens": 11469,
+          "outputTokens": 3925,
+          "costUsd": 0.002037675,
+          "latencyMs": 7462,
           "model": "openai/gpt-oss-20b",
-          "calls": 0
-        },
-        "error": "no JSON found in model output: {\"comments\":[{\"file\":\"src"
+          "calls": 5
+        }
       },
       "verdict": {
         "caught": false,
         "caughtAnyLocation": false,
         "matchedIndices": [],
-        "perComment": [],
-        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment claims the loop logic is incorrect (skipping bytes, wrong padding conditions), which is factually wrong for the provided code. The known bug is a performance/runtime crash caused by spreading a large array into `String.fromCharCode`, not a logic error in the loop indices or padding."
+          },
+          {
+            "index": 1,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 2,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 3,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1945,
+          "outputTokens": 80,
+          "costUsd": 0.001876,
+          "latencyMs": 673,
+          "model": "qwen/qwen3.8-27b"
+        }
       },
       "cached": false
     },
@@ -4100,7 +4156,7 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "unjs/h3#1242",
@@ -4123,7 +4179,7 @@
           "calls": 1
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "unjs/h3#1234",
@@ -4152,7 +4208,7 @@
           "calls": 1
         }
       },
-      "cached": false
+      "cached": true
     }
   ],
   "pending": [],
