@@ -156,14 +156,29 @@ export class BaselineReviewer implements Reviewer {
             }
             throw e;
           }
-          this.chunkCache?.set(key, res);
         }
-        comments.push(...parseReviewOutput(res.text, input.diff));
+        // Count every call that was paid for, including a cut-off reply that gets re-split below.
         usage.inputTokens += res.inputTokens;
         usage.outputTokens += res.outputTokens;
         usage.costUsd += res.costUsd;
         usage.latencyMs += res.latencyMs; // sequential calls: total time the review takes
         usage.calls++;
+        let parsed: ReviewComment[];
+        try {
+          parsed = parseReviewOutput(res.text, input.diff);
+        } catch (e) {
+          // Unparseable output is almost always a reply cut off at the output-token cap (many
+          // findings on a big chunk). Review the chunk in halves rather than failing the case.
+          const smaller = budget > 500 ? chunkDiff(chunk, Math.floor(budget / 2)) : [];
+          if (smaller.length > 1) {
+            queue.splice(i, 1, ...smaller.map((c) => ({ chunk: c, budget: Math.floor(budget / 2) })));
+            i--;
+            continue;
+          }
+          throw e;
+        }
+        this.chunkCache?.set(key, res); // only cache responses that parsed
+        comments.push(...parsed);
       }
       return { comments, usage };
     } catch (e) {

@@ -100,6 +100,23 @@ describe('BaselineReviewer', () => {
     expect(r.usage.calls).toBeGreaterThan(1);
     expect(calls).toBeGreaterThan(r.usage.calls!);
   });
+  it('re-splits a chunk when the model output is cut off (unparseable JSON)', async () => {
+    const llm: LlmProvider = {
+      name: 'groq',
+      model: 'm',
+      complete: async (req: LlmRequest): Promise<LlmResponse> => ({
+        text: estimateTokens(req.prompt) > 1000 ? '{"comments":[{"file":"src' : '{"comments":[]}',
+        inputTokens: 1,
+        outputTokens: 1,
+        latencyMs: 1,
+        costUsd: 0,
+        model: 'm',
+      }),
+    };
+    const r = await new BaselineReviewer(llm, { chunkTokens: 1600 }).review({ diff, repo: 'o/r', title: 't' });
+    expect(r.error).toBeUndefined();
+    expect(r.usage.calls).toBeGreaterThan(1);
+  });
   it('flags daily-quota failures so the runner can stop and resume', async () => {
     const failing: LlmProvider = {
       name: 'groq',
