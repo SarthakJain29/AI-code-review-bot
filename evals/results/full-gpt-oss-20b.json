@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-07T00-27-14-926Z_baseline-v2_groq_openai_gpt-oss-20b",
+  "runId": "2026-11-07T12-26-45-812Z_baseline-v2_groq_openai_gpt-oss-20b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-20b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-07T00:27:14.926Z",
-  "finishedAt": "2026-11-07T00:56:22.337Z",
+  "startedAt": "2026-11-07T12:26:45.812Z",
+  "finishedAt": "2026-11-07T12:34:48.558Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -2728,7 +2728,7 @@
         "perComment": [],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "date-fns/date-fns#1765",
@@ -2773,7 +2773,7 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "date-fns/date-fns#1690",
@@ -2906,7 +2906,7 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "pmndrs/zustand#2678",
@@ -2951,7 +2951,7 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "pmndrs/zustand#1144",
@@ -3022,7 +3022,7 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "pmndrs/zustand#1789",
@@ -3046,7 +3046,7 @@
         "perComment": [],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "pmndrs/zustand#1486",
@@ -3091,7 +3091,7 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "pmndrs/zustand#1460",
@@ -3136,7 +3136,7 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "pmndrs/zustand#1463",
@@ -3160,7 +3160,7 @@
         "perComment": [],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "pmndrs/zustand#724",
@@ -3184,7 +3184,7 @@
         "perComment": [],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "pmndrs/zustand#3032",
@@ -3200,7 +3200,7 @@
           "calls": 1
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "pmndrs/zustand#2277",
@@ -3223,7 +3223,7 @@
           "calls": 1
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "immerjs/immer#1255",
@@ -3247,7 +3247,7 @@
         "perComment": [],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "immerjs/immer#912",
@@ -3271,7 +3271,7 @@
         "perComment": [],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "immerjs/immer#1014",
@@ -3295,7 +3295,7 @@
         "perComment": [],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "immerjs/immer#771",
@@ -3340,7 +3340,7 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "immerjs/immer#1164",
@@ -3356,7 +3356,7 @@
           "calls": 1
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "sindresorhus/ky#736",
@@ -3413,7 +3413,7 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "sindresorhus/ky#751",
@@ -3437,7 +3437,7 @@
         "perComment": [],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "sindresorhus/ky#760",
@@ -3482,7 +3482,7 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "sindresorhus/ky#540",
@@ -3520,7 +3520,7 @@
         ],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "sindresorhus/ky#601",
@@ -3567,7 +3567,7 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "sindresorhus/ky#466",
@@ -3612,7 +3612,7 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "sindresorhus/ky#632",
@@ -3657,7 +3657,7 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "sindresorhus/ky#536",
@@ -3719,7 +3719,7 @@
         ],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "unjs/h3#1137",
@@ -3743,7 +3743,7 @@
         "perComment": [],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "unjs/h3#1212",
@@ -3767,7 +3767,7 @@
         "perComment": [],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "unjs/h3#1097",
@@ -3848,7 +3848,7 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "unjs/h3#480",
@@ -3872,18 +3872,289 @@
         "perComment": [],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
+      "cached": true
+    },
+    {
+      "caseId": "unjs/h3#1509",
+      "kind": "buggy",
+      "category": "async-concurrency",
+      "review": {
+        "comments": [
+          {
+            "file": "src/utils/internal/event-stream.ts",
+            "line": 2,
+            "severity": "critical",
+            "body": "The EventStream class has been removed from this module, but the public API still expects it to be exported. The test suite imports `EventStream` from this file and the package export list includes it. Without the class definition and export, importing `EventStream` will throw a runtime error and the package will not expose the expected API. This is a breaking change that must be addressed."
+          },
+          {
+            "file": "src/utils/internal/event-stream.ts",
+            "line": 4,
+            "severity": "critical",
+            "body": "The helper functions `formatEventStreamComment`, `formatEventStreamMessage`, and `formatEventStreamMessages` are no longer exported. The test suite imports `formatEventStreamComment` from this module, so the missing export will cause a test failure. The functions should be exported to maintain backward compatibility."
+          }
+        ],
+        "usage": {
+          "inputTokens": 7640,
+          "outputTokens": 1524,
+          "costUsd": 0.0010302,
+          "latencyMs": 4032,
+          "model": "openai/gpt-oss-20b",
+          "calls": 3
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 1,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": false
+    },
+    {
+      "caseId": "unjs/h3#315",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 2921,
+          "outputTokens": 593,
+          "costUsd": 0.00039697500000000004,
+          "latencyMs": 1194,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": false
+    },
+    {
+      "caseId": "unjs/h3#847",
+      "kind": "buggy",
+      "category": "performance",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 0,
+          "outputTokens": 0,
+          "costUsd": 0,
+          "latencyMs": 0,
+          "model": "openai/gpt-oss-20b",
+          "calls": 0
+        },
+        "error": "no JSON found in model output: {\"comments\":[{\"file\":\"src"
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": false
+    },
+    {
+      "caseId": "unjs/h3#1008",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "src/response.ts",
+            "line": 168,
+            "severity": "critical",
+            "body": "The `errorResponse` function constructs a `SrvxResponse` incorrectly: it passes `null` and `2` as the second and third arguments, which are interpreted as the response init and status code, respectively. The correct signature is `new SrvxResponse(body, init)`. This bug will cause malformed error responses and likely crash the server when an error occurs."
+          },
+          {
+            "file": "src/response.ts",
+            "line": 158,
+            "severity": "major",
+            "body": "The helper `nullBody` returns a union type `boolean | 0 | undefined`, but the callers expect a boolean. Returning `0` is unnecessary and confusing. It should return a plain boolean."
+          },
+          {
+            "file": "src/response.ts",
+            "line": 21,
+            "severity": "major",
+            "body": "`handleResponse` recursively calls itself when encountering a Promise. If the resolved value is again a Promise, this will lead to infinite recursion. The code should guard against this by checking if the resolved value is a Promise before recursing."
+          },
+          {
+            "file": "src/response.ts",
+            "line": 42,
+            "severity": "major",
+            "body": "When `val` is `kNotFound`, the code creates an error but does not set the HTTP status code on the response. The subsequent `prepareResponse` call will use the default status (200) unless `onError` modifies it. This can lead to a 200 response for a 404 error."
+          },
+          {
+            "file": "src/response.ts",
+            "line": 59,
+            "severity": "major",
+            "body": "The logic for handling non-Response values creates a new `SrvxResponse` with `nullBody(event.req.method, status) ? null : body`. However, `nullBody` may return `undefined`, which will be treated as `false`, potentially sending a body when it should be omitted. The condition should explicitly check for `true`."
+          },
+          {
+            "file": "src/response.ts",
+            "line": 76,
+            "severity": "major",
+            "body": "When merging headers from a `Response` object, the code uses `event.res._headers` to get the prepared headers. If `_headers` is undefined, it returns the original `Response`. However, this bypasses any status or statusText set on the original `Response`. The logic should preserve the status and statusText from the original `Response` even when headers are merged."
+          },
+          {
+            "file": "src/response.ts",
+            "line": 147,
+            "severity": "minor",
+            "body": "The handling of symbols now returns `val.toString()`, which yields a string like \"Symbol(test)\". This is acceptable, but the test expects the string representation. Ensure that this behavior is intentional and documented."
+          },
+          {
+            "file": "src/response.ts",
+            "line": 150,
+            "severity": "minor",
+            "body": "The handling of functions returns a string representation of the function name. This may expose internal implementation details. Consider sanitizing or restricting this behavior."
+          }
+        ],
+        "usage": {
+          "inputTokens": 3836,
+          "outputTokens": 1971,
+          "costUsd": 0.000879,
+          "latencyMs": 2904,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "Identifies a different bug related to incorrect constructor arguments for SrvxResponse, not the synchronous throw escaping the error pipeline."
+          },
+          {
+            "index": 1,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "Identifies a type inconsistency in the nullBody helper, unrelated to the synchronous exception handling bug."
+          },
+          {
+            "index": 2,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "Identifies a potential infinite recursion issue with Promises, which is a different logic flaw than the unhandled synchronous throw."
+          },
+          {
+            "index": 3,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "Identifies a missing status code for 404 errors, which is a different issue from the synchronous throw bypassing the error pipeline."
+          },
+          {
+            "index": 4,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "Identifies a potential issue with nullBody returning undefined, unrelated to the synchronous exception handling."
+          },
+          {
+            "index": 5,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "Identifies an issue with header merging and status preservation, unrelated to the synchronous throw bug."
+          },
+          {
+            "index": 6,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "Comments on symbol stringification behavior, unrelated to the synchronous throw bug."
+          },
+          {
+            "index": 7,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "Comments on function stringification exposing details, unrelated to the synchronous throw bug."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 2032,
+          "outputTokens": 301,
+          "costUsd": 0.0028296000000000003,
+          "latencyMs": 952,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "unjs/h3#1242",
+      "kind": "clean",
+      "review": {
+        "comments": [
+          {
+            "file": "src/utils/ws.ts",
+            "line": 37,
+            "severity": "major",
+            "body": "`hooks` can be a function that returns a Promise<Partial<WebSocketHooks>> according to the type definition, but the implementation calls it synchronously and assigns the result to `crossws`. If the function returns a Promise, `crossws` will be a Promise instead of the expected hooks object, leading to incorrect behavior and type errors. The function should await the result (or handle the Promise) before assigning to `crossws`."
+          }
+        ],
+        "usage": {
+          "inputTokens": 960,
+          "outputTokens": 333,
+          "costUsd": 0.00017189999999999998,
+          "latencyMs": 1038,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "unjs/h3#1234",
+      "kind": "clean",
+      "review": {
+        "comments": [
+          {
+            "file": "src/middleware.ts",
+            "line": 137,
+            "severity": "critical",
+            "body": "`is404` references `kNotFound`, which is not imported or defined anywhere in this file. This will cause a runtime ReferenceError when the function is executed."
+          },
+          {
+            "file": "src/middleware.ts",
+            "line": 106,
+            "severity": "major",
+            "body": "`toMiddleware` treats any returned value as a 404 if it is `undefined` or equal to `kNotFound`. However, the tests expect a `Response` with status 404 to trigger the next middleware. The current implementation does not inspect the `Response` status, so a 404 `Response` will be returned instead of calling `next()`. This logic is incorrect and will break the intended behavior."
+          }
+        ],
+        "usage": {
+          "inputTokens": 1676,
+          "outputTokens": 367,
+          "costUsd": 0.00023579999999999999,
+          "latencyMs": 890,
+          "model": "openai/gpt-oss-20b",
+          "calls": 1
+        }
+      },
       "cached": false
     }
   ],
-  "pending": [
-    "unjs/h3#1509",
-    "unjs/h3#315",
-    "unjs/h3#847",
-    "unjs/h3#1008",
-    "unjs/h3#1242",
-    "unjs/h3#1234"
-  ],
-  "notes": [
-    "reviewer daily quota exhausted at unjs/h3#1509: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 197984, Requested 2193. Please try again in 1m16.464s"
-  ]
+  "pending": [],
+  "notes": []
 }
