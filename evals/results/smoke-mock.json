@@ -1,0 +1,119 @@
+{
+  "runId": "2026-11-04T21-19-44-703Z_mock-heuristic-v1",
+  "reviewerId": "mock-heuristic-v1",
+  "judgeId": "llm-judge-v1:groq:openai/gpt-oss-120b",
+  "startedAt": "2026-11-04T21:19:44.703Z",
+  "finishedAt": "2026-11-04T21:19:44.706Z",
+  "datasetVersion": 1,
+  "caseCount": 5,
+  "results": [
+    {
+      "caseId": "vuejs/core#16109",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 2309,
+          "outputTokens": 0,
+          "costUsd": 0,
+          "latencyMs": 1,
+          "model": "mock"
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v1:groq:openai/gpt-oss-120b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vuejs/core#14348",
+      "kind": "clean",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 693,
+          "outputTokens": 0,
+          "costUsd": 0,
+          "latencyMs": 1,
+          "model": "mock"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "sveltejs/svelte#12604",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 312,
+          "outputTokens": 0,
+          "costUsd": 0,
+          "latencyMs": 1,
+          "model": "mock"
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v1:groq:openai/gpt-oss-120b"
+      },
+      "cached": false
+    },
+    {
+      "caseId": "vitest-dev/vitest#5135",
+      "kind": "buggy",
+      "category": "state-mutation",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 521,
+          "outputTokens": 0,
+          "costUsd": 0,
+          "latencyMs": 1,
+          "model": "mock"
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v1:groq:openai/gpt-oss-120b"
+      },
+      "cached": false
+    },
+    {
+      "caseId": "TanStack/query#11679",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 1052,
+          "outputTokens": 0,
+          "costUsd": 0,
+          "latencyMs": 1,
+          "model": "mock"
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v1:groq:openai/gpt-oss-120b"
+      },
+      "cached": false
+    }
+  ],
+  "notes": []
+}

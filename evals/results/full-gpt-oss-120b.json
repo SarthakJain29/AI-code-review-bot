@@ -1,0 +1,2160 @@
+{
+  "runId": "2026-11-06T12-27-15-815Z_baseline-v2_groq_openai_gpt-oss-120b",
+  "reviewerId": "baseline-v2:groq:openai/gpt-oss-120b",
+  "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+  "startedAt": "2026-11-06T12:27:15.815Z",
+  "finishedAt": "2026-11-06T12:31:17.845Z",
+  "datasetVersion": 1,
+  "caseCount": 110,
+  "results": [
+    {
+      "caseId": "vuejs/core#16109",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/runtime-core/src/components/Suspense.ts",
+            "line": 130,
+            "severity": "minor",
+            "body": "The code accesses `n2.ssContent!` which is not a standard property on a VNode in Vue's Suspense implementation. This may be undefined, causing a runtime error when `isSameVNodeType` is called. It likely should reference the appropriate content vnode property (e.g., `n2.suspense?.activeBranch` or similar)."
+          }
+        ],
+        "usage": {
+          "inputTokens": 3477,
+          "outputTokens": 348,
+          "costUsd": 0.0007303499999999999,
+          "latencyMs": 1704,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment identifies a potential runtime error due to accessing a non-standard property `n2.ssContent!`, which is a different issue from the known bug. The known bug is a logic error where the guard `!suspense.isInFallback` is incorrectly placed, causing root replacements to be applied when they should be skipped. The comment does not address the logical inversion or the specific behavior of mounting new content into a retained page."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1402,
+          "outputTokens": 110,
+          "costUsd": 0.0015616000000000002,
+          "latencyMs": 897,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vuejs/core#15430",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/runtime-core/src/hydration.ts",
+            "line": 319,
+            "severity": "major",
+            "body": "The added condition accesses `vnode.component!.asyncDep` without guaranteeing that `vnode.component` is defined. In cases where `vnode.component` is null, this will throw a runtime error. The check should safely guard against a null component, e.g., `vnode.component && vnode.component.asyncDep`."
+          }
+        ],
+        "usage": {
+          "inputTokens": 6767,
+          "outputTokens": 399,
+          "costUsd": 0.0012544499999999998,
+          "latencyMs": 3525,
+          "model": "openai/gpt-oss-120b",
+          "calls": 3
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vuejs/core#12255",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/runtime-core/src/hydration.ts",
+            "line": 721,
+            "severity": "major",
+            "body": "The added code unconditionally sets `parentComponent.vnode.el = vnode.el` even when `vnode.el` may be null (e.g., during a mismatch before the new element is created). Overwriting the parent component's vnode.el with null can break subsequent DOM operations that expect a valid element reference."
+          }
+        ],
+        "usage": {
+          "inputTokens": 1041,
+          "outputTokens": 302,
+          "costUsd": 0.00033735000000000004,
+          "latencyMs": 1559,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment identifies a potential null reference issue (vnode.el being null), whereas the known bug is a logic error where the parent's el is updated unconditionally even when it does not correspond to the replaced node, leading to an incorrect (but non-null) element reference. The root causes are different."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1417,
+          "outputTokens": 84,
+          "costUsd": 0.0014696000000000002,
+          "latencyMs": 562,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vuejs/core#15627",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 871,
+          "outputTokens": 274,
+          "costUsd": 0.00029505,
+          "latencyMs": 1068,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vuejs/core#11639",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/runtime-core/src/hydrationStrategies.ts",
+            "line": 34,
+            "severity": "minor",
+            "body": "The visibility check uses `top > 0 && top < innerHeight` (and similar for left/right). This excludes elements that are exactly at the viewport edge (e.g., top===0) which are still visible. Using `>= 0` would be more correct."
+          },
+          {
+            "file": "packages/runtime-core/src/hydrationStrategies.ts",
+            "line": 34,
+            "severity": "minor",
+            "body": "The visibility logic also fails for elements larger than the viewport: if an element spans the whole viewport, both `top` and `bottom` may be outside the 0‑innerHeight range, causing the function to incorrectly report it as not visible. Consider checking for any overlap rather than both coordinates being within the range."
+          }
+        ],
+        "usage": {
+          "inputTokens": 878,
+          "outputTokens": 505,
+          "costUsd": 0.0004347,
+          "latencyMs": 1565,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment identifies a boundary condition bug in the `elementIsVisibleInViewport` helper (off-by-one at viewport edges). The known bug is a logic flaw in the `hydrateOnVisible` strategy where it fails to observe children of `display: contents` elements, causing the observer to never trigger for nested visible content. These are different root causes and behaviors."
+          },
+          {
+            "index": 1,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment identifies a bug in the `elementIsVisibleInViewport` helper regarding elements larger than the viewport. The known bug is about the `hydrateOnVisible` strategy not observing children of `display: contents` elements. These are different defects."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1493,
+          "outputTokens": 162,
+          "costUsd": 0.0018424000000000001,
+          "latencyMs": 949,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vuejs/core#10734",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 3152,
+          "outputTokens": 363,
+          "costUsd": 0.0006905999999999999,
+          "latencyMs": 1462,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vuejs/core#14902",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/reactivity/src/watch.ts",
+            "line": 223,
+            "severity": "critical",
+            "body": "The once wrapper calls the original callback twice: first with `_cb(...args)` and then again when assigning `const res = _cb(...args)`. This duplicate invocation can cause side effects, double execution, and incorrect behavior, especially for async callbacks. The first call should be removed so the callback is invoked only once and its result returned."
+          }
+        ],
+        "usage": {
+          "inputTokens": 870,
+          "outputTokens": 295,
+          "costUsd": 0.0003075,
+          "latencyMs": 975,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment claims the callback is invoked twice (duplicate invocation), which is factually incorrect based on the provided code snippet (`const res = _cb(...args)` is a single call). The known bug is that `watchHandle()` is not called if the callback throws, not that the callback is called twice. Therefore, the comment identifies a different (and non-existent) defect."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 797,
+          "outputTokens": 99,
+          "costUsd": 0.0010336,
+          "latencyMs": 449,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vuejs/core#12308",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 1804,
+          "outputTokens": 503,
+          "costUsd": 0.0005723999999999999,
+          "latencyMs": 1814,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vuejs/core#14348",
+      "kind": "clean",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 987,
+          "outputTokens": 376,
+          "costUsd": 0.00037365,
+          "latencyMs": 999,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vuejs/core#14308",
+      "kind": "clean",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 1862,
+          "outputTokens": 129,
+          "costUsd": 0.0003567,
+          "latencyMs": 962,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "sveltejs/svelte#12604",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/svelte/src/internal/client/dom/hydration.js",
+            "line": 4,
+            "severity": "major",
+            "body": "The code imports HYDRATION_ERROR from '../../../constants.js', but that constant does not exist in the Svelte codebase. Importing a non‑existent export will cause a runtime error and break hydration."
+          }
+        ],
+        "usage": {
+          "inputTokens": 614,
+          "outputTokens": 241,
+          "costUsd": 0.00023669999999999998,
+          "latencyMs": 695,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment claims that HYDRATION_ERROR is a non-existent export causing a runtime error. This is factually incorrect (HYDRATION_ERROR is a valid constant used in the codebase) and does not identify the actual bug, which is the failure to handle HYDRATION_START_FAILED in the skip_nodes logic."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1443,
+          "outputTokens": 86,
+          "costUsd": 0.0014984,
+          "latencyMs": 828,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "sveltejs/svelte#10916",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/svelte/src/internal/client/dom/elements/attributes.js",
+            "line": 54,
+            "severity": "critical",
+            "body": "The function returns early after recording the original attribute during hydration (`return;` on line 54). This prevents the later logic that actually updates the element’s attribute from running, so attributes are never applied during hydration."
+          },
+          {
+            "file": "packages/svelte/src/internal/client/dom/elements/attributes.js",
+            "line": 306,
+            "severity": "major",
+            "body": "`check_src_in_dev_hydration` now returns early only when `!DEV` (line 306) instead of when not hydrating. This causes the dev‑only warning to fire during normal client updates, potentially spamming the console and misreporting errors."
+          }
+        ],
+        "usage": {
+          "inputTokens": 2486,
+          "outputTokens": 648,
+          "costUsd": 0.0007617,
+          "latencyMs": 1942,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The known bug is about redundant attribute writes (performance/efficiency issue) where the code writes attributes that were already rendered by the server. Comment [0] claims the early return prevents attributes from being applied at all (a functional correctness bug where attributes are missing). These are different defects: one is about unnecessary work, the other is about missing work."
+          },
+          {
+            "index": 1,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The known bug is in the `set_attribute` function regarding redundant writes during hydration. Comment [1] discusses a different function (`check_src_in_dev_hydration`) and a different issue (dev warnings firing incorrectly). This is a completely different problem in a different part of the code."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1654,
+          "outputTokens": 168,
+          "costUsd": 0.0019952,
+          "latencyMs": 1623,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "sveltejs/svelte#18944",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/svelte/src/internal/client/proxy.js",
+            "line": 242,
+            "severity": "major",
+            "body": "The condition now checks `active_reaction` instead of `active_effect`. However, elsewhere in the code `active_effect` is used to determine whether a write should trigger tracking. Switching to `active_reaction` may cause writes performed during an effect (but not a reaction) to be ignored, breaking reactivity for certain derived stores."
+          },
+          {
+            "file": "packages/svelte/tests/signals/test.ts",
+            "line": 188,
+            "severity": "major",
+            "body": "The test expects that setting `value.length = 0` will cause the derived `has_first` to recompute. The proxy's `set` trap only tracks writes to existing properties or writable descriptors; changing the `length` property does not automatically trigger a re‑evaluation of the `in` check for index `0`. This may result in the derived not updating, indicating a missing edge‑case handling for array length mutations."
+          }
+        ],
+        "usage": {
+          "inputTokens": 979,
+          "outputTokens": 413,
+          "costUsd": 0.00039464999999999997,
+          "latencyMs": 1604,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment suggests that the code is incorrectly using `active_reaction` instead of `active_effect`, implying the bug is that `active_effect` is missing or ignored. However, the known bug is that the code *only* checks `active_reaction` and fails to include `active_effect` in the condition, causing state sources not to be created when an effect is active but no reaction is. The comment misidentifies the direction of the error (claiming `active_reaction` is the wrong choice when it's actually the incomplete one) and focuses on a different consequence (writes being ignored) rather than the root cause (missing state source creation for `in` checks during effect initialization)."
+          },
+          {
+            "index": 1,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1476,
+          "outputTokens": 161,
+          "costUsd": 0.0018248,
+          "latencyMs": 602,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "sveltejs/svelte#16333",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 2026,
+          "outputTokens": 222,
+          "costUsd": 0.00043709999999999995,
+          "latencyMs": 1282,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "sveltejs/svelte#17105",
+      "kind": "buggy",
+      "category": "state-mutation",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/svelte/src/internal/client/reactivity/effects.js",
+            "line": 106,
+            "severity": "major",
+            "body": "The reaction object is always created with the CONNECTED flag (f: type | DIRTY | CONNECTED). CONNECTED is meant to indicate that a reaction is part of an effect tree (i.e., an effect or a derived that is depended on by an effect). Adding it to every reaction, including pure deriveds that have no dependents, incorrectly marks them as connected. This prevents deriveds from being treated as unconnected and can stop them from being marked MAYBE_DIRTY, breaking the intended reconnection logic and potentially causing stale values."
+          },
+          {
+            "file": "packages/svelte/src/internal/client/runtime.js",
+            "line": 647,
+            "severity": "major",
+            "body": "The reconnect function toggles the CONNECTED flag using XOR (derived.f ^= CONNECTED). This will incorrectly clear the flag if the derived is already connected, causing it to become disconnected again. It should set the flag (derived.f |= CONNECTED) instead of toggling."
+          }
+        ],
+        "usage": {
+          "inputTokens": 7084,
+          "outputTokens": 872,
+          "costUsd": 0.0015858,
+          "latencyMs": 3227,
+          "model": "openai/gpt-oss-120b",
+          "calls": 2
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 1,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment identifies a potential issue with the CONNECTED flag being toggled via XOR, which is a different concern from the known bug. The known bug is about the `reconnect` function unconditionally pushing the derived onto the dependency's `reactions` array, leading to duplicate subscriptions. The comment does not mention duplicate subscriptions, the `reactions` array, or the lack of a check for existing entries."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1453,
+          "outputTokens": 106,
+          "costUsd": 0.0015864000000000002,
+          "latencyMs": 550,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "sveltejs/svelte#11879",
+      "kind": "buggy",
+      "category": "state-mutation",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/svelte/src/compiler/phases/3-transform/client/visitors/template.js",
+            "line": 2776,
+            "severity": "major",
+            "body": "Added handling for `activeElement` binding but omitted similar handling for the newly introduced `pointerLockElement` binding. As a result, `<svelte:document bind:pointerLockElement={...}>` will not generate the appropriate binding code, breaking the feature."
+          }
+        ],
+        "usage": {
+          "inputTokens": 2092,
+          "outputTokens": 240,
+          "costUsd": 0.0004578,
+          "latencyMs": 1253,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "sveltejs/svelte#15460",
+      "kind": "buggy",
+      "category": "async-concurrency",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 2068,
+          "outputTokens": 351,
+          "costUsd": 0.0005208,
+          "latencyMs": 1339,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "sveltejs/svelte#12285",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/svelte/src/reactivity/url.js",
+            "line": 129,
+            "severity": "major",
+            "body": "The `search` getter now returns `get(this.#search)`, which only tracks changes to the internal `#search` source. Modifications to `searchParams` (e.g., append, delete, set) no longer trigger updates because the source isn’t updated when `SvelteURLSearchParams` changes. This breaks reactivity for `url.search` and consequently for `url.href`, causing tests like the new `url.href` test to fail."
+          }
+        ],
+        "usage": {
+          "inputTokens": 6752,
+          "outputTokens": 1289,
+          "costUsd": 0.0017862,
+          "latencyMs": 4038,
+          "model": "openai/gpt-oss-120b",
+          "calls": 2
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "sveltejs/svelte#17575",
+      "kind": "clean",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/svelte/src/internal/client/render.js",
+            "line": 211,
+            "severity": "major",
+            "body": "The change now always pushes an empty context object onto the context stack, even when no context is provided. Previously a context layer was only added when a context existed, and popped accordingly. Introducing an unnecessary empty context layer can affect getContext/lookups and may break components that rely on the absence of a context layer."
+          },
+          {
+            "file": "packages/svelte/src/internal/server/renderer.js",
+            "line": 620,
+            "severity": "major",
+            "body": "Similarly, the server renderer now always pushes a context frame regardless of whether options.context is set, and always pops it. This adds an extraneous empty context layer that could interfere with SSR context handling and break code that expects no context frame when none is supplied."
+          }
+        ],
+        "usage": {
+          "inputTokens": 1658,
+          "outputTokens": 396,
+          "costUsd": 0.00048629999999999995,
+          "latencyMs": 1633,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "sveltejs/svelte#17088",
+      "kind": "clean",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/svelte/src/compiler/phases/1-parse/read/options.js",
+            "line": 141,
+            "severity": "major",
+            "body": "The error handler references an undefined variable 'attribute' instead of the 'shadow' node. This will cause a ReferenceError when an invalid shadow option is encountered."
+          },
+          {
+            "file": "packages/svelte/types/index.d.ts",
+            "line": 1237,
+            "severity": "major",
+            "body": "The new type for the `shadow` option is declared as `ObjectExpression | undefined`, which is a Babel AST node type and does not represent the runtime shape of a `ShadowRootInit` object. This will cause type errors for legitimate `ShadowRootInit` values (e.g., `{ mode: \"open\", delegatesFocus: true }`) and may break consumers' TypeScript typings. The type should be something like `ShadowRootInit` or a generic object type, not `ObjectExpression`."
+          }
+        ],
+        "usage": {
+          "inputTokens": 5064,
+          "outputTokens": 874,
+          "costUsd": 0.001284,
+          "latencyMs": 3617,
+          "model": "openai/gpt-oss-120b",
+          "calls": 2
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vitest-dev/vitest#5135",
+      "kind": "buggy",
+      "category": "state-mutation",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/expect/src/jest-extend.ts",
+            "line": 1,
+            "severity": "major",
+            "body": "Importing `use` (and `util`) as named exports from 'chai' is incorrect; `use` is a method on the chai instance, not a named export. This will be undefined at runtime, causing a failure when calling `use(JestExtendPlugin(...))`."
+          }
+        ],
+        "usage": {
+          "inputTokens": 857,
+          "outputTokens": 331,
+          "costUsd": 0.00032714999999999996,
+          "latencyMs": 1300,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment claims that importing `use` from 'chai' is incorrect and will be undefined, which is factually wrong (chai does export `use`). More importantly, it identifies a potential runtime error due to incorrect import syntax rather than the actual bug, which is a memory leak caused by the global state mutation of registering plugins via `chai.use`."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1499,
+          "outputTokens": 94,
+          "costUsd": 0.0015752000000000001,
+          "latencyMs": 504,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vitest-dev/vitest#9745",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/browser/src/client/tester/tester-utils.ts",
+            "line": 227,
+            "severity": "major",
+            "body": "The new implementation of getIframeScale assumes it is always called from within an iframe and throws an error if window.frameElement is null. In non‑iframe contexts (e.g., when running tests without the UI), this will cause a runtime exception, breaking functionality that previously fell back to reading the data‑scale attribute from the parent tester element."
+          },
+          {
+            "file": "test/test-utils/cli.ts",
+            "line": 89,
+            "severity": "major",
+            "body": "The timeout fallback expression uses incorrect operator precedence: `timeout ?? process.env.CI ? 20_000 : 4_000` evaluates as `(timeout ?? process.env.CI) ? 20_000 : 4_000` instead of the intended `timeout ?? (process.env.CI ? 20_000 : 4_000)`. This can cause an unexpected timeout value (e.g., using 20_000 when `timeout` is undefined but `process.env.CI` is falsy). Wrap the ternary in parentheses to fix the precedence."
+          }
+        ],
+        "usage": {
+          "inputTokens": 9463,
+          "outputTokens": 1121,
+          "costUsd": 0.0020920500000000002,
+          "latencyMs": 5333,
+          "model": "openai/gpt-oss-120b",
+          "calls": 3
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 1,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vitest-dev/vitest#10656",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/browser/src/client/orchestrator.ts",
+            "line": 611,
+            "severity": "critical",
+            "body": "The function getIframeTimeout uses getConfig() but getConfig is not imported or defined in this module, causing a ReferenceError at runtime."
+          }
+        ],
+        "usage": {
+          "inputTokens": 5484,
+          "outputTokens": 506,
+          "costUsd": 0.0011262,
+          "latencyMs": 2519,
+          "model": "openai/gpt-oss-120b",
+          "calls": 2
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment identifies a missing import/definition for `getConfig` causing a ReferenceError, which is a different defect from the known bug where the orchestrator fails to reject the promise when an error field is present in the response event."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 786,
+          "outputTokens": 69,
+          "costUsd": 0.0009048000000000001,
+          "latencyMs": 460,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vitest-dev/vitest#9132",
+      "kind": "buggy",
+      "category": "api-contract",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 3227,
+          "outputTokens": 394,
+          "costUsd": 0.00072045,
+          "latencyMs": 1648,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vitest-dev/vitest#10170",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/runner/src/types/runner.ts",
+            "line": 39,
+            "severity": "critical",
+            "body": "Changed taskTitleValueFormatTruncate to a required number, but the configuration may still provide undefined. This will cause runtime errors when the value is accessed (e.g., in suite.ts where it’s used as inspectOptions.truncate). The type should remain number|undefined or a default should be enforced."
+          },
+          {
+            "file": "packages/utils/src/display.ts",
+            "line": 268,
+            "severity": "critical",
+            "body": "The new truncateString function uses isHighSurrogate but does not import or define it in this file, leading to a ReferenceError when the function is called with a string longer than maxLength."
+          }
+        ],
+        "usage": {
+          "inputTokens": 3460,
+          "outputTokens": 294,
+          "costUsd": 0.0006954,
+          "latencyMs": 1418,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 1,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vitest-dev/vitest#11594",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "test/browser/specs/trace-timeline.test.ts",
+            "line": 28,
+            "severity": "major",
+            "body": "The function extractTimelines assumes that each matched trace block contains at least one data line (rows[0]). If a trace block only contains a title with no subsequent lines, rows[0] will be undefined and rows[0].map will throw a TypeError, causing the test runner to crash. Add a guard to handle empty rows safely."
+          }
+        ],
+        "usage": {
+          "inputTokens": 7769,
+          "outputTokens": 725,
+          "costUsd": 0.00160035,
+          "latencyMs": 4488,
+          "model": "openai/gpt-oss-120b",
+          "calls": 3
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vitest-dev/vitest#6070",
+      "kind": "buggy",
+      "category": "regex-string",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/ui/client/composables/explorer/state.ts",
+            "line": 35,
+            "severity": "major",
+            "body": "The `highlightRegex` computed value escapes HTML entities in the search string but does not escape RegExp meta‑characters. If a user searches for characters like '(' or ')' the generated RegExp will be invalid and throw at runtime, breaking the search/highlight feature."
+          }
+        ],
+        "usage": {
+          "inputTokens": 2103,
+          "outputTokens": 332,
+          "costUsd": 0.00051465,
+          "latencyMs": 1539,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": true,
+        "caughtAnyLocation": true,
+        "matchedIndices": [
+          0
+        ],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": true,
+            "reason": "The comment correctly identifies that the search string is being HTML-escaped instead of RegExp-escaped, leading to invalid Regular Expressions when searching for meta-characters like '('. This matches the root cause of the known bug where `escapeHtml` was used to build the RegExp, breaking highlighting for terms with regex meta-characters."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1419,
+          "outputTokens": 88,
+          "costUsd": 0.0014872000000000002,
+          "latencyMs": 547,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vitest-dev/vitest#11623",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/vitest/src/runtime/moduleRunner/bareModuleMocker.ts",
+            "line": 182,
+            "severity": "major",
+            "body": "await this.registeringMocks may be undefined when there are no pending mock registrations, causing a TypeError. The code should guard against undefined before awaiting."
+          },
+          {
+            "file": "packages/vitest/src/runtime/moduleRunner/bareModuleMocker.ts",
+            "line": 171,
+            "severity": "major",
+            "body": "The logic was changed to `if (BareModuleMocker.pendingIds.length) { ... }` without an else branch that returns early. When there are no pending IDs, the function proceeds to `await this.registeringMocks`, which may still hold a previous registration promise, leading to unintended awaiting of stale work or a possible deadlock."
+          },
+          {
+            "file": "test/e2e/test/mocking.test.ts",
+            "line": 135,
+            "severity": "major",
+            "body": "The Promise created on line 135 never resolves because the resolve callback is never called (setTimeout is invoked without invoking resolve). This will cause later.module to remain pending and the test to hang or fail. It should call resolve, e.g., `new Promise(resolve => setTimeout(resolve, 0))`."
+          }
+        ],
+        "usage": {
+          "inputTokens": 8827,
+          "outputTokens": 659,
+          "costUsd": 0.00171945,
+          "latencyMs": 3199,
+          "model": "openai/gpt-oss-120b",
+          "calls": 2
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 1,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 2,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vitest-dev/vitest#9581",
+      "kind": "clean",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 2873,
+          "outputTokens": 363,
+          "costUsd": 0.00064875,
+          "latencyMs": 1577,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "vitest-dev/vitest#9533",
+      "kind": "clean",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/vitest/src/node/cli/cli-config.ts",
+            "line": 831,
+            "severity": "major",
+            "body": "The `print` subcommand now declares an argument `<boolean|on-warn>` but the `transform` function only handles the special string `'on-warn'`. It returns the raw value for all other inputs, meaning values like `'true'` or `'false'` remain strings instead of being converted to booleans. Downstream code expects a boolean (e.g., `resolved.experimental.importDurations.print ??= false` and truthy checks), so passing `'true'` will be truthy but not a boolean, and `'false'` will be truthy as a non‑empty string, causing the print option to be incorrectly enabled. The transform should coerce `'true'`/`'false'` to actual booleans."
+          },
+          {
+            "file": "packages/vitest/src/node/cli/cli-config.ts",
+            "line": 848,
+            "severity": "minor",
+            "body": "The `thresholds` subcommand is defined with `argument: ''`. An empty argument string is not a valid CLI definition and may cause the command parser to reject the option or behave unexpectedly. It should either omit the `argument` field or provide a proper placeholder (e.g., `<number>` for each sub‑command)."
+          },
+          {
+            "file": "packages/vitest/src/node/reporters/base.ts",
+            "line": 616,
+            "severity": "major",
+            "body": "`thresholds` is accessed without a null‑check. The config makes `thresholds` optional, so if a user doesn’t provide it the code will throw when reading `thresholds.danger` or `thresholds.warn`."
+          },
+          {
+            "file": "packages/vitest/src/node/reporters/base.ts",
+            "line": 732,
+            "severity": "major",
+            "body": "Same issue as above: `thresholds` may be undefined, causing a runtime error when determining the colour for import durations."
+          },
+          {
+            "file": "test/cli/test/reporters/import-durations.test.ts",
+            "line": 19,
+            "severity": "critical",
+            "body": "The function `normalizeImportDurationsOutput` returns `section` at line 19, making the subsequent replace calls (lines 20‑26) unreachable. As a result, timing values, bar characters, and extra spaces are never normalized, causing the snapshot test to compare raw output instead of the intended normalized form."
+          }
+        ],
+        "usage": {
+          "inputTokens": 8851,
+          "outputTokens": 1212,
+          "costUsd": 0.00205485,
+          "latencyMs": 5073,
+          "model": "openai/gpt-oss-120b",
+          "calls": 3
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "TanStack/query#11679",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/query-core/src/retryer.ts",
+            "line": 176,
+            "severity": "major",
+            "body": "The `pause` function signature was changed to require a `canResume` callback, but existing calls to `pause()` without arguments (e.g., elsewhere in the codebase) will now receive `undefined` and cause a runtime error when `canResume()` is invoked. All call sites must be updated to pass an appropriate predicate or provide a default fallback inside `pause`."
+          }
+        ],
+        "usage": {
+          "inputTokens": 1465,
+          "outputTokens": 243,
+          "costUsd": 0.00036554999999999997,
+          "latencyMs": 1413,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment identifies a potential runtime error caused by a signature change to the `pause` function (missing argument), which is a different issue from the known logic bug where a cancelled retry incorrectly schedules a pause. The known bug is about the control flow logic (checking `isResolved` or `canContinue` before pausing), not about the function signature or argument passing."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1484,
+          "outputTokens": 97,
+          "costUsd": 0.0015752000000000001,
+          "latencyMs": 1677,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "TanStack/query#11036",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/query-core/src/queryObserver.ts",
+            "line": 341,
+            "severity": "major",
+            "body": "The new Promise.race combines the fetch promise with a cache subscriber promise, but the fetch branch does not handle rejections. If query.fetch() rejects (e.g., network error), the race will reject even if the cachePromise later resolves with valid data, causing an unhandled rejection and breaking fetchOptimistic's contract. A catch should be added to the fetch branch to swallow errors (or resolveEarly) so that the race can still settle with the cachePromise when appropriate."
+          }
+        ],
+        "usage": {
+          "inputTokens": 2881,
+          "outputTokens": 353,
+          "costUsd": 0.0006439499999999999,
+          "latencyMs": 1581,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment identifies a different defect: it claims that the fetch branch of the Promise.race does not handle rejections, leading to unhandled rejections or incorrect race settlement. The known bug is that query.fetch() is called without passing the observer's options (defaultedOptions), causing it to fail when the query is recreated without a queryFn. The comment does not mention missing options or the queryFn issue."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1121,
+          "outputTokens": 106,
+          "costUsd": 0.0013208000000000002,
+          "latencyMs": 914,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "TanStack/query#8496",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/query-core/src/mutationCache.ts",
+            "line": 232,
+            "severity": "major",
+            "body": "The new implementation of `scopeFor` returns `undefined` when a mutation has no explicit scope, whereas the previous version fell back to `String(mutation.mutationId)`. This changes the grouping semantics: unscoped mutations are no longer grouped together. As a result, `canRun` now always returns true for unscoped mutations, allowing them to run concurrently, which differs from the original behavior where unscoped mutations were serialized per generated scope ID. This regression can lead to race conditions and broken mutation ordering."
+          }
+        ],
+        "usage": {
+          "inputTokens": 1857,
+          "outputTokens": 506,
+          "costUsd": 0.00058215,
+          "latencyMs": 1706,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment identifies a regression in the `scopeFor` method regarding how unscoped mutations are grouped and serialized, which is a different logic issue from the known bug where `clear()` notifies subscribers before removing mutations from the cache."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1427,
+          "outputTokens": 68,
+          "costUsd": 0.0014136,
+          "latencyMs": 464,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "TanStack/query#9338",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 4068,
+          "outputTokens": 438,
+          "costUsd": 0.000873,
+          "latencyMs": 1639,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "TanStack/query#11166",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/preact-query/src/errorBoundaryUtils.ts",
+            "line": 28,
+            "severity": "major",
+            "body": "The `ensurePreventErrorBoundaryRetry` function signature was changed to accept a third `query` argument, but the function definition itself was not updated to include this new parameter. This will cause a runtime TypeError when the function tries to access the undefined argument, and also breaks TypeScript type checking."
+          }
+        ],
+        "usage": {
+          "inputTokens": 3286,
+          "outputTokens": 526,
+          "costUsd": 0.0008085,
+          "latencyMs": 1839,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment identifies a signature mismatch/missing parameter issue, which is a different defect from the known bug. The known bug is a logic error where `query?.state.error` is used as a truthy check to decide whether to call the `throwOnError` function, causing falsy errors to be mishandled. The comment does not address this logic flaw."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1218,
+          "outputTokens": 96,
+          "costUsd": 0.0013584,
+          "latencyMs": 448,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "TanStack/query#8049",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/query-core/src/infiniteQueryBehavior.ts",
+            "line": 94,
+            "severity": "critical",
+            "body": "ReferenceError: the variable `pages` is used but never defined. The line `const remainingPages = pages ?? oldPages.length` will throw at runtime, breaking infinite query fetching."
+          }
+        ],
+        "usage": {
+          "inputTokens": 2013,
+          "outputTokens": 287,
+          "costUsd": 0.00047414999999999995,
+          "latencyMs": 1209,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment identifies a ReferenceError caused by an undefined variable `pages`, which is a different defect (syntax/runtime error) than the known logic bug where a stored `null` page parameter is incorrectly treated as falsy and replaced by `initialPageParam`."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1057,
+          "outputTokens": 75,
+          "costUsd": 0.0011455999999999999,
+          "latencyMs": 430,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "TanStack/query#7312",
+      "kind": "buggy",
+      "category": "async-concurrency",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/query-core/src/__tests__/hydration.test.tsx",
+            "line": 727,
+            "severity": "major",
+            "body": "The test asserts that `dehydrated.mutations[0]?.scope?.id` equals `'scope'`. However, the current implementation of `dehydrate` does not serialize the `scope` property of a mutation, so the `scope` field will be `undefined` in the dehydrated state. This will cause the test to fail and indicates that mutation scopes are not being persisted across hydration, breaking the intended scoped‑mutation feature."
+          },
+          {
+            "file": "packages/query-core/src/__tests__/mutations.test.tsx",
+            "line": 590,
+            "severity": "major",
+            "body": "The expectation for the execution order of mutations across different scopes assumes a specific interleaving (`start-A1`, `start-A2`, `finish-A1`, …). The current mutation queue implementation does not guarantee that mutations from different scopes start in parallel; they may start sequentially depending on the internal scheduling, causing flaky or failing tests. The test’s ordering assumption is too strict and should be relaxed or the queue logic should be adjusted to explicitly start mutations from different scopes concurrently."
+          },
+          {
+            "file": "packages/query-core/src/mutation.ts",
+            "line": 107,
+            "severity": "critical",
+            "body": "The setOptions method signature was changed to require an options argument (no longer optional). Existing callers that rely on the previous optional parameter will now throw a runtime error or TypeScript compile error."
+          },
+          {
+            "file": "packages/query-core/src/mutation.ts",
+            "line": 107,
+            "severity": "major",
+            "body": "The implementation of setOptions now overwrites this.options with the passed object instead of merging with default options (previously it spread #defaultOptions). This removes default option handling and can cause unexpected behavior when defaults are expected."
+          },
+          {
+            "file": "packages/query-core/src/mutation.ts",
+            "line": 165,
+            "severity": "major",
+            "body": "createRetryer is called with a new 'canRun' option, but the Retryer implementation in the codebase does not accept a 'canRun' parameter. Passing an unknown option will likely cause a TypeScript error or be ignored, breaking the intended pause/resume logic."
+          },
+          {
+            "file": "packages/query-core/src/mutation.ts",
+            "line": 300,
+            "severity": "major",
+            "body": "The reducer handling for the 'pending' action now expects action.isPaused, but the action type definition was only updated in this file. Other parts of the codebase that create or type‑check PendingAction may not include the new isPaused field, leading to type mismatches or undefined values."
+          },
+          {
+            "file": "packages/query-core/src/mutationCache.ts",
+            "line": 91,
+            "severity": "major",
+            "body": "`#mutationId` is initialized with `Date.now()` and never incremented, so all mutations will share the same ID. This breaks the default scope fallback (`String(mutation.mutationId)`) and can cause collisions in the mutation map, breaking `canRun`/`runNext` logic."
+          },
+          {
+            "file": "packages/query-core/src/mutationCache.ts",
+            "line": 205,
+            "severity": "minor",
+            "body": "`scopeFor` falls back to `String(mutation.mutationId)`. If a mutation's ID hasn't been assigned yet (e.g., before being added to the cache), this will be `undefined`, resulting in the string \"undefined\" as a scope and mixing unrelated mutations together."
+          }
+        ],
+        "usage": {
+          "inputTokens": 10282,
+          "outputTokens": 1444,
+          "costUsd": 0.0024086999999999997,
+          "latencyMs": 5287,
+          "model": "openai/gpt-oss-120b",
+          "calls": 3
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 1,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 2,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 3,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 4,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 5,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 6,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 7,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "TanStack/query#6982",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/solid-query/src/createBaseQuery.ts",
+            "line": 163,
+            "severity": "critical",
+            "body": "Calling unsubscribeIfQueued before it is defined. Since unsubscribeIfQueued is declared as a const arrow function, it is not hoisted, leading to a ReferenceError at runtime."
+          }
+        ],
+        "usage": {
+          "inputTokens": 741,
+          "outputTokens": 225,
+          "costUsd": 0.00024615,
+          "latencyMs": 1003,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment identifies a ReferenceError caused by calling a function before its definition (hoisting issue). The known bug is a logic error where the code checks a non-existent property `queryResource.loading` instead of `queryResource.state` for SSR cleanup. These are distinct defects with different root causes and behaviors."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 620,
+          "outputTokens": 84,
+          "costUsd": 0.000832,
+          "latencyMs": 462,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "TanStack/query#9914",
+      "kind": "clean",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/vue-query/src/useIsFetching.ts",
+            "line": 27,
+            "severity": "major",
+            "body": "The listener only runs when the query cache changes, but when `fetchingFilters` is a getter function that depends on reactive refs, changes to those refs won't trigger the listener, so `isFetching` won't update reactively. A watchEffect (or similar) should be added to re‑evaluate the getter whenever its dependencies change."
+          }
+        ],
+        "usage": {
+          "inputTokens": 6331,
+          "outputTokens": 759,
+          "costUsd": 0.00140505,
+          "latencyMs": 3273,
+          "model": "openai/gpt-oss-120b",
+          "calls": 2
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "TanStack/query#9866",
+      "kind": "clean",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 1093,
+          "outputTokens": 444,
+          "costUsd": 0.00043034999999999997,
+          "latencyMs": 1470,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "honojs/hono#2350",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "src/utils/cookie.ts",
+            "line": 209,
+            "severity": "major",
+            "body": "The `serialize` function now declares `opt` as optional (`opt?: CookieConstraint<Name>`), but it forwards this value directly to `_serialize`. The original implementation defaulted `opt` to an empty object (`{}`), ensuring `_serialize` always received an object. If callers omit the options argument, `opt` will be `undefined`, and `_serialize` may attempt to read properties on `undefined`, causing a runtime TypeError. The function should provide a default empty object or handle `undefined` before calling `_serialize`."
+          }
+        ],
+        "usage": {
+          "inputTokens": 1667,
+          "outputTokens": 269,
+          "costUsd": 0.00041145,
+          "latencyMs": 1170,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment identifies a potential runtime TypeError caused by an optional `opt` parameter being passed as `undefined` to `_serialize`. This is a different issue from the known bug, which is a type-level case-sensitivity flaw in the `CookieConstraint` type definition that fails to recognize lower-case or mixed-case `__Secure-` and `__Host-` prefixes."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1150,
+          "outputTokens": 97,
+          "costUsd": 0.001308,
+          "latencyMs": 469,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "honojs/hono#5222",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 615,
+          "outputTokens": 164,
+          "costUsd": 0.00019064999999999997,
+          "latencyMs": 542,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "honojs/hono#1215",
+      "kind": "buggy",
+      "category": "regex-string",
+      "review": {
+        "comments": [
+          {
+            "file": "src/middleware/timing/index.ts",
+            "line": 66,
+            "severity": "major",
+            "body": "The middleware appends Server-Timing header using the local `headers` array, which remains empty. It should use the `metrics.headers` array (the one stored in context) that `setMetric` pushes metrics into. This results in no timing data being sent to the client."
+          }
+        ],
+        "usage": {
+          "inputTokens": 4277,
+          "outputTokens": 234,
+          "costUsd": 0.0007819499999999999,
+          "latencyMs": 1293,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "honojs/hono#5121",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 768,
+          "outputTokens": 250,
+          "costUsd": 0.0002652,
+          "latencyMs": 1121,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "honojs/hono#2314",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "src/utils/cookie.ts",
+            "line": 130,
+            "severity": "major",
+            "body": "The __Host- cookie validation only checks that opt.path === '/' and throws otherwise. However, if opt.path is undefined (the default), the check passes, allowing creation of an invalid __Host- cookie. According to the spec, __Host- cookies must have a Path attribute of '/' explicitly set. The code should treat a missing path as an error."
+          }
+        ],
+        "usage": {
+          "inputTokens": 3248,
+          "outputTokens": 347,
+          "costUsd": 0.0006954,
+          "latencyMs": 1533,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment identifies a different defect: it claims that a missing `path` option allows invalid `__Host-` cookies to be created. The known bug is specifically about the case-sensitivity of the `startsWith` check for the `__Secure-` and `__Host-` prefixes, which allows bypassing validation entirely for mixed-case prefixes like `__secure-` or `__HOST-`. The comment does not mention case-sensitivity or the bypass of the prefix check."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1038,
+          "outputTokens": 120,
+          "costUsd": 0.0013104000000000002,
+          "latencyMs": 505,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "honojs/hono#2684",
+      "kind": "buggy",
+      "category": "api-contract",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 2687,
+          "outputTokens": 209,
+          "costUsd": 0.0005284500000000001,
+          "latencyMs": 1389,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": true
+    },
+    {
+      "caseId": "honojs/hono#4078",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "src/context.ts",
+            "line": 415,
+            "severity": "major",
+            "body": "In the `res` setter, `_res` is replaced with `new Response(_res.body, _res)` before copying headers from the previous response. This discards the original response’s headers and may also consume the body stream, leading to unexpected behavior."
+          },
+          {
+            "file": "src/context.ts",
+            "line": 515,
+            "severity": "critical",
+            "body": "The `header` method creates a new Response when the context is finalized, but it does so before copying the existing headers. It then iterates over `this.#res.headers`, which now refer to the newly created (empty) response, so original headers are lost. This also risks re‑throwing the same immutability error the guard is trying to avoid."
+          }
+        ],
+        "usage": {
+          "inputTokens": 1236,
+          "outputTokens": 391,
+          "costUsd": 0.00042,
+          "latencyMs": 1548,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": true,
+        "caughtAnyLocation": true,
+        "matchedIndices": [
+          1
+        ],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment identifies a potential issue in the `res` setter (line 415), whereas the known bug is in the `header` method (line 515). While both involve creating new Response instances, the specific defect described in the known bug is the unconditional reset in `header` when `finalized` is true, which the comment does not address."
+          },
+          {
+            "index": 1,
+            "locationMatch": true,
+            "semanticMatch": true,
+            "reason": "The comment correctly identifies that the `header` method creates a new Response when finalized, which discards existing state (headers/body) and leads to errors. This aligns with the known bug's root cause: the check `if (this.finalized)` triggers a reset that breaks subsequent operations like setting headers on the new, empty response instance."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 893,
+          "outputTokens": 184,
+          "costUsd": 0.0014504000000000001,
+          "latencyMs": 1489,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "honojs/hono#1015",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "deno_dist/utils/url.ts",
+            "line": 169,
+            "severity": "major",
+            "body": "When the URL contains no percent-encoded characters or plus signs, the function returns undefined immediately (lines 169‑171). This breaks the expected behavior for URLs without encoded characters, as getQueryParam should return either the specific value (if a key is provided) or the full parameter map. Returning undefined discards all query parameters for such URLs."
+          },
+          {
+            "file": "src/utils/url.ts",
+            "line": 151,
+            "severity": "major",
+            "body": "The optimized path for unencoded keys assumes the URL contains a scheme and looks for the query start at position 8 (url.indexOf('? ',8)). This fails for raw query strings like 'name=hey' which lack a scheme. In such cases the function returns undefined instead of the expected value, breaking backward compatibility."
+          }
+        ],
+        "usage": {
+          "inputTokens": 7832,
+          "outputTokens": 884,
+          "costUsd": 0.0017052,
+          "latencyMs": 3380,
+          "model": "openai/gpt-oss-120b",
+          "calls": 2
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 1,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment identifies a bug related to the hardcoded offset (position 8) for finding the query string, which fails for raw query strings without a scheme. The known bug is about the logic for handling duplicate keys where an earlier encoded key decodes to the same name as a later unencoded key, causing the wrong value to be returned. These are distinct defects."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1532,
+          "outputTokens": 96,
+          "costUsd": 0.0016096,
+          "latencyMs": 646,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": true
+    },
+    {
+      "caseId": "honojs/hono#4626",
+      "kind": "clean",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 1171,
+          "outputTokens": 211,
+          "costUsd": 0.00030225,
+          "latencyMs": 1281,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "honojs/hono#4559",
+      "kind": "clean",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 1329,
+          "outputTokens": 166,
+          "costUsd": 0.00029895,
+          "latencyMs": 722,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "colinhacks/zod#6705",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/zod/src/v4/core/memoizer.ts",
+            "line": 40,
+            "severity": "major",
+            "body": "The `record` function stores a length for each issue using `iss.path?.length`. When an issue has no path, this stores `undefined`. Later `replay` assumes this entry is a number and does arithmetic `iss.path.length - (rec[i + 1] as number)`. If the stored value is `undefined` the subtraction yields `NaN`, and `Array.prototype.slice(NaN)` behaves like `slice(0)`, potentially producing an incorrect (empty) path. This can corrupt error paths for issues that originally had no path. The code should store `0` instead of `undefined` for missing paths, or `replay` should guard against `undefined` values."
+          }
+        ],
+        "usage": {
+          "inputTokens": 2738,
+          "outputTokens": 639,
+          "costUsd": 0.0007941,
+          "latencyMs": 2151,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment identifies a potential bug in the `record` function regarding how it stores path lengths for issues without paths (storing `undefined` instead of `0`), which could lead to `NaN` in `replay`. However, the known bug is about the memoizer reusing issue lists from unchecked passes (encode passes that skip checks) because it didn't account for the start index of newly added issues. The fix involves separating buckets for checked and unchecked passes and passing a `start` index to `record` to only record new issues. The comment's suggested fix (handling `undefined` path lengths) does not address the root cause of reusing stale issue lists from different pass types."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1527,
+          "outputTokens": 164,
+          "costUsd": 0.0018776,
+          "latencyMs": 2117,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "colinhacks/zod#6443",
+      "kind": "buggy",
+      "category": "performance",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/zod/src/v4/core/memoizer.ts",
+            "line": 188,
+            "severity": "major",
+            "body": "When a memoized node has no issues, the code assigns the shared constant NO_ISSUES (an empty array) to entry.issues. Later code may push into entry.issues assuming it’s a fresh mutable array, which would mutate the shared constant and affect other cache entries. This can cause cross‑contamination of issue lists across different nodes. Use a new empty array (e.g., []) instead of the shared NO_ISSUES constant."
+          }
+        ],
+        "usage": {
+          "inputTokens": 1155,
+          "outputTokens": 405,
+          "costUsd": 0.00041625,
+          "latencyMs": 1475,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment identifies a potential bug regarding mutation of the shared `NO_ISSUES` constant, which is a different issue (correctness/safety of shared state) than the known performance bug (memory growth due to deep cloning of issue lists on every cache hit). The known bug is about the cost of `cloneIssues`, not the mutability of the empty array constant."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1529,
+          "outputTokens": 97,
+          "costUsd": 0.0016112000000000001,
+          "latencyMs": 545,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "colinhacks/zod#6652",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/zod/src/v4/core/compile.ts",
+            "line": 1556,
+            "severity": "major",
+            "body": "The generated size gate uses `numericOperand(max, check._zod.def.check)` where `check._zod.def.check` is a string identifier of the check (e.g., \"max\"). `numericOperand` expects a numeric value, so passing a string will produce incorrect code and likely a runtime error. It should compare against the numeric `max` directly, e.g., `if (${size} > ${max}) return INVALID;`. This bug could cause size checks to malfunction or throw."
+          }
+        ],
+        "usage": {
+          "inputTokens": 2865,
+          "outputTokens": 346,
+          "costUsd": 0.0006373500000000001,
+          "latencyMs": 1455,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": false
+    }
+  ],
+  "pending": [
+    "colinhacks/zod#6386",
+    "colinhacks/zod#6347",
+    "colinhacks/zod#6371",
+    "colinhacks/zod#5793",
+    "colinhacks/zod#4602",
+    "colinhacks/zod#5610",
+    "colinhacks/zod#5599",
+    "axios/axios#6518",
+    "axios/axios#10861",
+    "axios/axios#10957",
+    "axios/axios#11087",
+    "axios/axios#11138",
+    "axios/axios#10660",
+    "axios/axios#10795",
+    "axios/axios#10788",
+    "axios/axios#6265",
+    "axios/axios#7202",
+    "date-fns/date-fns#2720",
+    "date-fns/date-fns#2382",
+    "date-fns/date-fns#1105",
+    "date-fns/date-fns#1914",
+    "date-fns/date-fns#1765",
+    "date-fns/date-fns#1690",
+    "date-fns/date-fns#962",
+    "pmndrs/zustand#3206",
+    "pmndrs/zustand#2678",
+    "pmndrs/zustand#1144",
+    "pmndrs/zustand#1789",
+    "pmndrs/zustand#1486",
+    "pmndrs/zustand#1460",
+    "pmndrs/zustand#1463",
+    "pmndrs/zustand#724",
+    "pmndrs/zustand#3032",
+    "pmndrs/zustand#2277",
+    "immerjs/immer#1255",
+    "immerjs/immer#912",
+    "immerjs/immer#1014",
+    "immerjs/immer#771",
+    "immerjs/immer#1164",
+    "sindresorhus/ky#736",
+    "sindresorhus/ky#751",
+    "sindresorhus/ky#760",
+    "sindresorhus/ky#540",
+    "sindresorhus/ky#601",
+    "sindresorhus/ky#466",
+    "sindresorhus/ky#632",
+    "sindresorhus/ky#536",
+    "unjs/h3#1137",
+    "unjs/h3#1212",
+    "unjs/h3#1097",
+    "unjs/h3#480",
+    "unjs/h3#1509",
+    "unjs/h3#315",
+    "unjs/h3#847",
+    "unjs/h3#1008",
+    "unjs/h3#1242",
+    "unjs/h3#1234"
+  ],
+  "notes": [
+    "reviewer daily quota exhausted at colinhacks/zod#6386: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199731, Requested 3567. Please try again in 2"
+  ]
+}
