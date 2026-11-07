@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-06T12-27-15-815Z_baseline-v2_groq_openai_gpt-oss-120b",
+  "runId": "2026-11-07T00-27-14-919Z_baseline-v2_groq_openai_gpt-oss-120b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-120b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-06T12:27:15.815Z",
-  "finishedAt": "2026-11-06T12:31:17.845Z",
+  "startedAt": "2026-11-07T00:27:14.919Z",
+  "finishedAt": "2026-11-07T00:57:18.275Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -1948,7 +1948,7 @@
           "calls": 1
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "honojs/hono#4559",
@@ -1964,7 +1964,7 @@
           "calls": 1
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "colinhacks/zod#6705",
@@ -2009,7 +2009,7 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "colinhacks/zod#6443",
@@ -2054,7 +2054,7 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "colinhacks/zod#6652",
@@ -2092,31 +2092,1090 @@
         ],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
+      "cached": true
+    },
+    {
+      "caseId": "colinhacks/zod#6386",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/zod/src/v4/core/schemas.ts",
+            "line": 1758,
+            "severity": "major",
+            "body": "The presence check was changed from a custom isPropertyPresent to a simple `key in input`. For the special \"__proto__\" key this returns true even when the property is only inherited (i.e., not an own property). This can cause the parser to treat an absent \"__proto__\" as present, leading to unintended prototype manipulation or incorrect handling of optional fields."
+          }
+        ],
+        "usage": {
+          "inputTokens": 8581,
+          "outputTokens": 903,
+          "costUsd": 0.0018289500000000002,
+          "latencyMs": 4236,
+          "model": "openai/gpt-oss-120b",
+          "calls": 3
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The known bug is about a blanket `if (key === \"__proto__\") continue;` that skips validation of the key schema for `__proto__` keys, causing them to be silently accepted. The review comment discusses a different issue: the use of `key in input` vs `isPropertyPresent` for checking property presence, which affects whether an inherited `__proto__` is treated as present. This is a different root cause (presence check logic) and different behavior (treating absent/inherited as present vs skipping validation entirely)."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1565,
+          "outputTokens": 134,
+          "costUsd": 0.001788,
+          "latencyMs": 4568,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "colinhacks/zod#6347",
+      "kind": "buggy",
+      "category": "regex-string",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 2636,
+          "outputTokens": 140,
+          "costUsd": 0.0004794,
+          "latencyMs": 990,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": false
+    },
+    {
+      "caseId": "colinhacks/zod#6371",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/zod/src/v3/ZodError.ts",
+            "line": 245,
+            "severity": "major",
+            "body": "The loop manually increments `i` (line 245) and then `continue`s, but the surrounding `for` loop also increments `i`. This double‑increment causes the next path segment to be skipped when handling a `_errors` segment that is not terminal, leading to incorrect error formatting for nested paths."
+          },
+          {
+            "file": "packages/zod/src/v4/core/errors.ts",
+            "line": 330,
+            "severity": "major",
+            "body": "The code manually increments `i` (line 331) before `continue`. Since the surrounding loop also increments `i`, this will skip the element immediately after a \"_errors\" segment, causing parts of the error path to be ignored."
+          }
+        ],
+        "usage": {
+          "inputTokens": 9903,
+          "outputTokens": 866,
+          "costUsd": 0.00200505,
+          "latencyMs": 4286,
+          "model": "openai/gpt-oss-120b",
+          "calls": 3
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 1,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": false
+    },
+    {
+      "caseId": "colinhacks/zod#5793",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/zod/src/v3/types.ts",
+            "line": 1355,
+            "severity": "critical",
+            "body": "The new implementation of floatSafeRemainder returns the fractional part of the division (ratio - roundedRatio) instead of the actual remainder of val divided by step. Existing code expects the remainder (i.e., (val % step) / step) to be zero for valid multiples. This change will break multipleOf validation and any other logic that relies on the original remainder semantics."
+          },
+          {
+            "file": "packages/zod/src/v4/core/util.ts",
+            "line": 247,
+            "severity": "critical",
+            "body": "Same issue as above: the function now returns ratio - roundedRatio, which is the fractional part, not the remainder. This deviates from the original contract of floatSafeRemainder and will cause incorrect validation for number steps and multiples across the library."
+          }
+        ],
+        "usage": {
+          "inputTokens": 1329,
+          "outputTokens": 304,
+          "costUsd": 0.00038175,
+          "latencyMs": 1034,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 1,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment claims the function returns the fractional part instead of the remainder, which is incorrect; the function correctly returns the remainder (ratio - roundedRatio). The known bug is about the tolerance being too strict, not about the return value logic."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1034,
+          "outputTokens": 71,
+          "costUsd": 0.0011112000000000001,
+          "latencyMs": 870,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "colinhacks/zod#4602",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/zod/src/v4/core/checks.ts",
+            "line": 956,
+            "severity": "major",
+            "body": "The new regex construction uses `def.position` directly without validation. If `def.position` is negative or not an integer, the generated pattern `^.{${def.position}}...` will be invalid and throw a runtime error. The code should validate that `def.position` is a non‑negative integer before embedding it in the regex."
+          }
+        ],
+        "usage": {
+          "inputTokens": 1045,
+          "outputTokens": 220,
+          "costUsd": 0.00028875,
+          "latencyMs": 1220,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment identifies a potential runtime error caused by invalid input (negative or non-integer position), whereas the known bug is a semantic off-by-one error where the regex quantifier `{N}` enforces an exact offset instead of the required 'at or after' behavior (`{N,}`). Fixing the validation issue would not resolve the incorrect matching logic for valid inputs."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1225,
+          "outputTokens": 97,
+          "costUsd": 0.001368,
+          "latencyMs": 614,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "colinhacks/zod#5610",
+      "kind": "clean",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 4581,
+          "outputTokens": 725,
+          "costUsd": 0.0011221500000000001,
+          "latencyMs": 2381,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "colinhacks/zod#5599",
+      "kind": "clean",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/zod/src/v4/locales/uz.ts",
+            "line": 14,
+            "severity": "major",
+            "body": "The `getSizing` function does not include a case for the new `map` origin. As a result, when a map validation error occurs, `getSizing` will return `null` and the error message will fall back to a generic format, causing the test expectations (which look for the Uzbek word \"yozuv\") to fail. Add a `case \"map\": return locales.map;` (or equivalent) to handle map sizing messages."
+          }
+        ],
+        "usage": {
+          "inputTokens": 831,
+          "outputTokens": 215,
+          "costUsd": 0.00025364999999999996,
+          "latencyMs": 1019,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "axios/axios#6518",
+      "kind": "buggy",
+      "category": "state-mutation",
+      "review": {
+        "comments": [
+          {
+            "file": "lib/helpers/AxiosTransformStream.js",
+            "line": 45,
+            "severity": "major",
+            "body": "The constructor no longer registers listeners for 'end' and 'error' to call onFinish, which previously emitted the final progress event. Without these listeners the stream will never emit the final progress update when it finishes, breaking progress reporting."
+          },
+          {
+            "file": "lib/helpers/AxiosTransformStream.js",
+            "line": 140,
+            "severity": "major",
+            "body": "The method setLength was removed. Other parts of the codebase (e.g., adapters) may rely on AxiosTransformStream#setLength to set the total length for progress calculations. Its removal can cause undefined total size and break progress calculations or throw errors."
+          },
+          {
+            "file": "lib/helpers/throttle.js",
+            "line": 9,
+            "severity": "major",
+            "body": "The refactored throttle implementation removed the original \"force\" mechanism (triggered by calling the throttled function with `this===true`). Existing code may rely on this to immediately invoke the wrapped function, so removing it changes behavior and can break callers."
+          },
+          {
+            "file": "lib/helpers/throttle.js",
+            "line": 23,
+            "severity": "major",
+            "body": "The new throttled function no longer returns the result of the original `fn`. Previously, `throttle` returned whatever `fn` returned, which callers might depend on. Not returning the value can cause unexpected undefined results."
+          }
+        ],
+        "usage": {
+          "inputTokens": 7057,
+          "outputTokens": 1213,
+          "costUsd": 0.00178635,
+          "latencyMs": 4077,
+          "model": "openai/gpt-oss-120b",
+          "calls": 2
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 1,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 2,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 3,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": false
+    },
+    {
+      "caseId": "axios/axios#10861",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 4718,
+          "outputTokens": 509,
+          "costUsd": 0.0010130999999999999,
+          "latencyMs": 2499,
+          "model": "openai/gpt-oss-120b",
+          "calls": 2
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": false
+    },
+    {
+      "caseId": "axios/axios#10957",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "lib/adapters/http.js",
+            "line": 115,
+            "severity": "major",
+            "body": "The code assumes that `agent.callback` exists. In some versions or configurations of HttpsProxyAgent the `callback` property may be undefined, causing a TypeError when `callback.call` is invoked. Guard against a missing callback before wrapping it."
+          }
+        ],
+        "usage": {
+          "inputTokens": 2027,
+          "outputTokens": 136,
+          "costUsd": 0.00038564999999999997,
+          "latencyMs": 903,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment identifies a potential TypeError due to a missing `callback` property on the agent, which is a defensive programming concern. The known bug is a logic error where the code fails to apply `https.globalAgent` TLS options when no explicit `httpsAgent` is provided, leading to incorrect TLS configuration (e.g., missing custom CA). These are different root causes and behaviors."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1180,
+          "outputTokens": 99,
+          "costUsd": 0.00134,
+          "latencyMs": 532,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "axios/axios#11087",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 3666,
+          "outputTokens": 334,
+          "costUsd": 0.0007503,
+          "latencyMs": 1728,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": false
+    },
+    {
+      "caseId": "axios/axios#11138",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "lib/helpers/estimateDataURLDecodedBytes.js",
+            "line": 166,
+            "severity": "major",
+            "body": "The function still checks the scheme with `url.slice(0, 5) !== 'data:'`, which only matches lowercase. After making the base64 token case‑insensitive, URLs with uppercase scheme (e.g., `DATA:`) will incorrectly return 0 instead of being processed, breaking existing behavior and causing test failures."
+          }
+        ],
+        "usage": {
+          "inputTokens": 3441,
+          "outputTokens": 277,
+          "costUsd": 0.0006823499999999999,
+          "latencyMs": 1423,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment identifies a case-sensitivity issue with the URL scheme check ('data:' vs 'DATA:'), which is a different defect from the known bug. The known bug is about the buffer allocation estimate using the raw body length instead of the percent-decoded length for base64 data, leading to inflated size estimates. The comment does not address the percent-encoding or buffer allocation logic."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1221,
+          "outputTokens": 101,
+          "costUsd": 0.0013808000000000002,
+          "latencyMs": 501,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "axios/axios#10660",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 2605,
+          "outputTokens": 231,
+          "costUsd": 0.00052935,
+          "latencyMs": 1209,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": false
+    },
+    {
+      "caseId": "axios/axios#10795",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 4176,
+          "outputTokens": 202,
+          "costUsd": 0.0007476,
+          "latencyMs": 1328,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": false
+    },
+    {
+      "caseId": "axios/axios#10788",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 5151,
+          "outputTokens": 366,
+          "costUsd": 0.00099225,
+          "latencyMs": 2284,
+          "model": "openai/gpt-oss-120b",
+          "calls": 2
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": false
+    },
+    {
+      "caseId": "axios/axios#6265",
+      "kind": "clean",
+      "review": {
+        "comments": [
+          {
+            "file": "lib/utils.js",
+            "line": 255,
+            "severity": "major",
+            "body": "Changing the forEach signature to accept an options object breaks existing calls that pass a boolean for allOwnKeys. Those callers will now receive an object instead of a boolean, leading to unexpected behavior or runtime errors."
+          },
+          {
+            "file": "lib/utils.js",
+            "line": 380,
+            "severity": "critical",
+            "body": "extend now uses Object.defineProperty to add properties to the target object. If the target object is frozen or non‑extensible (which this PR aims to support), defineProperty will throw a TypeError, breaking compatibility with frozen prototypes."
+          },
+          {
+            "file": "lib/utils.js",
+            "line": 387,
+            "severity": "major",
+            "body": "Using Object.defineProperty with enumerable:true for all properties overwrites original property attributes (e.g., non‑enumerable, getters/setters). This changes object semantics and may cause bugs where property enumerability mattered."
+          }
+        ],
+        "usage": {
+          "inputTokens": 945,
+          "outputTokens": 343,
+          "costUsd": 0.00034754999999999996,
+          "latencyMs": 1304,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "axios/axios#7202",
+      "kind": "clean",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 678,
+          "outputTokens": 412,
+          "costUsd": 0.00034889999999999997,
+          "latencyMs": 1202,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "date-fns/date-fns#2720",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "src/locale/tr/_lib/match/index.ts",
+            "line": 2,
+            "severity": "major",
+            "body": "The import path for the Quarter type looks incorrect. Other locale match files import Quarter from '../../../types' (relative to the locale folder). Using '../../../../types' will likely resolve to a non‑existent module at runtime, causing a module not found error when the locale is loaded."
+          }
+        ],
+        "usage": {
+          "inputTokens": 9903,
+          "outputTokens": 506,
+          "costUsd": 0.00178905,
+          "latencyMs": 2663,
+          "model": "openai/gpt-oss-120b",
+          "calls": 2
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment identifies a potential import path error for the `Quarter` type, which is a different issue from the known bug regarding the regex patterns for matching Turkish weekday names ('pazar' and 'cuma')."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1793,
+          "outputTokens": 65,
+          "costUsd": 0.0016944,
+          "latencyMs": 464,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "date-fns/date-fns#2382",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "src/eachMinuteOfInterval/index.ts",
+            "line": 50,
+            "severity": "major",
+            "body": "The function throws a RangeError when startTime is equal to endTime (line 50). For an interval where start and end are the same minute, the expected behavior (consistent with other interval helpers) is to return an array containing that single minute, not to treat it as an invalid interval. The check should be `if (startTime > endTime)` instead of `>=`."
+          }
+        ],
+        "usage": {
+          "inputTokens": 2791,
+          "outputTokens": 346,
+          "costUsd": 0.00062625,
+          "latencyMs": 1313,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The known bug is that `startOfMinute` is applied to the interval's end date, causing intervals shorter than a minute (where start and end are in the same minute but different seconds) to be treated as zero-length and throw an error. The fix removes `startOfMinute` from the end date calculation. Comment [0] suggests changing the validation check from `>=` to `>` to handle the case where `startTime === endTime`. While this might prevent the error for some cases, it does not address the root cause (the incorrect truncation of the end date) and would still fail for intervals where the start is truncated to a minute but the end is in a later minute (e.g., start 10:00:30, end 10:01:30 -> start 10:00, end 10:01, which is valid, but the comment focuses on the equality case which is a symptom of the truncation, not the fix). More importantly, the comment identifies the validation logic as the problem, whereas the actual bug is in the date preparation logic (line 45). A developer following comment [0] would change the comparison operator, which is not the fix applied (removing `startOfMinute` from `endDate`). Therefore, it does not identify the same defect/root cause."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 804,
+          "outputTokens": 301,
+          "costUsd": 0.0018472,
+          "latencyMs": 850,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "date-fns/date-fns#1105",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 1255,
+          "outputTokens": 82,
+          "costUsd": 0.00023745,
+          "latencyMs": 810,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": false
+    },
+    {
+      "caseId": "date-fns/date-fns#1914",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "src/locale/gd/_lib/localize/index.js",
+            "line": 152,
+            "severity": "major",
+            "body": "The switch case for rem100 % 10 == 3 was removed, so ordinal numbers ending in 3 (e.g., 3rd, 23rd) will no longer return the correct 'tr' suffix and will fall through to the default 'mh' suffix, producing wrong output."
+          },
+          {
+            "file": "src/locale/gd/_lib/localize/index.js",
+            "line": 159,
+            "severity": "minor",
+            "body": "A special case for rem100 === 12 was added returning 'na', but the same suffix is already handled by the existing case for rem100 % 10 == 2. This duplicate handling may be unnecessary and could cause inconsistencies if other logic changes."
+          },
+          {
+            "file": "src/locale/gd/_lib/formatDistance/index.js",
+            "line": 110,
+            "severity": "major",
+            "body": "The past-tense formatting was changed from `result + ' o chionn'` to `' o chionn' + result`. This adds a leading space before the result and reverses the intended phrase order, likely breaking the grammar and producing strings like `' o chionn5mh'` instead of `'5mh o chionn'`."
+          },
+          {
+            "file": "src/locale/gd/snapshot.md",
+            "line": 205,
+            "severity": "major",
+            "body": "The snapshot line for 2000-01-15 changed from the correct expected result \"14 làithean\" to \"14 là\". This typo will cause the test for formatDistance to fail because the expected string no longer matches the actual output."
+          },
+          {
+            "file": "src/locale/gd/snapshot.md",
+            "line": 206,
+            "severity": "major",
+            "body": "Similarly, the line for 2000-01-02 changed from \"1 làithean\" (or \"1 latha\") to \"1 là\", breaking the expected output for that case."
+          },
+          {
+            "file": "src/locale/gd/snapshot.md",
+            "line": 216,
+            "severity": "major",
+            "body": "The suffix column for the last row now contains \"o chionnnas lugha na mionaid\" (typo with extra \"nn\") instead of the correct \"nas lugha na mionaid o chionn\". This typo corrupts the snapshot and will cause test failures."
+          },
+          {
+            "file": "src/locale/gd/snapshot.md",
+            "line": 217,
+            "severity": "major",
+            "body": "Similar typo in the suffix column: \"o chionnnas lugha na mionaid\" should be \"nas lugha na mionaid o chionn\"."
+          },
+          {
+            "file": "src/locale/gd/snapshot.md",
+            "line": 218,
+            "severity": "major",
+            "body": "Suffix typo \"o chionnnas lugha na mionaid\" again incorrect."
+          },
+          {
+            "file": "src/locale/gd/snapshot.md",
+            "line": 219,
+            "severity": "major",
+            "body": "Suffix typo \"o chionnnas lugha na mionaid\" should be \"nas lugha na mionaid o chionn\"."
+          },
+          {
+            "file": "src/locale/gd/snapshot.md",
+            "line": 220,
+            "severity": "major",
+            "body": "Suffix column now reads \"o chionn1 mionaid\" missing a space and the word \"nas\"; should be \"1 mionaid o chionn\"."
+          },
+          {
+            "file": "src/locale/gd/snapshot.md",
+            "line": 221,
+            "severity": "major",
+            "body": "Suffix column \"o chionn15 mionaidean\" missing space and leading phrase; should be \"15 mionaidean o chionn\"."
+          },
+          {
+            "file": "src/locale/gd/snapshot.md",
+            "line": 222,
+            "severity": "major",
+            "body": "Suffix column \"o chionn30 mionaidean\" malformed; should be \"30 mionaidean o chionn\"."
+          },
+          {
+            "file": "src/locale/gd/snapshot.md",
+            "line": 223,
+            "severity": "major",
+            "body": "Suffix column \"o chionnmu uair de thìde\" missing space; should be \"mu uair de thìde o chionn\"."
+          },
+          {
+            "file": "src/locale/gd/snapshot.md",
+            "line": 224,
+            "severity": "major",
+            "body": "Suffix column \"o chionnmu uair de thìde\" malformed as above."
+          },
+          {
+            "file": "src/locale/gd/snapshot.md",
+            "line": 225,
+            "severity": "major",
+            "body": "Suffix column \"o chionnmu 6 uairean de thìde\" malformed; should be \"mu 6 uairean de thìde o chionn\"."
+          },
+          {
+            "file": "src/locale/gd/snapshot.md",
+            "line": 226,
+            "severity": "major",
+            "body": "Suffix column \"o chionn2 là\" missing proper phrase; should be \"2 là o chionn\"."
+          },
+          {
+            "file": "src/locale/gd/snapshot.md",
+            "line": 227,
+            "severity": "major",
+            "body": "Suffix column \"o chionn17 là\" malformed; should be \"17 là o chionn\"."
+          },
+          {
+            "file": "src/locale/gd/snapshot.md",
+            "line": 228,
+            "severity": "major",
+            "body": "Suffix column \"o chionnmu mhìos\" malformed; should be \"mu mhìos o chionn\"."
+          },
+          {
+            "file": "src/locale/gd/snapshot.md",
+            "line": 229,
+            "severity": "major",
+            "body": "Suffix column \"o chionn2 mìosan\" malformed; should be \"2 mìosan o chionn\"."
+          },
+          {
+            "file": "src/locale/gd/snapshot.md",
+            "line": 230,
+            "severity": "major",
+            "body": "Suffix column \"o chionn7 mìosan\" malformed; should be \"7 mìosan o chionn\"."
+          },
+          {
+            "file": "src/locale/gd/snapshot.md",
+            "line": 231,
+            "severity": "major",
+            "body": "Suffix column \"o chionnmu bhliadhna\" malformed; should be \"mu bhliadhna o chionn\"."
+          },
+          {
+            "file": "src/locale/gd/snapshot.md",
+            "line": 232,
+            "severity": "major",
+            "body": "Suffix column \"o chionnmu bhliadhna\" malformed as above."
+          },
+          {
+            "file": "src/locale/gd/snapshot.md",
+            "line": 233,
+            "severity": "major",
+            "body": "Suffix column \"o chionncòrr is bliadhna\" typo; should be \"còrr is bliadhna o chionn\"."
+          },
+          {
+            "file": "src/locale gd/snapshot.md",
+            "line": 234,
+            "severity": "major",
+            "body": "Suffix column \"o chionnmu 2 bliadhnaichean\" malformed; should be \"mu 2 bliadhnaichean o chionn\"."
+          },
+          {
+            "file": "src/locale/gd/snapshot.md",
+            "line": 235,
+            "severity": "major",
+            "body": "Suffix column \"o chionnmu 3 bliadhnaichean\" malformed; should be \"mu 3 bliadhnaichean o chionn\"."
+          },
+          {
+            "file": "src/locale/gd/snapshot.md",
+            "line": 236,
+            "severity": "major",
+            "body": "Suffix column \"o chionnmu 4 bliadhnaichean\" malformed; should be \"mu 4 bliadhnaichean o chionn\"."
+          },
+          {
+            "file": "src/locale/gd/snapshot.md",
+            "line": 237,
+            "severity": "major",
+            "body": "Suffix column \"o chionnmu 5 bliadhnaichean\" malformed; should be \"mu 5 bliadhnaichean o chionn\"."
+          },
+          {
+            "file": "src/locale/gd/snapshot.md",
+            "line": 238,
+            "severity": "major",
+            "body": "Suffix column \"o chionnmu 6 bliadhnaichean\" malformed; should be \"mu 6 bliadhnaichean o chionn\"."
+          }
+        ],
+        "usage": {
+          "inputTokens": 13004,
+          "outputTokens": 1890,
+          "costUsd": 0.0030846,
+          "latencyMs": 6776,
+          "model": "openai/gpt-oss-120b",
+          "calls": 3
+        }
+      },
+      "verdict": {
+        "caught": true,
+        "caughtAnyLocation": true,
+        "matchedIndices": [
+          2
+        ],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 1,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 2,
+            "locationMatch": true,
+            "semanticMatch": true,
+            "reason": "The comment correctly identifies the specific defect at line 110 where the string concatenation is malformed. It points out that the code produces output like `' o chionn5mh'` (missing space/incorrect order) instead of the correct format, which aligns with the known bug of missing a space before the result in the 'o chionn' phrase."
+          },
+          {
+            "index": 3,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 4,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 5,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 6,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 7,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 8,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 9,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 10,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 11,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 12,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 13,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 14,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 15,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 16,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 17,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 18,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 19,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 20,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 21,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 22,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 23,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 24,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 25,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 26,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 27,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 2016,
+          "outputTokens": 99,
+          "costUsd": 0.0020088000000000003,
+          "latencyMs": 651,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
       "cached": false
     }
   ],
   "pending": [
-    "colinhacks/zod#6386",
-    "colinhacks/zod#6347",
-    "colinhacks/zod#6371",
-    "colinhacks/zod#5793",
-    "colinhacks/zod#4602",
-    "colinhacks/zod#5610",
-    "colinhacks/zod#5599",
-    "axios/axios#6518",
-    "axios/axios#10861",
-    "axios/axios#10957",
-    "axios/axios#11087",
-    "axios/axios#11138",
-    "axios/axios#10660",
-    "axios/axios#10795",
-    "axios/axios#10788",
-    "axios/axios#6265",
-    "axios/axios#7202",
-    "date-fns/date-fns#2720",
-    "date-fns/date-fns#2382",
-    "date-fns/date-fns#1105",
-    "date-fns/date-fns#1914",
     "date-fns/date-fns#1765",
     "date-fns/date-fns#1690",
     "date-fns/date-fns#962",
@@ -2155,6 +3214,6 @@
     "unjs/h3#1234"
   ],
   "notes": [
-    "reviewer daily quota exhausted at colinhacks/zod#6386: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199731, Requested 3567. Please try again in 2"
+    "reviewer daily quota exhausted at date-fns/date-fns#1765: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199111, Requested 5306. Please try again i"
   ]
 }
