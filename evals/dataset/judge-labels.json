@@ -1,0 +1,303 @@
+{
+  "description": "Hand labels for judge validation. Each item is a buggy case plus a set of review comments; \"caught\" is the label under the STRICT definition (some comment identifies the known bug AND is within the location tolerance). smoke-run items are real baseline outputs; constructed items probe paraphrase, wrong-line, generic-advice, same-line-different-issue and buried-comment cases.",
+  "labeler": "harness author (AI agent, unattended); please re-check",
+  "items": [
+    {
+      "id": "smoke:vuejs/core#16109",
+      "caseId": "vuejs/core#16109",
+      "source": "smoke-run",
+      "comments": [
+        {
+          "file": "packages/runtime-core/__tests__/components/Suspense.spec.ts",
+          "line": 5028,
+          "severity": "major",
+          "body": "Using `setTimeout` in a test is flaky and non-deterministic. It should be replaced with a more reliable mechanism like `await vi.advanceTimersByTimeAsync()` or a promise-based synchronization to ensure the test is stable across different environments."
+        }
+      ],
+      "caught": false,
+      "note": "Comment is about flaky setTimeout in a test file; unrelated to the inverted isInFallback guard."
+    },
+    {
+      "id": "smoke:sveltejs/svelte#12604",
+      "caseId": "sveltejs/svelte#12604",
+      "source": "smoke-run",
+      "comments": [
+        {
+          "file": "packages/svelte/src/internal/client/dom/hydration.js",
+          "line": 41,
+          "severity": "critical",
+          "body": "The assignment `hydrate_node = ...` will now throw a TypeError if `hydrate_node` is null because the check on line 37 only handles the error case, but the subsequent line attempts to access `.nextSibling` on a null reference if the function were to continue (though it throws, the logic flow is fragile). More importantly, if `hydrate_node` is null, `hydrate_node.nextSibling` will crash before the check if the check was intended to be defensive, or if the logic expects to return a value. Additionally, throwing a constant `HYDRATION_ERROR` (which is likely a string or number) is not a standard Error object, which may break error handling upstream."
+        }
+      ],
+      "caught": false,
+      "note": "Same file but a speculative null-dereference concern, not the HYDRATION_START_FAILED marker handling."
+    },
+    {
+      "id": "smoke:vitest-dev/vitest#5135",
+      "caseId": "vitest-dev/vitest#5135",
+      "source": "smoke-run",
+      "comments": [
+        {
+          "file": "packages/expect/package.json",
+          "line": 42,
+          "severity": "major",
+          "body": "The @types/chai version 4.3.6 is incompatible with Chai v5. Chai v5 includes its own type definitions, and using the old @types/chai package will cause significant type conflicts and incorrect type inference."
+        }
+      ],
+      "caught": false,
+      "note": "Comment is about @types/chai in package.json; the bug is the global chai.use plugin registration leaking context."
+    },
+    {
+      "id": "smoke:TanStack/query#11679",
+      "caseId": "TanStack/query#11679",
+      "source": "smoke-run",
+      "comments": [
+        {
+          "file": "packages/query-core/src/retryer.ts",
+          "line": 277,
+          "severity": "major",
+          "body": "The change to `pause(canStart).then(run)` in `retryer.ts` creates a potential race condition. If `canStart` returns false, `pause` is called. Inside `pause`, `continueFn` is defined, which checks `canResume` (passed as `canStart`). However, `continueFn` is only triggered by external events (like window focus or online status). If the condition for `canStart` changes due to a mutation finishing in the same scope, there is no mechanism here to trigger `continueFn` unless the window focus or online status also changes. This could lead to mutations being permanently stuck in a 'paused' state even when the queue should have progressed."
+        }
+      ],
+      "caught": false,
+      "note": "Hard negative: same retry/pause area and also says \"race\", but describes pause never resuming, not a cancelled retry pausing a replacement fetch; also 30 lines away."
+    },
+    {
+      "id": "probe:hono-paraphrase",
+      "caseId": "honojs/hono#2314",
+      "source": "constructed",
+      "comments": [
+        {
+          "file": "src/utils/cookie.ts",
+          "line": 117,
+          "body": "Cookie name prefixes are matched case-insensitively by browsers, but startsWith here is case-sensitive, so a cookie named `__SECURE-sid` or `__host-x` skips the secure/path/domain enforcement entirely.",
+          "severity": "major"
+        }
+      ],
+      "caught": true,
+      "note": "Correct bug, paraphrased, on the line."
+    },
+    {
+      "id": "probe:hono-wrong-line",
+      "caseId": "honojs/hono#2314",
+      "source": "constructed",
+      "comments": [
+        {
+          "file": "src/utils/cookie.ts",
+          "line": 40,
+          "body": "The __Secure-/__Host- prefix checks are case-sensitive; `__SECURE-` names bypass the Secure attribute requirement.",
+          "severity": "major"
+        }
+      ],
+      "caught": false,
+      "note": "Right bug but 77 lines away: strict scoring must say missed (lenient would say caught)."
+    },
+    {
+      "id": "probe:hono-generic",
+      "caseId": "honojs/hono#2314",
+      "source": "constructed",
+      "comments": [
+        {
+          "file": "src/utils/cookie.ts",
+          "line": 117,
+          "body": "Consider adding unit tests for the cookie prefix handling.",
+          "severity": "minor"
+        }
+      ],
+      "caught": false,
+      "note": "Generic advice placed exactly on the bug."
+    },
+    {
+      "id": "probe:query-correct",
+      "caseId": "TanStack/query#9338",
+      "source": "constructed",
+      "comments": [
+        {
+          "file": "packages/react-query/src/errorBoundaryUtils.ts",
+          "line": 31,
+          "body": "Gating on `query?.state.error` being truthy means a query that rejected with a falsy value (e.g. `Promise.reject(undefined)`) never calls the throwOnError function; check `query.state.status === \"error\"` instead.",
+          "severity": "major"
+        }
+      ],
+      "caught": true,
+      "note": "Correct cause and consequence."
+    },
+    {
+      "id": "probe:query-other-issue",
+      "caseId": "TanStack/query#9338",
+      "source": "constructed",
+      "comments": [
+        {
+          "file": "packages/react-query/src/errorBoundaryUtils.ts",
+          "line": 32,
+          "body": "`options.throwOnError` can be a boolean here; add a type guard so TypeScript narrows it before calling shouldThrowError.",
+          "severity": "minor"
+        }
+      ],
+      "caught": false,
+      "note": "Right lines, different (typing) concern."
+    },
+    {
+      "id": "probe:immer-correct",
+      "caseId": "immerjs/immer#912",
+      "source": "constructed",
+      "comments": [
+        {
+          "file": "src/core/proxy.ts",
+          "line": 163,
+          "body": "`prop in state.copy_` is true for inherited keys too (prototype chain), so assigning `undefined` to a key that only exists on the prototype is treated as a no-op and no patch is generated. Use an own-property check.",
+          "severity": "major"
+        }
+      ],
+      "caught": true,
+      "note": "Correct, precise."
+    },
+    {
+      "id": "probe:immer-buried",
+      "caseId": "immerjs/immer#912",
+      "source": "constructed",
+      "comments": [
+        {
+          "file": "src/core/proxy.ts",
+          "line": 165,
+          "body": "Number.isNaN on both sides is fine, but consider Object.is for clarity.",
+          "severity": "nit"
+        },
+        {
+          "file": "src/core/proxy.ts",
+          "line": 150,
+          "body": "This function is getting long; consider extracting the equality check.",
+          "severity": "nit"
+        },
+        {
+          "file": "src/core/proxy.ts",
+          "line": 163,
+          "body": "`in` walks the prototype chain: for a draft of a class instance, `draft.foo = undefined` where `foo` is defined on the prototype gets skipped.",
+          "severity": "minor"
+        }
+      ],
+      "caught": true,
+      "note": "Correct comment buried among nits, with low severity."
+    },
+    {
+      "id": "probe:zustand-correct",
+      "caseId": "pmndrs/zustand#3206",
+      "source": "constructed",
+      "comments": [
+        {
+          "file": "src/middleware/persist.ts",
+          "line": 190,
+          "body": "`() => localStorage` will throw a ReferenceError during SSR / in Node where localStorage is not defined; guard with `typeof window !== \"undefined\"`.",
+          "severity": "major"
+        }
+      ],
+      "caught": true,
+      "note": "Matches the described bug."
+    },
+    {
+      "id": "probe:zustand-nearmiss",
+      "caseId": "pmndrs/zustand#3206",
+      "source": "constructed",
+      "comments": [
+        {
+          "file": "src/middleware/persist.ts",
+          "line": 190,
+          "body": "Defaulting to localStorage persists state across sessions; sessionStorage would be a safer default for sensitive data.",
+          "severity": "minor"
+        }
+      ],
+      "caught": false,
+      "note": "Same line, design opinion, not the defect."
+    },
+    {
+      "id": "probe:ky-correct",
+      "caseId": "sindresorhus/ky#632",
+      "source": "constructed",
+      "comments": [
+        {
+          "file": "source/utils/body.ts",
+          "line": 114,
+          "body": "By the time streamRequest runs, `request.body` is already a ReadableStream, so getBodySize cannot know the size and upload progress totals will be wrong. Compute the size from the original body before wrapping.",
+          "severity": "major"
+        }
+      ],
+      "caught": true,
+      "note": "Correct, at second bug location."
+    },
+    {
+      "id": "probe:h3-correct",
+      "caseId": "unjs/h3#1008",
+      "source": "constructed",
+      "comments": [
+        {
+          "file": "src/response.ts",
+          "line": 21,
+          "body": "If prepareResponse throws synchronously (e.g. JSON.stringify on a circular object) the exception escapes before the promise chain, bypassing onError and producing an unhandled error instead of a 500. Wrap it in try/catch.",
+          "severity": "major"
+        }
+      ],
+      "caught": true,
+      "note": "Correct."
+    },
+    {
+      "id": "probe:h3-other-issue",
+      "caseId": "unjs/h3#1008",
+      "source": "constructed",
+      "comments": [
+        {
+          "file": "src/response.ts",
+          "line": 53,
+          "body": "`newVal ?? val` falls back to the original value when onError returns nothing, which may re-trigger the same failure in prepareResponse.",
+          "severity": "major"
+        }
+      ],
+      "caught": false,
+      "note": "Right location, a different (plausible) issue."
+    },
+    {
+      "id": "probe:zod-terse",
+      "caseId": "colinhacks/zod#6371",
+      "source": "constructed",
+      "comments": [
+        {
+          "file": "packages/zod/src/v4/core/json-schema-processors.ts",
+          "line": 472,
+          "body": "This marks every enum key as required; what about records whose value schema is optional or has a default? Those keys should not be required on input.",
+          "severity": "minor"
+        }
+      ],
+      "caught": true,
+      "note": "Terse, question-style, but identifies the cause."
+    },
+    {
+      "id": "probe:axios-correct",
+      "caseId": "axios/axios#11087",
+      "source": "constructed",
+      "comments": [
+        {
+          "file": "lib/core/InterceptorManager.js",
+          "line": 90,
+          "body": "Handlers are keyed by number in the Map, so `eject(\"3\")` (string id, which the old array-based API accepted) no longer finds the entry and silently does nothing. Normalise the id with Number(id).",
+          "severity": "major"
+        }
+      ],
+      "caught": true,
+      "note": "Correct."
+    },
+    {
+      "id": "probe:axios-generic",
+      "caseId": "axios/axios#11138",
+      "source": "constructed",
+      "comments": [
+        {
+          "file": "lib/helpers/estimateDataURLDecodedBytes.js",
+          "line": 168,
+          "body": "Potential DoS: make sure input size is validated.",
+          "severity": "minor"
+        }
+      ],
+      "caught": false,
+      "note": "Generic security advice; does not identify the raw-length estimate on percent-encoded base64."
+    }
+  ]
+}
