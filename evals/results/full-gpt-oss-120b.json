@@ -1,9 +1,9 @@
 {
-  "runId": "2026-11-07T12-26-45-810Z_baseline-v2_groq_openai_gpt-oss-120b",
+  "runId": "2026-11-08T00-27-12-940Z_baseline-v2_groq_openai_gpt-oss-120b",
   "reviewerId": "baseline-v2:groq:openai/gpt-oss-120b",
   "judgeId": "llm-judge-v2:groq:qwen/qwen3.8-27b",
-  "startedAt": "2026-11-07T12:26:45.810Z",
-  "finishedAt": "2026-11-07T12:56:53.584Z",
+  "startedAt": "2026-11-08T00:27:12.940Z",
+  "finishedAt": "2026-11-08T00:39:15.933Z",
   "datasetVersion": 1,
   "caseCount": 110,
   "results": [
@@ -3229,7 +3229,7 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "date-fns/date-fns#1690",
@@ -3291,7 +3291,7 @@
         ],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "date-fns/date-fns#962",
@@ -3360,7 +3360,7 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "pmndrs/zustand#3206",
@@ -3384,7 +3384,7 @@
         "perComment": [],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "pmndrs/zustand#2678",
@@ -3429,7 +3429,7 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "pmndrs/zustand#1144",
@@ -3453,7 +3453,7 @@
         "perComment": [],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "pmndrs/zustand#1789",
@@ -3539,7 +3539,7 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "pmndrs/zustand#1486",
@@ -3584,7 +3584,7 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "pmndrs/zustand#1460",
@@ -3629,7 +3629,7 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "pmndrs/zustand#1463",
@@ -3653,7 +3653,7 @@
         "perComment": [],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "pmndrs/zustand#724",
@@ -3698,7 +3698,7 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "pmndrs/zustand#3032",
@@ -3714,7 +3714,7 @@
           "calls": 1
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "pmndrs/zustand#2277",
@@ -3749,7 +3749,7 @@
           "calls": 1
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "immerjs/immer#1255",
@@ -3773,7 +3773,7 @@
         "perComment": [],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "immerjs/immer#912",
@@ -3797,7 +3797,7 @@
         "perComment": [],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "immerjs/immer#1014",
@@ -3842,7 +3842,7 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "immerjs/immer#771",
@@ -3866,7 +3866,7 @@
         "perComment": [],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "immerjs/immer#1164",
@@ -3889,7 +3889,7 @@
           "calls": 1
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "sindresorhus/ky#736",
@@ -3913,7 +3913,7 @@
         "perComment": [],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "sindresorhus/ky#751",
@@ -3958,7 +3958,7 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "sindresorhus/ky#760",
@@ -4003,7 +4003,7 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "sindresorhus/ky#540",
@@ -4060,7 +4060,7 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "sindresorhus/ky#601",
@@ -4107,7 +4107,7 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "sindresorhus/ky#466",
@@ -4131,7 +4131,7 @@
         "perComment": [],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "sindresorhus/ky#632",
@@ -4176,7 +4176,7 @@
           "model": "qwen/qwen3.8-27b"
         }
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "sindresorhus/ky#536",
@@ -4200,7 +4200,7 @@
         "perComment": [],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
-      "cached": false
+      "cached": true
     },
     {
       "caseId": "unjs/h3#1137",
@@ -4224,21 +4224,420 @@
         "perComment": [],
         "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
       },
+      "cached": true
+    },
+    {
+      "caseId": "unjs/h3#1212",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "src/response.ts",
+            "line": 106,
+            "severity": "critical",
+            "body": "The variable `preparedRes` is no longer defined after the refactor. The code now uses `const res = prepareResponseBody(...);` but still references `preparedRes?.status` and `preparedRes?.statusText`, which will cause a ReferenceError at runtime."
+          },
+          {
+            "file": "src/utils/response.ts",
+            "line": 44,
+            "severity": "major",
+            "body": "The new `redirect` function returns an HTTPResponse but its signature includes a `statusText` parameter that defaults to a generic value. Existing callers may rely on the default status text for 302 (“Found”). Changing the default could break expectations."
+          },
+          {
+            "file": "src/utils/response.ts",
+            "line": 48,
+            "severity": "minor",
+            "body": "The `redirect` implementation sets the `location` header using a lowercase key (`\"location\"`). While header names are case‑insensitive, many utilities normalize to capitalized form (`\"Location\"`). This inconsistency could cause mismatches in downstream code that checks header names case‑sensitively."
+          },
+          {
+            "file": "src/utils/response.ts",
+            "line": 112,
+            "severity": "major",
+            "body": "`iterable` now returns an `HTTPResponse` wrapping a `ReadableStream`. The original implementation returned the stream directly, and the framework may treat a stream specially (e.g., piping it directly). Wrapping it could result in the stream being sent as a body string like \"[object ReadableStream]\" instead of streaming the data."
+          },
+          {
+            "file": "src/utils/static.ts",
+            "line": 133,
+            "severity": "major",
+            "body": "When handling a 304 Not Modified response, the new code returns an `HTTPResponse` without setting any headers (e.g., `ETag`, `Last-Modified`). Previously those headers were already present on `event.res`. Dropping them may cause caching logic to break."
+          },
+          {
+            "file": "src/utils/static.ts",
+            "line": 181,
+            "severity": "major",
+            "body": "For HEAD requests the function now returns `new HTTPResponse(null, { status: 200 })` but does not copy existing response headers (e.g., `Content-Type`, `Content-Length`). The original behavior returned an empty string while preserving headers set earlier, which is required for correct HEAD responses."
+          },
+          {
+            "file": "src/utils/static.ts",
+            "line": 186,
+            "severity": "major",
+            "body": "The final successful response now returns `new HTTPResponse(contents || null, { status: 200 })` without preserving any previously set headers (e.g., `Content-Type`, `Cache-Control`). This can lead to missing MIME type headers for served static files."
+          }
+        ],
+        "usage": {
+          "inputTokens": 7725,
+          "outputTokens": 1215,
+          "costUsd": 0.0018877499999999999,
+          "latencyMs": 4974,
+          "model": "openai/gpt-oss-120b",
+          "calls": 2
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 1,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment discusses the signature and default value of the `statusText` parameter in `redirect` and potential breaking changes for callers. It does not identify the specific bug where the default status text was hard-coded to incorrect values (e.g., 'Found' for 300) instead of using the correct reason phrase for the given status code."
+          },
+          {
+            "index": 2,
+            "locationMatch": true,
+            "semanticMatch": false,
+            "reason": "The comment identifies a case-sensitivity issue with the `location` header key. This is a different problem from the known bug regarding incorrect `statusText` values."
+          },
+          {
+            "index": 3,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment identifies a potential issue with the `iterable` function wrapping a `ReadableStream` in an `HTTPResponse`. This is unrelated to the `noContent` and `redirect` helpers' status text logic."
+          },
+          {
+            "index": 4,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 5,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 6,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1732,
+          "outputTokens": 207,
+          "costUsd": 0.0022136000000000005,
+          "latencyMs": 1267,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "unjs/h3#1097",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "src/handler.ts",
+            "line": 100,
+            "severity": "major",
+            "body": "The new implementation of handlerWithFetch replaces the previous Promise chain with a direct call to Promise.resolve(handleResponse(handler(event), event)). This change means that if the handler returns a rejected promise (i.e., an async error), it will not be caught by the surrounding try/catch and will result in an unhandled promise rejection. The original code used Promise.resolve(handler(event)).then(...).catch(...) to correctly handle both synchronous throws and asynchronous rejections. This regression breaks error handling for async handlers."
+          }
+        ],
+        "usage": {
+          "inputTokens": 6021,
+          "outputTokens": 519,
+          "costUsd": 0.00121455,
+          "latencyMs": 2499,
+          "model": "openai/gpt-oss-120b",
+          "calls": 2
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment identifies a regression in error handling for async handlers (unhandled promise rejections) in `handlerWithFetch`. The known bug is about query parsing logic discarding repeated query parameters. These are completely different defects."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1517,
+          "outputTokens": 67,
+          "costUsd": 0.0014816000000000002,
+          "latencyMs": 407,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "unjs/h3#480",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "src/utils/static.ts",
+            "line": 86,
+            "severity": "minor",
+            "body": "The vary header is only set when more than one accepted encoding is present (acceptEncodings.length > 1). According to HTTP spec, the Vary header should be sent whenever the response varies based on the Accept‑Encoding request header, even if there is only a single supported encoding. This may cause caching issues for clients that send a single encoding."
+          }
+        ],
+        "usage": {
+          "inputTokens": 3705,
+          "outputTokens": 295,
+          "costUsd": 0.00073275,
+          "latencyMs": 1725,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": true,
+        "caughtAnyLocation": true,
+        "matchedIndices": [
+          0
+        ],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": true,
+            "semanticMatch": true,
+            "reason": "The comment correctly identifies that the Vary header is only set when `acceptEncodings.length > 1`, which ignores cases where a single encoding is accepted. It explicitly states that the header should be sent whenever the response varies based on Accept-Encoding, even for a single encoding, which matches the root cause and fix of the known bug."
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b",
+        "judgeUsage": {
+          "inputTokens": 1478,
+          "outputTokens": 91,
+          "costUsd": 0.0015464,
+          "latencyMs": 695,
+          "model": "qwen/qwen3.8-27b"
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "unjs/h3#1509",
+      "kind": "buggy",
+      "category": "async-concurrency",
+      "review": {
+        "comments": [
+          {
+            "file": "src/index.ts",
+            "line": 164,
+            "severity": "major",
+            "body": "The public API no longer re-exports the deprecated `createEventStream` function, but the deprecation shim is only defined in `_deprecated.ts` and not exported from the main entry point. Existing code that imports `createEventStream` from \"h3\" will break, which is likely unintended for a deprecation path."
+          },
+          {
+            "file": "src/utils/internal/event-stream.ts",
+            "line": 2,
+            "severity": "critical",
+            "body": "The file no longer exports the EventStream class, but other parts of the codebase (e.g., test/unit/sse.test.ts) still import EventStream from '../../src/utils/event-stream.ts'. This will cause a runtime import error because EventStream is missing from the module's public API."
+          }
+        ],
+        "usage": {
+          "inputTokens": 7640,
+          "outputTokens": 771,
+          "costUsd": 0.0016086,
+          "latencyMs": 3506,
+          "model": "openai/gpt-oss-120b",
+          "calls": 3
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          },
+          {
+            "index": 1,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": false
+    },
+    {
+      "caseId": "unjs/h3#315",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "src/types.ts",
+            "line": 2,
+            "severity": "major",
+            "body": "Imports a runtime value `Session` from './utils/session' but `Session` is only a TypeScript type. This will cause a runtime error because the compiled JavaScript will try to require a non‑existent export. Use `import type { Session }` instead."
+          }
+        ],
+        "usage": {
+          "inputTokens": 2921,
+          "outputTokens": 398,
+          "costUsd": 0.00067695,
+          "latencyMs": 1561,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": false
+    },
+    {
+      "caseId": "unjs/h3#847",
+      "kind": "buggy",
+      "category": "performance",
+      "review": {
+        "comments": [
+          {
+            "file": "src/utils/internal/iterable.ts",
+            "line": 14,
+            "severity": "major",
+            "body": "The IteratorSerializer type was changed to return Uint8Array|undefined, but serializeIterableValue now always returns a Uint8Array (even for unsupported types it returns an empty Uint8Array). Previously the function could return undefined to signal that a value should be skipped. This change can cause iterable() to emit empty chunks instead of skipping them, breaking existing behaviour and potentially breaking downstream consumers."
+          }
+        ],
+        "usage": {
+          "inputTokens": 6225,
+          "outputTokens": 499,
+          "costUsd": 0.0012331500000000001,
+          "latencyMs": 2496,
+          "model": "openai/gpt-oss-120b",
+          "calls": 2
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "not in a bug file (not sent to judge)"
+          }
+        ],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": false
+    },
+    {
+      "caseId": "unjs/h3#1008",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [],
+        "usage": {
+          "inputTokens": 3864,
+          "outputTokens": 426,
+          "costUsd": 0.0008352,
+          "latencyMs": 1819,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [],
+        "judgeModel": "llm-judge-v2:groq:qwen/qwen3.8-27b"
+      },
+      "cached": false
+    },
+    {
+      "caseId": "unjs/h3#1242",
+      "kind": "clean",
+      "review": {
+        "comments": [
+          {
+            "file": "src/utils/ws.ts",
+            "line": 37,
+            "severity": "major",
+            "body": "When `hooks` is a function that returns a Promise (async), the code assigns the Promise to `crossws` without awaiting it. This means `crossws` may be a Promise instead of the expected hooks object, breaking downstream usage. The handler should await the result of the function before assigning it."
+          }
+        ],
+        "usage": {
+          "inputTokens": 960,
+          "outputTokens": 167,
+          "costUsd": 0.00024419999999999997,
+          "latencyMs": 963,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "unjs/h3#1234",
+      "kind": "clean",
+      "review": {
+        "comments": [
+          {
+            "file": "src/middleware.ts",
+            "line": 109,
+            "severity": "critical",
+            "body": "Accessing (input as H3Core).handler without checking if input is defined can throw a TypeError when input is undefined. toMiddleware should guard against undefined before property access."
+          },
+          {
+            "file": "src/middleware.ts",
+            "line": 137,
+            "severity": "critical",
+            "body": "The is404 function references kNotFound, but kNotFound is not imported or defined in this module, causing a ReferenceError at runtime whenever is404 is called."
+          }
+        ],
+        "usage": {
+          "inputTokens": 1676,
+          "outputTokens": 327,
+          "costUsd": 0.0004476,
+          "latencyMs": 1305,
+          "model": "openai/gpt-oss-120b",
+          "calls": 1
+        }
+      },
       "cached": false
     }
   ],
-  "pending": [
-    "unjs/h3#1212",
-    "unjs/h3#1097",
-    "unjs/h3#480",
-    "unjs/h3#1509",
-    "unjs/h3#315",
-    "unjs/h3#847",
-    "unjs/h3#1008",
-    "unjs/h3#1242",
-    "unjs/h3#1234"
-  ],
-  "notes": [
-    "reviewer daily quota exhausted at unjs/h3#1212: HTTP 429: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01k8wvwnh5embvdns3pdrfap23` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 196344, Requested 3855. Please try again in 1m25.968"
-  ]
+  "pending": [],
+  "notes": []
 }
