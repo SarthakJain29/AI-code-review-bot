@@ -165,8 +165,10 @@ reads the `--out` file first, so it survives a lost `.cache/` (new container); c
 
 ## Progress
 
-- **Done:** harness, dataset (91 buggy + 19 clean), judge validation (Qwen v2 100%, κ 1.0), smoke run; full-run tooling
-  (TPM throttle, chunking, quota stop/resume, `--until-done`).
-- **In progress:** full runs of gpt-oss-120b and gpt-oss-20b (`results/full-gpt-oss-*.json`), resuming as Groq's daily quota frees up.
-- **Next:** when both have 0 pending: `report --runs results/full-gpt-oss-120b.json,results/full-gpt-oss-20b.json`, fill the
-  README "Results" section, push, update PR.
+- **Done:** harness, dataset (91 buggy + 19 clean), judge validation (Qwen v2 100%, κ 1.0), smoke run, full-run tooling
+  (TPM throttle, chunking, per-chunk cache, 413/cut-off re-split, quota stop/resume). **Full runs complete**:
+  gpt-oss-120b and gpt-oss-20b, 110/110 cases each, 0 errors (Nov 5–8, free tier, run every 12 h at the end).
+  Final scoreboard in `reports/scoreboard.{md,html}`; README "Results" written.
+- **In progress:** nothing.
+- **Next (suggested):** plug in the Diffwise reviewer (`--reviewer diffwise`) and compare it with these baselines;
+  spot-check ~20 judged verdicts by hand to measure judge error on real output.

@@ -24,13 +24,62 @@ finished, so it is fully decoupled: any reviewer that maps `diff → comments` c
                                    reports/scoreboard.{md,html}
 ```
 
-> **Smoke test (5 cases):** the baseline (`gemini-3.1-flash-lite`, one prompt) caught **0/4** known bugs and left
-> 1 comment on the 1 clean PR, at ≈$0.0002 and 1.2 s per review. Each miss was a plausible-sounding comment about
-> something else. See [`reports/scoreboard.md`](reports/scoreboard.md) or [`reports/scoreboard.html`](reports/scoreboard.html).
+## Results
 
-> **Status:** the harness, dataset and judge are complete. Per the brief, the **full eval has not been run**. The
-> committed report in [`reports/`](reports/) is a **5-case smoke test**, and its numbers carry error bars far
-> too wide to mean anything. Run the full eval with `npm run evals -- run --reviewer baseline`.
+Full run: **110 real PRs** (91 bug-introducing, 19 clean) from 12 TS/JS repos. Two single-prompt baselines on Groq,
+judged by `qwen/qwen3.8-27b`. Full tables: [`reports/scoreboard.md`](reports/scoreboard.md) ·
+[`reports/scoreboard.html`](reports/scoreboard.html).
+
+| Reviewer | Catch rate (strict) | 95% CI | Noise: comments / clean PR | Silent on clean PRs | Precision ≥ | Cost / review | Latency p50 / p95 |
+|---|---|---|---|---|---|---|---|
+| `openai/gpt-oss-120b` | **6.6%** (6/91) | 3.1–13.6% | 1.11 | 47% (9/19) | 7.0% | $0.00081 | 1.5 s / 4.8 s |
+| `openai/gpt-oss-20b` | **6.6%** (6/91) | 3.1–13.6% | 0.74 | 63% (12/19) | 6.7% | $0.00046 | 1.4 s / 4.2 s |
+
+**What it says**
+
+- **A diff-only, single-prompt reviewer catches about 1 in 15 real bugs.** Both models found 6 of 91. They overlap
+  on only 3 cases (vitest#6070, hono#4078, ky#601), so together they cover 9. This is the bar Diffwise has to clear.
+- **The 6× bigger model is not measurably better here.** Same catch rate. The 120b model is noisier on clean PRs
+  (1.11 vs 0.74 comments, silent on 47% vs 63%) and costs ~1.8× more, at similar latency. With CIs this wide, a
+  real gap under ~10 points would not show up.
+- **By category** (strict catches, 120b / 20b): logic 5/52 vs 3/52; edge-case 0/17 vs 1/17; regex-string 1/3 each;
+  null-undefined 0/3 vs 1/3; async-concurrency 0/6 and state-mutation 0/4 for both. Concurrency and state bugs, which
+  depend on code outside the diff, were never caught. Category n is tiny, so read this as directional.
+- **Cost is negligible either way:** under $0.001 per review at Groq list prices. The whole 110-case run was ≈$0.09
+  (120b) and ≈$0.05 (20b) for reviews, plus the judge.
+
+**Example catches**
+
+- [vitest#6070](https://github.com/vitest-dev/vitest/pull/6070) (both models): the search string was HTML-escaped
+  instead of RegExp-escaped before building the highlight regex. 120b: *"escapes HTML entities in the search string
+  but does not escape RegExp meta-characters. If a user searches for '(' the RegExp will be invalid"*.
+- [ky#601](https://github.com/sindresorhus/ky/pull/601) (both): the request is cloned for retries, but the original is
+  passed to fetch. *"clones the original request into `this.request` but then continues to use `mainRequest`…"*.
+- [zustand#1144](https://github.com/pmndrs/zustand/pull/1144) (20b only): `typeof null === 'object'` makes a `null`
+  state update merge instead of replace. The comment names exactly that.
+
+**Example misses**
+
+- [TanStack/query#7312](https://github.com/TanStack/query/pull/7312) (120b left 8 comments): the bug is that queued
+  scoped mutations stay paused while the tab is unfocused (`retryer.ts`). Every comment was about test files or other
+  logic, none in the bug file.
+- [axios#6518](https://github.com/axios/axios/pull/6518): progress listeners are never removed in the XHR adapter.
+  The reviewer commented on a different file (`AxiosTransformStream.js`), about plausible but different issues.
+- [vue/core#10734](https://github.com/vuejs/core/pull/10734): moving `transformTransition` out of a `__DEV__` guard
+  breaks `v-show` in `<transition>` in production. Neither model commented at all. Spotting it needs knowledge of
+  the compiler beyond the diff.
+
+**Read with care**
+
+- **Small n.** 91 buggy cases give a ±5 point CI around ~7%; the two reviewers are statistically indistinguishable.
+- **SZZ noise.** The "bug" is the change a later fix touched. Some cases are mislabelled, and some "misses" may be
+  bugs no diff-only reviewer could see. Some comments counted as noise may flag real, unreported problems, so
+  precision is a lower bound.
+- **Judge error.** The Qwen judge agreed with all 19 hand labels (κ 1.00), but 19 items is small and partly
+  constructed. Expect a few wrong verdicts in 91.
+- **Pricing.** Groq prices for gpt-oss-120b/20b and Qwen were checked on Groq's model page. Runs were on the free
+  tier, so the actual spend was $0; cost is a list-price equivalent.
+- **Contamination.** These PRs are public and may be in the models' training data, which would inflate catches.
 
 ---
 
@@ -166,12 +215,13 @@ date-fns), "fix doesn't touch source" (51× in TanStack/query, mostly devtools/t
 
 - **Location check (deterministic):** the comment's file matches a bug file (path-normalised) and its line is
   within the bug range ±5 (`--tolerance`).
-- **Semantic check (LLM):** Groq `openai/gpt-oss-120b` at temperature 0 gets the bug description, category,
-  location, the real fix diff (source files first) and all comments. It returns `match` and a reason for each
+- **Semantic check (LLM):** Groq `qwen/qwen3.8-27b` at temperature 0 gets the bug description, category,
+  location, the real fix diff (source files first, capped at 3500 chars) and the comments that are in a bug file
+  (others cannot be strict catches and are not sent). It returns `match` and a reason for each
   comment. The prompt is strict: generic advice ("add tests", "check for null" without this bug's cause) and
   different real problems in the same lines do not count. The judge deliberately uses a different model family
-  from the baseline reviewer (Gemini `gemini-3.1-flash-lite`), to avoid self-preference.
-- **Verdicts:** `caught` = some comment passes both checks; `caughtAnyLocation` = some comment passes the semantic check.
+  from the baseline reviewers (gpt-oss), to avoid self-preference.
+- **Verdicts:** `caught` = some comment passes both checks; `caughtAnyLocation` = some comment in a bug file passes the semantic check, at any line.
 - Offline fallback: a keyword-overlap judge. It is much weaker and only for plumbing tests.
 
 **Validation:** [`dataset/judge-labels.json`](dataset/judge-labels.json) holds hand-labelled items, each a
@@ -190,7 +240,9 @@ comment sets written to probe the judge's hard cases:
 
 | Judge | Items | Accuracy | Cohen's κ | Disagreements |
 |---|---|---|---|---|
-| LLM judge (`openai/gpt-oss-120b`, Groq) | 19 (4 real + 15 constructed; 9 caught / 10 missed) | **100%** | 1.00 | none |
+| **LLM judge v2 (`qwen/qwen3.8-27b`, Groq), used for the full runs** | 19 (4 real + 15 constructed; 9 caught / 10 missed) | **100%** | 1.00 | none |
+| LLM judge v1 (`openai/gpt-oss-120b`, Groq) | 19 | 100% | 1.00 | none (not used: same family as the reviewers) |
+| LLM judge v1 (`gemini-3.1-flash-lite`) | 19 | 94.7% | 0.90 | accepted generic "potential DoS" advice on the bug line |
 | Keyword judge (offline fallback) | 19 | 89.5% | 0.79 | missed the correct comment buried among nits; missed a correct comment using different words |
 
 The LLM judge rejected all the hard negatives: right bug on the wrong line, generic advice on the bug line, a
@@ -207,7 +259,7 @@ All metrics are computed in [`src/scoring/metrics.ts`](src/scoring/metrics.ts) a
 | Metric | Definition | Notes |
 |---|---|---|
 | **Catch rate (strict)** — headline recall | buggy PRs where ≥ 1 comment is a semantic match **and** within ±5 lines of the bug ÷ buggy PRs | 95% Wilson interval shown; at n≈70 expect about ±11 points |
-| Catch rate (any line) | same, ignoring location | the gap to strict = "found it, pointed at the wrong line" |
+| Catch rate (bug file, any line) | same, but any line of a bug file counts | the gap to strict = "found it, pointed at the wrong line" |
 | **Comments / clean PR** — noise | mean comments on clean PRs | every comment on a clean PR is presumed a false positive (some may be valid) |
 | Serious comments / clean PR | same, counting only `critical`/`major` | the noise that would block a merge |
 | Silent on clean | share of clean PRs with zero comments | |
@@ -270,7 +322,7 @@ context such as embeddings, note that the baseline sees the diff only.
   but the label set is small and was made by the harness author during development (an AI agent working
   unattended), so a human should re-check it. Some validation items are constructed probes, not real
   reviewer output.
-- **Small n.** About 70 buggy cases give a ±10–12 point confidence interval on recall. Differences between
+- **Small n.** 91 buggy cases give roughly a ±5 point interval at a ~7% catch rate (wider at higher rates). Differences between
   reviewers smaller than that are not significant. Per-category numbers are directional only.
 - **Selection bias.** Only squash-merge repos with conventional commits, small fixes and ≤600-line PRs are included.
   Large PRs, where review is hardest, are under-represented.
@@ -278,4 +330,5 @@ context such as embeddings, note that the baseline sees the diff only.
   This affects all LLM reviewers roughly equally, but it inflates absolute numbers.
 - **Free-tier volatility.** Gemini free-tier models get rotated or retired (`gemini-2.5-flash` was unavailable to new keys; `gemini-3.5-flash` allows 20 requests/day on the free tier, which is why the baseline uses `gemini-3.1-flash-lite`)
   and return 503s under load. Latency numbers include provider queueing.
-- **Cost is an estimate** at list prices, some of which are marked `assumed` in `pricing.ts`.
+- **Cost is an estimate** at list prices. Groq prices (gpt-oss, Qwen) are confirmed; the Gemini prices in
+  `pricing.ts` are marked `assumed`.
