@@ -1,0 +1,210 @@
+{
+  "runId": "2026-11-04T21-16-52-542Z_baseline-v1_gemini_gemini-3.1-flash-lite",
+  "reviewerId": "baseline-v1:gemini:gemini-3.1-flash-lite",
+  "judgeId": "llm-judge-v1:groq:openai/gpt-oss-120b",
+  "startedAt": "2026-11-04T21:16:52.542Z",
+  "finishedAt": "2026-11-04T21:17:03.031Z",
+  "datasetVersion": 1,
+  "caseCount": 5,
+  "results": [
+    {
+      "caseId": "vuejs/core#16109",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/runtime-core/__tests__/components/Suspense.spec.ts",
+            "line": 5028,
+            "severity": "major",
+            "body": "Using `setTimeout` in a test is flaky and non-deterministic. It should be replaced with a more reliable mechanism like `await vi.advanceTimersByTimeAsync()` or a promise-based synchronization to ensure the test is stable across different environments."
+          }
+        ],
+        "usage": {
+          "inputTokens": 4146,
+          "outputTokens": 117,
+          "costUsd": 0.00046140000000000005,
+          "latencyMs": 1226,
+          "model": "gemini-3.1-flash-lite"
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment only critiques test timing (use of setTimeout) and suggests a more reliable synchronization method. It does not identify the incorrect guard `!suspense.isInFallback` or the root replacement logic that caused the bug."
+          }
+        ],
+        "judgeModel": "llm-judge-v1:groq:openai/gpt-oss-120b",
+        "judgeUsage": {
+          "inputTokens": 2025,
+          "outputTokens": 108,
+          "costUsd": 0.00036855,
+          "latencyMs": 1055,
+          "model": "openai/gpt-oss-120b"
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "sveltejs/svelte#12604",
+      "kind": "buggy",
+      "category": "edge-case",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/svelte/src/internal/client/dom/hydration.js",
+            "line": 41,
+            "severity": "critical",
+            "body": "The assignment `hydrate_node = ...` will now throw a TypeError if `hydrate_node` is null because the check on line 37 only handles the error case, but the subsequent line attempts to access `.nextSibling` on a null reference if the function were to continue (though it throws, the logic flow is fragile). More importantly, if `hydrate_node` is null, `hydrate_node.nextSibling` will crash before the check if the check was intended to be defensive, or if the logic expects to return a value. Additionally, throwing a constant `HYDRATION_ERROR` (which is likely a string or number) is not a standard Error object, which may break error handling upstream."
+          }
+        ],
+        "usage": {
+          "inputTokens": 558,
+          "outputTokens": 210,
+          "costUsd": 0.0001398,
+          "latencyMs": 1530,
+          "model": "gemini-3.1-flash-lite"
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment discusses a possible null dereference of `hydrate_node` and error throwing, which is unrelated to the bug about handling HYDRATION_START_FAILED markers during hydration."
+          }
+        ],
+        "judgeModel": "llm-judge-v1:groq:openai/gpt-oss-120b",
+        "judgeUsage": {
+          "inputTokens": 1488,
+          "outputTokens": 88,
+          "costUsd": 0.000276,
+          "latencyMs": 584,
+          "model": "openai/gpt-oss-120b"
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "vitest-dev/vitest#5135",
+      "kind": "buggy",
+      "category": "state-mutation",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/expect/package.json",
+            "line": 42,
+            "severity": "major",
+            "body": "The @types/chai version 4.3.6 is incompatible with Chai v5. Chai v5 includes its own type definitions, and using the old @types/chai package will cause significant type conflicts and incorrect type inference."
+          }
+        ],
+        "usage": {
+          "inputTokens": 839,
+          "outputTokens": 102,
+          "costUsd": 0.00012470000000000002,
+          "latencyMs": 902,
+          "model": "gemini-3.1-flash-lite"
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment addresses a type definition version mismatch, which is unrelated to the state‑mutation bug caused by calling chai.use and retaining the expect context."
+          }
+        ],
+        "judgeModel": "llm-judge-v1:groq:openai/gpt-oss-120b",
+        "judgeUsage": {
+          "inputTokens": 1963,
+          "outputTokens": 90,
+          "costUsd": 0.00034845,
+          "latencyMs": 747,
+          "model": "openai/gpt-oss-120b"
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "TanStack/query#11679",
+      "kind": "buggy",
+      "category": "logic",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/query-core/src/retryer.ts",
+            "line": 277,
+            "severity": "major",
+            "body": "The change to `pause(canStart).then(run)` in `retryer.ts` creates a potential race condition. If `canStart` returns false, `pause` is called. Inside `pause`, `continueFn` is defined, which checks `canResume` (passed as `canStart`). However, `continueFn` is only triggered by external events (like window focus or online status). If the condition for `canStart` changes due to a mutation finishing in the same scope, there is no mechanism here to trigger `continueFn` unless the window focus or online status also changes. This could lead to mutations being permanently stuck in a 'paused' state even when the queue should have progressed."
+          }
+        ],
+        "usage": {
+          "inputTokens": 1628,
+          "outputTokens": 207,
+          "costUsd": 0.0002456,
+          "latencyMs": 1835,
+          "model": "gemini-3.1-flash-lite"
+        }
+      },
+      "verdict": {
+        "caught": false,
+        "caughtAnyLocation": false,
+        "matchedIndices": [],
+        "perComment": [
+          {
+            "index": 0,
+            "locationMatch": false,
+            "semanticMatch": false,
+            "reason": "The comment describes a potential race condition where pause may never resume due to canStart changes, which is unrelated to the bug where a cancelled retry still schedules a pause after its delay. It does not point to the cancelled‑retry‑pause issue."
+          }
+        ],
+        "judgeModel": "llm-judge-v1:groq:openai/gpt-oss-120b",
+        "judgeUsage": {
+          "inputTokens": 2156,
+          "outputTokens": 122,
+          "costUsd": 0.0003966,
+          "latencyMs": 1432,
+          "model": "openai/gpt-oss-120b"
+        }
+      },
+      "cached": false
+    },
+    {
+      "caseId": "vuejs/core#14348",
+      "kind": "clean",
+      "review": {
+        "comments": [
+          {
+            "file": "packages/runtime-core/src/renderer.ts",
+            "line": 1389,
+            "severity": "critical",
+            "body": "The original code checked `root.ce` (which is a `VueElement` instance) for the `_def` property. The new implementation calls `root.ce._hasShadowRoot()`. However, `root.ce` is typed as `any` or `RendererElement` in the context of `root` (which is a `Teleport` or similar internal structure), and `ComponentCustomElementInterface` is not guaranteed to be implemented by the object stored in `root.ce`. This will cause a runtime error if `root.ce` does not have the `_hasShadowRoot` method."
+          }
+        ],
+        "usage": {
+          "inputTokens": 1079,
+          "outputTokens": 187,
+          "costUsd": 0.0001827,
+          "latencyMs": 1167,
+          "model": "gemini-3.1-flash-lite"
+        }
+      },
+      "cached": false
+    }
+  ],
+  "notes": []
+}
